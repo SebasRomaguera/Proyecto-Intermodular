@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - EasyTaxi Palma</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .dashboard {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .welcome {
+      background: var(--white);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .welcome h1 {
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+    .welcome p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .btn-logout {
+      background: var(--error);
+      color: white;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    .btn-logout:hover {
+      background: #c0392b;
+    }
+    .info-box {
+      background: #fff3cd;
+      border: 2px solid var(--primary-color);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="welcome">
+      <h1>🚕 Bienvenido a EasyTaxi</h1>
+      <p id="nombreUsuario"></p>
+      
+      <div class="info-box">
+        <p><strong>✅ Autenticación funcional implementada</strong></p>
+        <p>Esta es la primera versión del proyecto (UD1A)</p>
+        <p>Próximamente: Sistema de reservas y mapa interactivo</p>
+      </div>
+
+      <button class="btn-logout" onclick="cerrarSesion()">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Verificar si hay usuario logueado
+    const usuarioData = localStorage.getItem('usuario');
+    
+    if (!usuarioData) {
+      window.location.href = 'login.html';
+    } else {
+      const usuario = JSON.parse(usuarioData);
+      document.getElementById('nombreUsuario').textContent = `Hola, ${usuario.nombre}! 👋`;
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem('usuario');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

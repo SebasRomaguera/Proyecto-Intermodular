@@ -1,10 +1,58 @@
 # EasyTaxi Palma 🚕  
 Aplicación web para la reserva y solicitud de taxis en Palma de Mallorca
 
-## 📌 Descripción del proyecto
+## � Estado del proyecto
+**Versión actual:** UD1A - Primera versión funcional  
+**Fecha:** Febrero 2026  
+**Estado:** ✅ En desarrollo activo  
+
+### Funcionalidades implementadas
+- ✅ Sistema de registro de usuarios
+- ✅ Sistema de login/autenticación
+- ✅ Validación de datos (frontend y backend)
+- ✅ Encriptación de contraseñas con bcrypt
+- ✅ Conexión con MongoDB
+- ✅ API REST funcional (Express)
+- ✅ Interfaz de usuario responsive
+- ✅ Gestión de sesiones con localStorage
+
+### Próximas funcionalidades (UD1B y siguientes)
+- ⏳ Tokens JWT para autenticación
+- ⏳ Sistema de reservas de taxi
+- ⏳ Mapa interactivo con Leaflet
+- ⏳ Simulación de taxi en movimiento
+- ⏳ Cálculo del taxi más cercano
+- ⏳ Historial de reservas
+
+---
+
+## �📌 Descripción del proyecto
 EasyTaxi Palma es una aplicación web que tengo como objetivo desarrollar para modernizar el sector del taxi en Palma de Mallorca. Después de trabajar como taxista durante cinco meses, pude ver de primera mano las limitaciones tecnológicas del sector y cómo esto afecta tanto a conductores como a usuarios.
 
 Mientras plataformas como Uber o Cabify han avanzado muchísimo digitalmente, el taxi tradicional sigue funcionando de manera muy manual. Por eso quiero crear una alternativa moderna, accesible y fácil de usar que permita solicitar taxis, ver su ubicación en tiempo real y gestionar todo desde una interfaz clara y rápida.
+
+---
+
+## 🛠️ Stack tecnológico
+
+### Backend
+- **Node.js** + **Express.js** - Servidor y API REST
+- **MongoDB** + **Mongoose** - Base de datos NoSQL
+- **Bcrypt** - Encriptación de contraseñas
+- **CORS** - Manejo de peticiones entre dominios
+- **Dotenv** - Variables de entorno
+
+### Frontend
+- **HTML5** + **CSS3** + **JavaScript ES6+**
+- **Leaflet** - Mapas interactivos (próximamente)
+- **OpenStreetMap** - Proveedor de mapas (próximamente)
+- **Fetch API** - Peticiones HTTP
+
+### Herramientas
+- **Git/GitHub** - Control de versiones
+- **Trello** - Gestión del proyecto
+- **VS Code** - Editor de código
+- **Nodemon** - Recarga automática
 
 ---
 
@@ -14,9 +62,11 @@ Mientras plataformas como Uber o Cabify han avanzado muchísimo digitalmente, el
 Desarrollar una aplicación web funcional que permita solicitar, reservar y gestionar taxis en tiempo real, de manera segura, rápida y accesible.
 
 ### Objetivos específicos
-1. Implementar un sistema de registro y autenticación para usuarios y conductores.  
-2. Diseñar un mapa interactivo que muestre taxis disponibles y permita hacer reservas en tiempo real.  
-3. Crear un sistema de gestión de reservas con distintos estados (pendiente, en camino, completado).  
+1. Implementar un sistema de registro y autenticación para usuarios (clientes).  
+2. Diseñar un mapa interactivo con Leaflet que muestre la ubicación del usuario y el taxi asignado.  
+3. Simular el movimiento del taxi en tiempo real hacia la ubicación del cliente.  
+4. Crear un sistema de gestión de reservas con distintos estados (pendiente, en camino, completado).  
+5. Calcular automáticamente el taxi más cercano según la ubicación del usuario.  
 
 ---
 
@@ -48,22 +98,105 @@ Trabajaré con datos sensibles (email, nombre, ubicación, contraseñas), así q
 - Tokens JWT.  
 - Política de privacidad clara y accesible.  
 
-### Licencias y tecnologías
-Usaré:
-- Node.js (backend).  
-- Express (API).  
+### Tecnologías utilizadas
+**Backend:**
+- Node.js + Express (API REST).  
 - MongoDB (base de datos).  
-- API de Google Maps.  
+- Bcrypt (cifrado de contraseñas).  
 
-Todas las tecnologías serán gratuitas u open source para fines educativos.
+**Frontend:**
+- HTML5, CSS3, JavaScript vanilla.  
+- Leaflet + OpenStreetMap (mapas interactivos, 100% gratis).  
+- Geolocalización HTML5 (para detectar ubicación del usuario).  
 
-### Inclusión y sostenibilidad
-La app también quiere ayudar a quienes tienen dificultad para pedir taxis en la calle, especialmente personas mayores.  
-Y además busca reducir kilómetros en vacío, lo cual tiene un impacto positivo económico para los taxistas y ambiental para la ciudad.
+**Simulación:**
+- Movimiento del taxi mediante actualización de coordenadas con `setInterval`.  
+- Datos de taxis generados (5-10 taxis simulados con ubicaciones en Palma).  
+
+Todas las tecnologías son gratuitas y open source.
+
+### Alcance del proyecto
+Este es un proyecto educativo que simula el funcionamiento de una plataforma de reserva de taxis.  
+**No habrá taxis reales**, sino datos simulados para demostrar la funcionalidad del sistema.  
+
+La aplicación está pensada para ser intuitiva y accesible, especialmente para personas que prefieren solicitar un taxi desde su móvil en lugar de llamar por teléfono o esperar en la calle.
 
 ---
 
-## 🗓️ Planificación del proyecto
+## � Funcionalidades principales
+
+### Para usuarios (clientes)
+1. **Registro e inicio de sesión** - Sistema de autenticación con email y contraseña.  
+2. **Solicitar taxi** - El usuario introduce o permite detectar su ubicación.  
+3. **Visualización en mapa** - Ver en tiempo real:
+   - Su propia ubicación (marcador azul).  
+   - El taxi asignado y su movimiento hacia el cliente (marcador amarillo).  
+4. **Ver tiempo estimado de llegada** - Cálculo aproximado según distancia.  
+5. **Historial de reservas** - Consultar viajes anteriores.  
+6. **Cancelar reserva** - Antes de que el taxi llegue.  
+
+### Sistema de simulación
+- Los taxis son **datos falsos** almacenados en la base de datos con ubicaciones reales de Palma.  
+- Cuando un usuario pide taxi, el sistema calcula cuál está más cerca.  
+- El taxi se "mueve" por el mapa siguiendo una ruta simulada hasta llegar al cliente.  
+
+---
+## 🚀 Instalación y ejecución del proyecto
+
+### Requisitos previos
+- Node.js v18 o superior
+- MongoDB v6 o superior (instalado y ejecutándose)
+- Git
+
+### Paso 1: Clonar el repositorio
+```bash
+git clone https://github.com/SebasRomaguera/Proyecto-Intermodular.git
+cd Proyecto-Intermodular
+```
+
+### Paso 2: Instalar dependencias del backend
+```bash
+cd backend
+npm install
+```
+
+### Paso 3: Configurar variables de entorno
+Crear archivo `.env` en la carpeta `backend/` con el siguiente contenido:
+```env
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/easytaxi
+NODE_ENV=development
+```
+
+### Paso 4: Asegurarse de que MongoDB esté ejecutándose
+```bash
+# Linux/Mac
+sudo systemctl start mongod
+
+# Windows - Iniciar el servicio de MongoDB
+# O usar MongoDB Compass
+```
+
+### Paso 5: Iniciar el servidor backend
+```bash
+cd backend
+npm run dev
+```
+
+El servidor estará disponible en: `http://localhost:3000`
+
+### Paso 6: Abrir el frontend
+Abrir el archivo `frontend/index.html` en un navegador o usar Live Server de VS Code.
+
+### Verificar que funciona
+1. Abre el navegador en `frontend/index.html`
+2. Haz clic en "Registrarse"
+3. Completa el formulario de registro
+4. Inicia sesión con tus credenciales
+5. Deberías ver el dashboard con tu nombre
+
+---
+## �🗓️ Planificación del proyecto
 La planificación del proyecto la llevo mediante Trello, donde tengo organizadas las tareas, fases y subtareas.
 
 📌 **Tablero de Trello:**  
@@ -71,10 +204,40 @@ https://trello.com/invite/b/692c9bad0c0887593048e3b8/ATTI442e3823e003cc7552755b6
 
 ---
 
-## 📚 Bibliografía y recursos consultados
+## � Estructura del proyecto
+
+```
+Proyecto-Intermodular/
+├── backend/                    # Servidor Node.js
+│   ├── src/
+│   │   ├── config/            # Configuración (BD)
+│   │   ├── models/            # Modelos de datos (Mongoose)
+│   │   ├── controllers/       # Lógica de negocio
+│   │   └── routes/            # Rutas de la API
+│   ├── .env                   # Variables de entorno
+│   ├── package.json           # Dependencias
+│   └── server.js              # Punto de entrada
+├── frontend/                  # Aplicación web
+│   ├── assets/
+│   │   ├── css/              # Estilos
+│   │   └── js/               # Scripts
+│   ├── index.html            # Página principal
+│   ├── login.html            # Login
+│   ├── register.html         # Registro
+│   └── dashboard.html        # Dashboard
+├── docs/
+│   └── tecnica.md            # Documentación técnica
+├── .gitignore
+└── README.md
+```
+
+---
+
+## �📚 Bibliografía y recursos consultados
 - MDN Web Docs – Accesibilidad y buenas prácticas.  
-- Google Developers – Documentación de Maps JavaScript API.  
+- Leaflet Documentation – Mapas interactivos con OpenStreetMap.  
 - MongoDB – Security Best Practices.  
+- Express.js Documentation – Creación de APIs REST.  
 - Consultas técnicas sobre accesibilidad y elección de tecnologías.  
 
 ---
@@ -88,5 +251,5 @@ https://trello.com/invite/b/692c9bad0c0887593048e3b8/ATTI442e3823e003cc7552755b6
 ## 📄 Información
 Proyecto Intermodular – UT0  
 Sebastià Romaguera Camps – IFC33X  
-30/
+Febrero 2026
 

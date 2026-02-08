@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EasyTaxi Palma - Solicita taxis en Palma de Mallorca">
+  <title>EasyTaxi Palma</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 20px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .buttons a {
+      padding: 15px 40px;
+      background: var(--primary-color);
+      color: var(--secondary-color);
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .buttons a:hover {
+      background: #FFA500;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(253, 185, 19, 0.4);
+    }
+    .buttons a.secondary {
+      background: var(--secondary-color);
+      color: var(--primary-color);
+    }
+    .buttons a.secondary:hover {
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>🚕 EasyTaxi Palma</h1>
+      <p>Solicita tu taxi de forma rápida y sencilla en Palma de Mallorca</p>
+      
+      <div class="buttons">
+        <a href="login.html">Iniciar sesión</a>
+        <a href="register.html" class="secondary">Registrarse</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
