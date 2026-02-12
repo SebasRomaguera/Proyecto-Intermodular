@@ -69,6 +69,71 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
+        /* Language Dropdown */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-btn {
+            background: transparent;
+            border: none;
+            color: black;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .language-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-top: 5px;
+            min-width: 140px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #333;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .language-option:last-child {
+            border-bottom: none;
+        }
+
+        .language-option:hover {
+            background: #f8f8f8;
+        }
+
+        .language-option.active {
+            background: #FDB913;
+            color: white;
+            font-weight: 600;
+        }
+
         /* Main Content */
         .container {
             max-width: 1200px;
@@ -248,6 +313,107 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
+        /* Location Features */
+        .btn-current-location {
+            background: transparent;
+            border: none;
+            color: #FDB913;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-current-location:hover {
+            background: rgba(253, 185, 19, 0.1);
+        }
+
+        .popular-locations {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .popular-locations.show {
+            display: block;
+        }
+
+        .location-option {
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+
+        .location-option:last-child {
+            border-bottom: none;
+        }
+
+        .location-option:hover {
+            background: #f6f6f6;
+        }
+
+        .location-option i {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .location-text {
+            flex: 1;
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .location-address {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .autocomplete-list.show {
+            display: block;
+        }
+
+        .origin-wrapper, .destination-wrapper {
+            position: relative;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .navbar {
@@ -283,7 +449,24 @@
             </ul>
         </div>
         <div class="nav-right" id="nav-right">
-            <a href="#"><i class="ph ph-globe"></i> ES</a>
+            <div class="language-selector">
+                <button class="language-btn" onclick="toggleLanguageDropdown()">
+                    <i class="ph ph-globe"></i>
+                    <span id="current-lang">ES</span>
+                    <i class="ph ph-caret-down" style="font-size: 12px;"></i>
+                </button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <div class="language-option" onclick="changeLanguage('es', 'ES')">
+                        🇪🇸 Español
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('en', 'EN')">
+                        🇬🇧 English
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('ca', 'CA')">
+                        🏴 Català
+                    </div>
+                </div>
+            </div>
             <a href="login.html" id="btn-login">Inicia sesión</a>
             <a href="register.html" class="btn-register" id="btn-register">Registrarse</a>
         </div>
@@ -301,15 +484,21 @@
 
                 <div class="input-group">
                     <div class="location-inputs">
-                        <div class="input-wrapper">
-                            <span class="dot-origin"></span>
-                            <input type="text" id="origen-input" placeholder="Ubicación de recogida">
-                            <i class="ph ph-navigation-arrow-fill" style="color: #999; cursor: pointer;"></i>
+                        <div class="origin-wrapper">
+                            <div class="input-wrapper">
+                                <span class="dot-origin"></span>
+                                <input type="text" id="origen-input" placeholder="Ubicación de recogida" autocomplete="off" oninput="handleOriginInput()" onfocus="showOriginSuggestions()">
+                                <button class="btn-current-location" onclick="useCurrentLocation()" title="Usar ubicación actual">
+                                    <i class="ph ph-navigation-arrow-fill"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="line"></div>
-                        <div class="input-wrapper">
-                            <span class="square-destination"></span>
-                            <input type="text" id="destino-input" placeholder="Ubicación de destino">
+                        <div class="destination-wrapper">
+                            <div class="input-wrapper">
+                                <span class="square-destination"></span>
+                                <input type="text" id="destino-input" placeholder="Ubicación de destino" autocomplete="off" oninput="handleDestinationInput()">
+                            </div>
                         </div>
                     </div>
 
@@ -324,8 +513,480 @@
     </main>
 
     <script>
+        // Base de datos local de ubicaciones en Palma de Mallorca
+        const palmaLocations = [
+            // Aeropuertos y Transporte
+            { name: 'Aeropuerto de Palma', address: 'Son Sant Joan (PMI)', icon: 'ph-airplane', category: 'transporte' },
+            { name: 'Estación Intermodal', address: 'Plaza de España', icon: 'ph-train', category: 'transporte' },
+            { name: 'Puerto de Palma', address: 'Paseo Marítimo', icon: 'ph-anchor', category: 'transporte' },
+            { name: 'Estación de Autobuses', address: 'Plaza España', icon: 'ph-bus', category: 'transporte' },
+            
+            // Hoteles 5 Estrellas
+            { name: 'Hotel Maricel', address: 'Cala Major', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Gran Meliá Victoria', address: 'Avenida Joan Miró', icon: 'ph-building', category: 'hotel' },
+            { name: 'Castillo Hotel Son Vida', address: 'Son Vida', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Hospes Maricel', address: 'Cas Català', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Sant Francesc Singular', address: 'Plaza Sant Francesc', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Can Cera', address: 'Carrer Sant Francesc', icon: 'ph-building', category: 'hotel' },
+            { name: 'Nixe Palace Hotel', address: 'Cala Major', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Saratoga', address: 'Paseo Mallorca', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Convent de la Missio', address: 'Carrer de la Missió', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Cort', address: 'Plaza Cort', icon: 'ph-building', category: 'hotel' },
+            
+            // Hoteles 4 Estrellas
+            { name: 'Hotel Almudaina', address: 'Avenida Jaume III', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Isla Mallorca', address: 'Pilar Juncosa', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Tryp Palma', address: 'Plaza Mediterráneo', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Mirador', address: 'Paseo Marítimo', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Costa Azul', address: 'Paseo Marítimo', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Amic Horizonte', address: 'Paseo Marítimo', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Palladium', address: 'Paseo Marítimo', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Meliá Palas Atenea', address: 'Paseo Marítimo', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel HM Jaime III', address: 'Paseo Mallorca', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Innside Palma Center', address: 'Carrer Sant Miquel', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Feliz', address: 'Rambla dels Ducs de Palma de Mallorca', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Catalonia Majorica', address: 'Garita', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Puro', address: 'Carrer Montenegro', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Nakar', address: 'Avenida Jaume III', icon: 'ph-building', category: 'hotel' },
+            
+            // Hoteles 3 Estrellas y Boutique
+            { name: 'Hotel Born', address: 'Carrer Sant Jaume', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Palacio Ca Sa Galesa', address: 'Carrer de Miramar', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Boho Club', address: 'Carrer de Can Maçanet', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Santa Clara', address: 'Carrer Sant Alonso', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Boutique Posada Terra Santa', address: 'Carrer Posada Terra Santa', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Brondo Architect', address: 'Carrer de Can Brondo', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Cala Major', address: 'Cala Major', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Portixol', address: 'Portixol', icon: 'ph-building', category: 'hotel' },
+            { name: 'Hotel Tres', address: 'Carrer Apuntadors', icon: 'ph-building', category: 'hotel' },
+            
+            // Playas
+            { name: 'Playa de Palma', address: 'Can Pastilla - S\'Arenal', icon: 'ph-umbrella-simple', category: 'playa' },
+            { name: 'Playa de Cala Major', address: 'Cala Major', icon: 'ph-umbrella-simple', category: 'playa' },
+            { name: 'Playa de Illetas', address: 'Illetas', icon: 'ph-umbrella-simple', category: 'playa' },
+            { name: 'Playa de Ciudad Jardín', address: 'Ciudad Jardín', icon: 'ph-umbrella-simple', category: 'playa' },
+            { name: 'Cala Estancia', address: 'Can Pastilla', icon: 'ph-umbrella-simple', category: 'playa' },
+            { name: 'Playa de Portixol', address: 'Portixol', icon: 'ph-umbrella-simple', category: 'playa' },
+            
+            // Monumentos y Atracciones
+            { name: 'Catedral de Palma', address: 'La Seu', icon: 'ph-church', category: 'monumento' },
+            { name: 'Castillo de Bellver', address: 'Col·lecció Museu d\'Història', icon: 'ph-castle-turret', category: 'monumento' },
+            { name: 'Plaza Mayor', address: 'Centro histórico', icon: 'ph-buildings', category: 'monumento' },
+            { name: 'Palacio Real de La Almudaina', address: 'Carrer del Palau Reial', icon: 'ph-castle-turret', category: 'monumento' },
+            { name: 'Lonja de Palma', address: 'Plaza de la Lonja', icon: 'ph-landmark', category: 'monumento' },
+            { name: 'Pueblo Español', address: 'Arquitectura española', icon: 'ph-house', category: 'monumento' },
+            { name: 'Palma Aquarium', address: 'Acuario', icon: 'ph-fish', category: 'ocio' },
+            { name: 'Baños Árabes', address: 'Carrer de Can Serra', icon: 'ph-columns', category: 'monumento' },
+            { name: 'Museo Es Baluard', address: 'Plaza Porta Santa Catalina', icon: 'ph-palette', category: 'museo' },
+            
+            // Centros Comerciales
+            { name: 'Porto Pi Centro Comercial', address: 'Centro comercial', icon: 'ph-shopping-bag', category: 'compras' },
+            { name: 'El Corte Inglés Avenida', address: 'Av. Alexandre Rosselló', icon: 'ph-shopping-cart', category: 'compras' },
+            { name: 'El Corte Inglés Jaime III', address: 'Av. Jaume III', icon: 'ph-shopping-cart', category: 'compras' },
+            { name: 'FAN Mallorca Shopping', address: 'Autopista Palma-Inca', icon: 'ph-shopping-bag', category: 'compras' },
+            { name: 'Festival Park', address: 'Autopista Palma-Inca', icon: 'ph-shopping-bag', category: 'compras' },
+            
+            // Restaurantes Populares
+            { name: 'Restaurante Marc Fosh', address: 'Carrer de la Missió', icon: 'ph-fork-knife', category: 'restaurante' },
+            { name: 'Restaurante Adrián Quetglas', address: 'Passeig Mallorca', icon: 'ph-fork-knife', category: 'restaurante' },
+            { name: 'Restaurante La Rosa Vermutería', address: 'Carrer Rosa', icon: 'ph-fork-knife', category: 'restaurante' },
+            { name: 'Restaurante Toque', address: 'Carrer Blanquerna', icon: 'ph-fork-knife', category: 'restaurante' },
+            { name: 'Restaurante Forn de Sant Joan', address: 'Carrer Sant Joan', icon: 'ph-fork-knife', category: 'restaurante' },
+            { name: 'Restaurante Ombu', address: 'Carrer Montenegro', icon: 'ph-fork-knife', category: 'restaurante' },
+            { name: 'Restaurante Sadrassana', address: 'Paseo Mallorca', icon: 'ph-fork-knife', category: 'restaurante' },
+            { name: 'Restaurante Ca\'n Eduardo', address: 'Paseo Marítimo', icon: 'ph-fork-knife', category: 'restaurante' },
+            
+            // Zonas y Barrios
+            { name: 'Son Vida', address: 'Zona residencial', icon: 'ph-house-line', category: 'zona' },
+            { name: 'Santa Catalina', address: 'Barrio Santa Catalina', icon: 'ph-map-pin', category: 'zona' },
+            { name: 'El Terreno', address: 'Barrio El Terreno', icon: 'ph-map-pin', category: 'zona' },
+            { name: 'La Lonja', address: 'Barrio La Lonja', icon: 'ph-map-pin', category: 'zona' },
+            { name: 'Casco Antiguo', address: 'Centro histórico', icon: 'ph-map-pin', category: 'zona' },
+            { name: 'Portixol', address: 'Puerto deportivo', icon: 'ph-map-pin', category: 'zona' },
+            { name: 'Molinar', address: 'Barrio pesquero', icon: 'ph-map-pin', category: 'zona' },
+            { name: 'Son Espanyolet', address: 'Zona residencial', icon: 'ph-map-pin', category: 'zona' },
+            
+            // Hospitales y Centros Médicos
+            { name: 'Hospital Son Espases', address: 'Carretera de Valldemossa', icon: 'ph-first-aid', category: 'hospital' },
+            { name: 'Hospital Son Llàtzer', address: 'Carretera Manacor', icon: 'ph-first-aid', category: 'hospital' },
+            { name: 'Clínica Juaneda', address: 'Carrer Company', icon: 'ph-first-aid', category: 'hospital' },
+            { name: 'Hospital Quirón Palmaplanas', address: 'Camí dels Reis', icon: 'ph-first-aid', category: 'hospital' },
+            
+            // Universidades
+            { name: 'Universidad de las Islas Baleares (UIB)', address: 'Carretera de Valldemossa', icon: 'ph-graduation-cap', category: 'universidad' },
+            { name: 'Campus UIB', address: 'Ctra. Valldemossa km 7.5', icon: 'ph-graduation-cap', category: 'universidad' },
+            
+            // Estadios y Deportes
+            { name: 'Estadio Son Moix', address: 'Camí dels Reis', icon: 'ph-football', category: 'deporte' },
+            { name: 'Palma Arena', address: 'Carrer de l\'Uruguai', icon: 'ph-basketball', category: 'deporte' },
+            
+            // Club Náuticos
+            { name: 'Real Club Náutico de Palma', address: 'Muelle de San Pedro', icon: 'ph-anchor', category: 'nautico' },
+            { name: 'Club de Mar', address: 'Avinguda Gabriel Roca', icon: 'ph-anchor', category: 'nautico' }
+        ];
+
+        let currentUserLocation = null;
+        let originDropdownVisible = false;
+        let destDropdownVisible = false;
+
+        // Use geolocation for current location
+        function useCurrentLocation() {
+            if ('geolocation' in navigator) {
+                const savedLang = localStorage.getItem('language') || 'es';
+                const messages = {
+                    es: { detecting: 'Detectando tu ubicación...', error: 'No se pudo obtener tu ubicación. Por favor, verifica los permisos.' },
+                    en: { detecting: 'Detecting your location...', error: 'Could not get your location. Please check permissions.' },
+                    ca: { detecting: 'Detectant la teva ubicació...', error: 'No s\'ha pogut obtenir la teva ubicació. Si us plau, verifica els permisos.' }
+                };
+                
+                document.getElementById('origen-input').value = messages[savedLang].detecting;
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        currentUserLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        
+                        const msgs = {
+                            es: 'Mi ubicación actual',
+                            en: 'My current location',
+                            ca: 'La meva ubicació actual'
+                        };
+                        
+                        document.getElementById('origen-input').value = msgs[savedLang];
+                        hideOriginDropdown();
+                    },
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        alert(messages[savedLang].error);
+                        document.getElementById('origen-input').value = '';
+                    }
+                );
+            } else {
+                const savedLang = localStorage.getItem('language') || 'es';
+                const msgs = {
+                    es: 'Tu navegador no soporta geolocalización',
+                    en: 'Your browser does not support geolocation',
+                    ca: 'El teu navegador no suporta geolocalització'
+                };
+                alert(msgs[savedLang]);
+            }
+        }
+
+        // Filter and show origin suggestions
+        function handleOriginInput() {
+            const input = document.getElementById('origen-input').value.toLowerCase().trim();
+            const dropdown = createOriginDropdown();
+            
+            if (input.length < 2) {
+                hideOriginDropdown();
+                return;
+            }
+            
+            const filtered = palmaLocations.filter(loc => 
+                loc.name.toLowerCase().includes(input) || 
+                loc.address.toLowerCase().includes(input) ||
+                loc.category.toLowerCase().includes(input)
+            );
+            
+            if (filtered.length === 0) {
+                hideOriginDropdown();
+                return;
+            }
+            
+            displayOriginSuggestions(filtered.slice(0, 10), false); // Limit to 10 results
+        }
+
+        // Show origin suggestions when input gets focus
+        function showOriginSuggestions() {
+            const input = document.getElementById('origen-input').value.trim();
+            
+            // If input is empty, show current location option + popular places
+            if (input.length === 0) {
+                const popularOrigins = palmaLocations.filter(loc => 
+                    loc.category === 'transporte' || loc.category === 'hotel'
+                ).slice(0, 8);
+                
+                displayOriginSuggestions(popularOrigins, true); // true = show current location option
+            }
+        }
+
+        // Filter and show destination suggestions
+        function handleDestinationInput() {
+            const input = document.getElementById('destino-input').value.toLowerCase().trim();
+            const dropdown = createDestinationDropdown();
+            
+            if (input.length < 2) {
+                hideDestinationDropdown();
+                return;
+            }
+            
+            const filtered = palmaLocations.filter(loc => 
+                loc.name.toLowerCase().includes(input) || 
+                loc.address.toLowerCase().includes(input) ||
+                loc.category.toLowerCase().includes(input)
+            );
+            
+            if (filtered.length === 0) {
+                hideDestinationDropdown();
+                return;
+            }
+            
+            displayDestinationSuggestions(filtered.slice(0, 10)); // Limit to 10 results
+        }
+
+        // Create origin dropdown if doesn't exist
+        function createOriginDropdown() {
+            let dropdown = document.getElementById('origin-autocomplete-dropdown');
+            if (!dropdown) {
+                dropdown = document.createElement('div');
+                dropdown.id = 'origin-autocomplete-dropdown';
+                dropdown.className = 'autocomplete-list';
+                document.querySelector('.origin-wrapper').appendChild(dropdown);
+            }
+            return dropdown;
+        }
+
+        // Create destination dropdown if doesn't exist
+        function createDestinationDropdown() {
+            let dropdown = document.getElementById('dest-autocomplete-dropdown');
+            if (!dropdown) {
+                dropdown = document.createElement('div');
+                dropdown.id = 'dest-autocomplete-dropdown';
+                dropdown.className = 'autocomplete-list';
+                document.querySelector('.destination-wrapper').appendChild(dropdown);
+            }
+            return dropdown;
+        }
+
+        // Display origin suggestions
+        function displayOriginSuggestions(locations, showCurrentLocation = false) {
+            const dropdown = createOriginDropdown();
+            const savedLang = localStorage.getItem('language') || 'es';
+            
+            let html = '';
+            
+            // Add current location option if requested
+            if (showCurrentLocation) {
+                const currentLocationLabels = {
+                    es: { name: 'Usar ubicación actual', desc: 'Detectar automáticamente' },
+                    en: { name: 'Use current location', desc: 'Detect automatically' },
+                    ca: { name: 'Utilitzar ubicació actual', desc: 'Detectar automàticament' }
+                };
+                
+                const currentLocLabel = currentLocationLabels[savedLang];
+                
+                html += `
+                    <div class="location-option" onclick="useCurrentLocation()" style="background: #f9f9f9; border-bottom: 2px solid #FDB913;">
+                        <i class="ph ph-navigation-arrow-fill" style="color: #FDB913;"></i>
+                        <div class="location-text">
+                            <div class="location-name" style="color: #FDB913; font-weight: 700;">${currentLocLabel.name}</div>
+                            <div class="location-address">${currentLocLabel.desc}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Add location suggestions
+            html += locations.map(loc => `
+                <div class="location-option" onclick="selectOrigin('${loc.name.replace(/'/g, "\\'")}', '${loc.address.replace(/'/g, "\\'")}')">
+                    <i class="ph ${loc.icon}"></i>
+                    <div class="location-text">
+                        <div class="location-name">${loc.name}</div>
+                        <div class="location-address">${loc.address}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            dropdown.innerHTML = html;
+            dropdown.classList.add('show');
+            originDropdownVisible = true;
+        }
+
+        // Display destination suggestions
+        function displayDestinationSuggestions(locations) {
+            const dropdown = createDestinationDropdown();
+            dropdown.innerHTML = locations.map(loc => `
+                <div class="location-option" onclick="selectDestination('${loc.name.replace(/'/g, "\\'")}', '${loc.address.replace(/'/g, "\\'")}')">
+                    <i class="ph ${loc.icon}"></i>
+                    <div class="location-text">
+                        <div class="location-name">${loc.name}</div>
+                        <div class="location-address">${loc.address}</div>
+                    </div>
+                </div>
+            `).join('');
+            dropdown.classList.add('show');
+            destDropdownVisible = true;
+        }
+
+        // Select origin location
+        function selectOrigin(name, address) {
+            document.getElementById('origen-input').value = name;
+            hideOriginDropdown();
+        }
+
+        // Select destination location
+        function selectDestination(name, address) {
+            document.getElementById('destino-input').value = name;
+            hideDestinationDropdown();
+        }
+
+        // Hide origin dropdown
+        function hideOriginDropdown() {
+            const dropdown = document.getElementById('origin-autocomplete-dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+                originDropdownVisible = false;
+            }
+        }
+
+        // Hide destination dropdown
+        function hideDestinationDropdown() {
+            const dropdown = document.getElementById('dest-autocomplete-dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+                destDropdownVisible = false;
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.origin-wrapper')) {
+                hideOriginDropdown();
+            }
+            if (!e.target.closest('.destination-wrapper')) {
+                hideDestinationDropdown();
+            }
+        });
+
+        // Translations
+        const translations = {
+            es: {
+                city: 'Palma, ES',
+                title: 'Solicita un taxi para ahora o para más tarde',
+                subtitle: 'Añade los datos del viaje, súbete y ¡en marcha!',
+                pickupPlaceholder: 'Ubicación de recogida',
+                destPlaceholder: 'Ubicación de destino',
+                pricesBtn: 'Ver precios',
+                navDrivers: 'Conductores',
+                navHelp: 'Ayuda',
+                btnLogin: 'Inicia sesión',
+                btnRegister: 'Registrarse',
+                btnLogout: 'Cerrar sesión',
+                loginPrompt: 'Necesitas iniciar sesión para solicitar un taxi. ¿Ir a iniciar sesión?',
+                devAlert: 'Funcionalidad de reserva en desarrollo...'
+            },
+            en: {
+                city: 'Palma, ES',
+                title: 'Request a taxi for now or later',
+                subtitle: 'Add your trip details, get in and let\'s go!',
+                pickupPlaceholder: 'Pickup location',
+                destPlaceholder: 'Destination location',
+                pricesBtn: 'See prices',
+                navDrivers: 'Drivers',
+                navHelp: 'Help',
+                btnLogin: 'Log in',
+                btnRegister: 'Sign up',
+                btnLogout: 'Log out',
+                loginPrompt: 'You need to log in to request a taxi. Go to login?',
+                devAlert: 'Booking functionality in development...'
+            },
+            ca: {
+                city: 'Palma, ES',
+                title: 'Sol·licita un taxi per ara o per més tard',
+                subtitle: 'Afegeix les dades del viatge, puja i en marxa!',
+                pickupPlaceholder: 'Ubicació de recollida',
+                destPlaceholder: 'Ubicació de destí',
+                pricesBtn: 'Veure preus',
+                navDrivers: 'Conductors',
+                navHelp: 'Ajuda',
+                btnLogin: 'Inicia sessió',
+                btnRegister: 'Registra\'t',
+                btnLogout: 'Tanca sessió',
+                loginPrompt: 'Necessites iniciar sessió per sol·licitar un taxi. Anar a iniciar sessió?',
+                devAlert: 'Funcionalitat de reserva en desenvolupament...'
+            }
+        };
+
+        // Language functions
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('language-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function changeLanguage(langCode, langDisplay) {
+            localStorage.setItem('language', langCode);
+            document.getElementById('current-lang').textContent = langDisplay;
+            toggleLanguageDropdown();
+            
+            // Update active state
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Apply translations
+            applyTranslations(langCode);
+        }
+
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations.es;
+            
+            // Update text content
+            document.querySelector('.city-selector').innerHTML = `<i class="ph ph-map-pin-fill"></i> ${t.city}`;
+            document.querySelector('h1').textContent = t.title;
+            document.querySelector('main p').textContent = t.subtitle;
+            document.getElementById('origen-input').placeholder = t.pickupPlaceholder;
+            document.getElementById('destino-input').placeholder = t.destPlaceholder;
+            document.querySelector('.btn-prices').textContent = t.pricesBtn;
+            
+            // Update nav links if not logged in
+            const btnLogin = document.getElementById('btn-login');
+            const btnRegister = document.getElementById('btn-register');
+            if (btnLogin) btnLogin.textContent = t.btnLogin;
+            if (btnRegister) btnRegister.textContent = t.btnRegister;
+            
+            // Update nav (always present)
+            const navLinks = document.querySelectorAll('.nav-links a');
+            if (navLinks.length >= 2) {
+                navLinks[0].textContent = t.navDrivers;
+                navLinks[1].textContent = t.navHelp;
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const selector = document.querySelector('.language-selector');
+            const dropdown = document.getElementById('language-dropdown');
+            if (selector && !selector.contains(e.target)) {
+                dropdown?.classList.remove('show');
+            }
+        });
+
+        // Load saved language
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('language') || 'es';
+            const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
+            document.getElementById('current-lang').textContent = langMap[savedLang];
+            
+            // Mark active option
+            const options = document.querySelectorAll('.language-option');
+            options.forEach((opt, index) => {
+                const langs = ['es', 'en', 'ca'];
+                if (langs[index] === savedLang) {
+                    opt.classList.add('active');
+                }
+            });
+            
+            // Apply translations
+            applyTranslations(savedLang);
+        }
+
         // Check if user is logged in and update navbar
         document.addEventListener('DOMContentLoaded', () => {
+            loadLanguage();
+            
             const usuario = localStorage.getItem('usuario');
             const navRight = document.getElementById('nav-right');
             
@@ -335,12 +996,31 @@
                     const userName = userObj.nombre || 'Usuario';
                     
                     // Replace login/register buttons with user info and logout
+                    const savedLang = localStorage.getItem('language') || 'es';
+                    const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
                     navRight.innerHTML = `
-                        <a href="#"><i class="ph ph-globe"></i> ES</a>
-                        <div style="display: flex; align-items: center; gap: 10px; color: black; font-weight: 500;">
+                        <div class="language-selector">
+                            <button class="language-btn" onclick="toggleLanguageDropdown()">
+                                <i class="ph ph-globe"></i>
+                                <span id="current-lang">${langMap[savedLang]}</span>
+                                <i class="ph ph-caret-down" style="font-size: 12px;"></i>
+                            </button>
+                            <div class="language-dropdown" id="language-dropdown">
+                                <div class="language-option ${savedLang === 'es' ? 'active' : ''}" onclick="changeLanguage('es', 'ES')">
+                                    🇪🇸 Español
+                                </div>
+                                <div class="language-option ${savedLang === 'en' ? 'active' : ''}" onclick="changeLanguage('en', 'EN')">
+                                    🇬🇧 English
+                                </div>
+                                <div class="language-option ${savedLang === 'ca' ? 'active' : ''}" onclick="changeLanguage('ca', 'CA')">
+                                    🏴 Català
+                                </div>
+                            </div>
+                        </div>
+                        <a href="perfil.html" style="display: flex; align-items: center; gap: 10px; color: black; font-weight: 500; text-decoration: none; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
                             <i class="ph ph-user-circle" style="font-size: 20px;"></i>
                             <span>${userName}</span>
-                        </div>
+                        </a>
                         <a href="#" onclick="cerrarSesion()" style="background: white; color: black; padding: 8px 16px; border-radius: 20px; font-weight: 600;">Cerrar sesión</a>
                     `;
                 } catch (e) {
@@ -352,15 +1032,17 @@
         function handleVerPrecios() {
             // Check if user is logged in
             const usuario = localStorage.getItem('usuario');
+            const lang = localStorage.getItem('language') || 'es';
+            const t = translations[lang];
             
             if (!usuario) {
                 // Not logged in - redirect to login
-                if (confirm('Necesitas iniciar sesión para solicitar un taxi. ¿Ir a iniciar sesión?')) {
+                if (confirm(t.loginPrompt)) {
                     window.location.href = 'login.html';
                 }
             } else {
                 // Logged in - process booking (to be implemented)
-                alert('Funcionalidad de reserva en desarrollo...');
+                alert(t.devAlert);
             }
         }
 

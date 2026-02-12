@@ -41,9 +41,10 @@ exports.registrarUsuario = async (req, res) => {
       success: true,
       mensaje: 'Usuario registrado correctamente',
       usuario: {
-        id: nuevoUsuario._id,
+        _id: nuevoUsuario._id,
         nombre: nuevoUsuario.nombre,
-        email: nuevoUsuario.email
+        email: nuevoUsuario.email,
+        telefono: nuevoUsuario.telefono
       }
     });
 
@@ -93,14 +94,63 @@ exports.loginUsuario = async (req, res) => {
       success: true,
       mensaje: 'Login exitoso',
       usuario: {
-        id: usuario._id,
+        _id: usuario._id,
         nombre: usuario.nombre,
-        email: usuario.email
+        email: usuario.email,
+        telefono: usuario.telefono
       }
     });
 
   } catch (error) {
     console.error('Error en login:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error en el servidor',
+      error: error.message
+    });
+  }
+};
+
+// Actualizar perfil de usuario
+exports.actualizarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, telefono, password } = req.body;
+
+    // Find user
+    const usuario = await Usuario.findById(id);
+    if (!usuario) {
+      return res.status(404).json({
+        success: false,
+        mensaje: 'Usuario no encontrado'
+      });
+    }
+
+    // Update fields
+    if (nombre) usuario.nombre = nombre;
+    if (telefono) usuario.telefono = telefono;
+
+    // Update password if provided
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      usuario.password = await bcrypt.hash(password, salt);
+    }
+
+    await usuario.save();
+
+    res.status(200).json({
+      success: true,
+      mensaje: 'Perfil actualizado correctamente',
+      usuario: {
+        _id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        telefono: usuario.telefono
+      }
+    });
+
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error);
     res.status(500).json({
       success: false,
       mensaje: 'Error en el servidor',

@@ -1,14 +1,52 @@
 const API_URL = 'http://localhost:3000/api';
 
+// Translations for validation messages
+const authTranslations = {
+  es: {
+    requiredFields: 'Por favor, completa todos los campos obligatorios',
+    nameLength: 'El nombre debe tener al menos 2 caracteres',
+    validEmail: 'Por favor, introduce un email válido',
+    passwordLength: 'La contraseña debe tener al menos 6 caracteres',
+    registerSuccess: '¡Registro exitoso! Redirigiendo al login...',
+    loginSuccess: '¡Login exitoso! Bienvenido...',
+    connectionError: 'Error de conexión. Asegúrate de que el servidor esté ejecutándose.'
+  },
+  en: {
+    requiredFields: 'Please fill in all required fields',
+    nameLength: 'Name must be at least 2 characters',
+    validEmail: 'Please enter a valid email',
+    passwordLength: 'Password must be at least 6 characters',
+    registerSuccess: 'Registration successful! Redirecting to login...',
+    loginSuccess: 'Login successful! Welcome...',
+    connectionError: 'Connection error. Make sure the server is running.'
+  },
+  ca: {
+    requiredFields: 'Si us plau, omple tots els camps obligatoris',
+    nameLength: 'El nom ha de tenir almenys 2 caràcters',
+    validEmail: 'Si us plau, introdueix un email vàlid',
+    passwordLength: 'La contrasenya ha de tenir almenys 6 caràcters',
+    registerSuccess: 'Registre exitós! Redirigint al login...',
+    loginSuccess: 'Login exitós! Benvingut...',
+    connectionError: 'Error de connexió. Assegura\'t que el servidor està funcionant.'
+  }
+};
+
+function getTranslation(key) {
+  const lang = localStorage.getItem('language') || 'es';
+  return authTranslations[lang][key] || authTranslations.es[key];
+}
+
 // Función para mostrar mensajes
 function mostrarMensaje(mensaje, tipo = 'error') {
   const mensajeDiv = document.getElementById('mensaje');
+  if (!mensajeDiv) return;
+  
   mensajeDiv.textContent = mensaje;
-  mensajeDiv.className = `mensaje ${tipo}`;
-  mensajeDiv.classList.remove('hidden');
+  mensajeDiv.className = `message ${tipo}`;
+  mensajeDiv.style.display = 'block';
   
   setTimeout(() => {
-    mensajeDiv.classList.add('hidden');
+    mensajeDiv.style.display = 'none';
   }, 5000);
 }
 
@@ -29,22 +67,22 @@ async function registrarUsuario(event) {
 
   // Validaciones
   if (!nombre || !email || !password) {
-    mostrarMensaje('Por favor, completa todos los campos obligatorios', 'error');
+    mostrarMensaje(getTranslation('requiredFields'), 'error');
     return;
   }
 
   if (nombre.length < 2) {
-    mostrarMensaje('El nombre debe tener al menos 2 caracteres', 'error');
+    mostrarMensaje(getTranslation('nameLength'), 'error');
     return;
   }
 
   if (!validarEmail(email)) {
-    mostrarMensaje('Por favor, introduce un email válido', 'error');
+    mostrarMensaje(getTranslation('validEmail'), 'error');
     return;
   }
 
   if (password.length < 6) {
-    mostrarMensaje('La contraseña debe tener al menos 6 caracteres', 'error');
+    mostrarMensaje(getTranslation('passwordLength'), 'error');
     return;
   }
 
@@ -60,7 +98,7 @@ async function registrarUsuario(event) {
     const data = await response.json();
 
     if (data.success) {
-      mostrarMensaje('¡Registro exitoso! Redirigiendo al login...', 'success');
+      mostrarMensaje(getTranslation('registerSuccess'), 'success');
       setTimeout(() => {
         window.location.href = 'login.html';
       }, 2000);
@@ -70,7 +108,7 @@ async function registrarUsuario(event) {
 
   } catch (error) {
     console.error('Error:', error);
-    mostrarMensaje('Error de conexión. Asegúrate de que el servidor esté ejecutándose.', 'error');
+    mostrarMensaje(getTranslation('connectionError'), 'error');
   }
 }
 
@@ -83,12 +121,12 @@ async function loginUsuario(event) {
 
   // Validaciones
   if (!email || !password) {
-    mostrarMensaje('Por favor, completa todos los campos', 'error');
+    mostrarMensaje(getTranslation('requiredFields'), 'error');
     return;
   }
 
   if (!validarEmail(email)) {
-    mostrarMensaje('Por favor, introduce un email válido', 'error');
+    mostrarMensaje(getTranslation('validEmail'), 'error');
     return;
   }
 
@@ -107,7 +145,7 @@ async function loginUsuario(event) {
       // Guardar información del usuario en localStorage
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
       
-      mostrarMensaje('¡Login exitoso! Bienvenido...', 'success');
+      mostrarMensaje(getTranslation('loginSuccess'), 'success');
       setTimeout(() => {
         window.location.href = 'index.html';
       }, 1500);
@@ -117,7 +155,7 @@ async function loginUsuario(event) {
 
   } catch (error) {
     console.error('Error:', error);
-    mostrarMensaje('Error de conexión. Asegúrate de que el servidor esté ejecutándose.', 'error');
+    mostrarMensaje(getTranslation('connectionError'), 'error');
   }
 }
 

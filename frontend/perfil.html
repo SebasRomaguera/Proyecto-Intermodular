@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - EasyTaxi Palma</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: white;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 80px;
+            background: #FDB913;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a, .nav-right a {
+            color: black;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover, .nav-right a:hover {
+            opacity: 0.7;
+        }
+
+        .btn-logout {
+            background: white;
+            color: black !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        /* Language Dropdown */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-btn {
+            background: transparent;
+            border: none;
+            color: black;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .language-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-top: 5px;
+            min-width: 140px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #333;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .language-option:last-child {
+            border-bottom: none;
+        }
+
+        .language-option:hover {
+            background: #f8f8f8;
+        }
+
+        .language-option.active {
+            background: #FDB913;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .profile-icon {
+            width: 100px;
+            height: 100px;
+            background: #FDB913;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 12px rgba(253, 185, 19, 0.3);
+        }
+
+        .profile-icon i {
+            font-size: 50px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Form */
+        .profile-form {
+            background: #f6f6f6;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #FDB913;
+            box-shadow: 0 0 0 3px rgba(253, 185, 19, 0.1);
+        }
+
+        .form-group input:disabled {
+            background: #f0f0f0;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #FDB913;
+            color: white;
+            box-shadow: 0 4px 12px rgba(253, 185, 19, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #e6a80f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(253, 185, 19, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f8f8;
+            border-color: #FDB913;
+        }
+
+        .message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .profile-form {
+                padding: 25px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="logo">EasyTaxi Palma</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="#">Ayuda</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="language-selector">
+                <button class="language-btn" onclick="toggleLanguageDropdown()">
+                    <i class="ph ph-globe"></i>
+                    <span id="current-lang">ES</span>
+                    <i class="ph ph-caret-down" style="font-size: 12px;"></i>
+                </button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <div class="language-option" onclick="changeLanguage('es', 'ES')">
+                        🇪🇸 Español
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('en', 'EN')">
+                        🇬🇧 English
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('ca', 'CA')">
+                        🏴 Català
+                    </div>
+                </div>
+            </div>
+            <a href="perfil.html" style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                <i class="ph ph-user-circle" style="font-size: 20px;"></i>
+                <span id="navbar-username">Usuario</span>
+            </a>
+            <a href="#" onclick="cerrarSesion()" class="btn-logout">Cerrar sesión</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="profile-header">
+            <div class="profile-icon">
+                <i class="ph ph-user"></i>
+            </div>
+            <h1 id="profile-title">Mi Perfil</h1>
+            <p>Gestiona tu información personal</p>
+        </div>
+
+        <div class="profile-form">
+            <div id="message" class="message"></div>
+
+            <form id="form-perfil" onsubmit="actualizarPerfil(event)">
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" id="nombre" placeholder="Tu nombre" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="tu@email.com" disabled>
+                    <small style="color: #999; font-size: 12px; margin-top: 5px; display: block;">El email no se puede modificar</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" placeholder="+34 600 000 000">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Nueva contraseña (opcional)</label>
+                    <input type="password" id="password" placeholder="Déjalo vacío para no cambiar">
+                </div>
+
+                <div class="form-group">
+                    <label for="password-confirm">Confirmar nueva contraseña</label>
+                    <input type="password" id="password-confirm" placeholder="Confirma tu contraseña">
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        // Translations
+        const translations = {
+            es: {
+                navHome: 'Inicio',
+                navHelp: 'Ayuda',
+                btnLogout: 'Cerrar sesión',
+                pageTitle: 'Mi Perfil',
+                pageSubtitle: 'Gestiona tu información personal',
+                labelName: 'Nombre completo',
+                labelEmail: 'Email',
+                labelPhone: 'Teléfono',
+                labelPassword: 'Nueva contraseña (opcional)',
+                labelConfirm: 'Confirmar nueva contraseña',
+                placeholderName: 'Tu nombre',
+                placeholderEmail: 'tu@email.com',
+                placeholderPhone: '+34 600 000 000',
+                placeholderPassword: 'Déjalo vacío para no cambiar',
+                placeholderConfirm: 'Confirma tu contraseña',
+                emailNote: 'El email no se puede modificar',
+                btnCancel: 'Cancelar',
+                btnSave: 'Guardar cambios',
+                errorPasswordMatch: 'Las contraseñas no coinciden',
+                errorPasswordLength: 'La contraseña debe tener al menos 6 caracteres',
+                successUpdate: 'Perfil actualizado correctamente',
+                errorUpdate: 'Error al actualizar el perfil',
+                errorConnection: 'Error de conexión. Inténtalo de nuevo.',
+                greeting: 'Hola'
+            },
+            en: {
+                navHome: 'Home',
+                navHelp: 'Help',
+                btnLogout: 'Log out',
+                pageTitle: 'My Profile',
+                pageSubtitle: 'Manage your personal information',
+                labelName: 'Full name',
+                labelEmail: 'Email',
+                labelPhone: 'Phone',
+                labelPassword: 'New password (optional)',
+                labelConfirm: 'Confirm new password',
+                placeholderName: 'Your name',
+                placeholderEmail: 'your@email.com',
+                placeholderPhone: '+34 600 000 000',
+                placeholderPassword: 'Leave empty to keep current',
+                placeholderConfirm: 'Confirm your password',
+                emailNote: 'Email cannot be modified',
+                btnCancel: 'Cancel',
+                btnSave: 'Save changes',
+                errorPasswordMatch: 'Passwords do not match',
+                errorPasswordLength: 'Password must be at least 6 characters',
+                successUpdate: 'Profile updated successfully',
+                errorUpdate: 'Error updating profile',
+                errorConnection: 'Connection error. Try again.',
+                greeting: 'Hello'
+            },
+            ca: {
+                navHome: 'Inici',
+                navHelp: 'Ajuda',
+                btnLogout: 'Tanca sessió',
+                pageTitle: 'El Meu Perfil',
+                pageSubtitle: 'Gestiona la teva informació personal',
+                labelName: 'Nom complet',
+                labelEmail: 'Email',
+                labelPhone: 'Telèfon',
+                labelPassword: 'Nova contrasenya (opcional)',
+                labelConfirm: 'Confirma la nova contrasenya',
+                placeholderName: 'El teu nom',
+                placeholderEmail: 'el.teu@email.com',
+                placeholderPhone: '+34 600 000 000',
+                placeholderPassword: 'Deixa-ho buit per no canviar',
+                placeholderConfirm: 'Confirma la teva contrasenya',
+                emailNote: 'El correu no es pot modificar',
+                btnCancel: 'Cancel·lar',
+                btnSave: 'Desar canvis',
+                errorPasswordMatch: 'Les contrasenyes no coincideixen',
+                errorPasswordLength: 'La contrasenya ha de tenir almenys 6 caràcters',
+                successUpdate: 'Perfil actualitzat correctament',
+                errorUpdate: 'Error en actualitzar el perfil',
+                errorConnection: 'Error de connexió. Torna-ho a provar.',
+                greeting: 'Hola'
+            }
+        };
+
+        // Language functions
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('language-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function changeLanguage(langCode, langDisplay) {
+            localStorage.setItem('language', langCode);
+            document.getElementById('current-lang').textContent = langDisplay;
+            toggleLanguageDropdown();
+            
+            // Update active state
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Apply translations
+            applyTranslations(langCode);
+        }
+
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations.es;
+            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+            
+            // Nav links
+            const navLinks = document.querySelectorAll('.nav-links a');
+            if (navLinks.length >= 2) {
+                navLinks[0].textContent = t.navHome;
+                navLinks[1].textContent = t.navHelp;
+            }
+            
+            // Logout button
+            document.querySelector('.btn-logout').textContent = t.btnLogout;
+            
+            // Page header
+            document.getElementById('profile-title').textContent = usuario.nombre ? `${t.greeting}, ${usuario.nombre}` : t.pageTitle;
+            document.querySelector('.profile-header p').textContent = t.pageSubtitle;
+            
+            // Form labels
+            const labels = document.querySelectorAll('.form-group label');
+            if (labels.length >= 5) {
+                labels[0].textContent = t.labelName;
+                labels[1].textContent = t.labelEmail;
+                labels[2].textContent = t.labelPhone;
+                labels[3].textContent = t.labelPassword;
+                labels[4].textContent = t.labelConfirm;
+            }
+            
+            // Placeholders
+            document.getElementById('nombre').placeholder = t.placeholderName;
+            document.getElementById('email').placeholder = t.placeholderEmail;
+            document.getElementById('telefono').placeholder = t.placeholderPhone;
+            document.getElementById('password').placeholder = t.placeholderPassword;
+            document.getElementById('password-confirm').placeholder = t.placeholderConfirm;
+            
+            // Email note
+            document.querySelector('small').textContent = t.emailNote;
+            
+            // Buttons
+            document.querySelector('.btn-secondary').textContent = t.btnCancel;
+            document.querySelector('.btn-primary').textContent = t.btnSave;
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const selector = document.querySelector('.language-selector');
+            const dropdown = document.getElementById('language-dropdown');
+            if (selector && !selector.contains(e.target)) {
+                dropdown?.classList.remove('show');
+            }
+        });
+
+        // Load saved language
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('language') || 'es';
+            const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
+            document.getElementById('current-lang').textContent = langMap[savedLang];
+            
+            // Mark active option
+            const options = document.querySelectorAll('.language-option');
+            options.forEach((opt, index) => {
+                const langs = ['es', 'en', 'ca'];
+                if (langs[index] === savedLang) {
+                    opt.classList.add('active');
+                }
+            });
+            
+            // Apply translations
+            applyTranslations(savedLang);
+        }
+
+        // Check authentication and load user data
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLanguage();
+            const usuarioStr = localStorage.getItem('usuario');
+            
+            if (!usuarioStr) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const usuario = JSON.parse(usuarioStr);
+                
+                // Fill form with user data
+                document.getElementById('nombre').value = usuario.nombre || '';
+                document.getElementById('email').value = usuario.email || '';
+                document.getElementById('telefono').value = usuario.telefono || '';
+                document.getElementById('navbar-username').textContent = usuario.nombre || 'Usuario';
+                document.getElementById('profile-title').textContent = `Hola, ${usuario.nombre || 'Usuario'}`;
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+                window.location.href = 'login.html';
+            }
+        });
+
+        async function actualizarPerfil(event) {
+            event.preventDefault();
+
+            const lang = localStorage.getItem('language') || 'es';
+            const t = translations[lang];
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('password-confirm').value;
+
+            // Validate password if provided
+            if (password || passwordConfirm) {
+                if (password !== passwordConfirm) {
+                    mostrarMensaje(t.errorPasswordMatch, 'error');
+                    return;
+                }
+                if (password.length < 6) {
+                    mostrarMensaje(t.errorPasswordLength, 'error');
+                    return;
+                }
+            }
+
+            const usuarioStr = localStorage.getItem('usuario');
+            const usuario = JSON.parse(usuarioStr);
+
+            try {
+                const updateData = {
+                    nombre,
+                    telefono
+                };
+
+                if (password) {
+                    updateData.password = password;
+                }
+
+                const response = await fetch(`${API_URL}/auth/usuarios/${usuario._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update localStorage with new data
+                    const updatedUser = { ...usuario, ...updateData };
+                    delete updatedUser.password; // Don't store password
+                    localStorage.setItem('usuario', JSON.stringify(updatedUser));
+
+                    mostrarMensaje(t.successUpdate, 'success');
+                    
+                    // Clear password fields
+                    document.getElementById('password').value = '';
+                    document.getElementById('password-confirm').value = '';
+
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
+                    mostrarMensaje(data.mensaje || t.errorUpdate, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje(t.errorConnection, 'error');
+            }
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = texto;
+            messageDiv.className = `message ${tipo}`;
+            messageDiv.style.display = 'block';
+
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuario');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+</body>
+</html>
