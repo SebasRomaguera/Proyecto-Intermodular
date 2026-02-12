@@ -1,65 +1,374 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="EasyTaxi Palma - Solicita taxis en Palma de Mallorca">
-  <title>EasyTaxi Palma</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <style>
-    .hero {
-      text-align: center;
-      padding: 20px;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-    }
-    .hero p {
-      font-size: 1.2rem;
-      color: #666;
-      margin-bottom: 30px;
-    }
-    .buttons {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .buttons a {
-      padding: 15px 40px;
-      background: var(--primary-color);
-      color: var(--secondary-color);
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .buttons a:hover {
-      background: #FFA500;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(253, 185, 19, 0.4);
-    }
-    .buttons a.secondary {
-      background: var(--secondary-color);
-      color: var(--primary-color);
-    }
-    .buttons a.secondary:hover {
-      background: #333;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyTaxi Palma - Tu taxi en Palma de Mallorca</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 80px;
+            background: #FDB913;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+            color: black;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a, .nav-right a {
+            color: black;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover, .nav-right a:hover {
+            opacity: 0.7;
+        }
+
+        .btn-register {
+            background: white;
+            color: black !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .booking-section {
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
+        }
+
+        .form-container {
+            flex: 1;
+        }
+
+        .city-selector {
+            font-size: 14px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .city-selector i {
+            color: #FDB913;
+        }
+
+        .city-selector a { 
+            color: #FDB913; 
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 52px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 40px;
+            color: #666;
+        }
+
+        /* Inputs y Formulario */
+        .input-group {
+            max-width: 400px;
+        }
+
+        .time-picker {
+            background: #eeeeee;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .time-picker:hover {
+            background: #e0e0e0;
+        }
+
+        .location-inputs {
+            position: relative;
+            background: #f6f6f6;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            gap: 15px;
+        }
+
+        .input-wrapper input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+            color: #333;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #999;
+        }
+
+        .dot-origin { 
+            width: 8px; 
+            height: 8px; 
+            background: #FDB913; 
+            border-radius: 50%; 
+            flex-shrink: 0;
+        }
+
+        .square-destination { 
+            width: 8px; 
+            height: 8px; 
+            background: #FDB913;
+            flex-shrink: 0;
+        }
+
+        .line {
+            width: 2px;
+            height: 30px;
+            background: #ccc;
+            position: absolute;
+            left: 23px;
+            top: 35px;
+        }
+
+        .btn-prices {
+            background: #FDB913;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(253, 185, 19, 0.3);
+        }
+
+        .btn-prices:hover {
+            background: #e6a80f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(253, 185, 19, 0.4);
+        }
+
+        .btn-prices:active {
+            transform: translateY(0);
+        }
+
+        /* Imagen */
+        .hero-image {
+            flex: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 650px;
+            height: auto;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Placeholder image styling */
+        .hero-placeholder {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .booking-section {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .hero-image {
+                margin-top: 40px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero">
-      <h1>🚕 EasyTaxi Palma</h1>
-      <p>Solicita tu taxi de forma rápida y sencilla en Palma de Mallorca</p>
-      
-      <div class="buttons">
-        <a href="login.html">Iniciar sesión</a>
-        <a href="register.html" class="secondary">Registrarse</a>
-      </div>
-    </div>
-  </div>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">EasyTaxi Palma</div>
+            <ul class="nav-links">
+                <li><a href="#">Conductores</a></li>
+                <li><a href="#">Ayuda</a></li>
+            </ul>
+        </div>
+        <div class="nav-right" id="nav-right">
+            <a href="#"><i class="ph ph-globe"></i> ES</a>
+            <a href="login.html" id="btn-login">Inicia sesión</a>
+            <a href="register.html" class="btn-register" id="btn-register">Registrarse</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="booking-section">
+            <div class="form-container">
+                <div class="city-selector">
+                    <i class="ph ph-map-pin-fill"></i> Palma, ES
+                </div>
+                
+                <h1>Solicita un taxi para ahora o para más tarde</h1>
+                <p>Añade los datos del viaje, súbete y ¡en marcha!</p>
+
+                <div class="input-group">
+                    <div class="location-inputs">
+                        <div class="input-wrapper">
+                            <span class="dot-origin"></span>
+                            <input type="text" id="origen-input" placeholder="Ubicación de recogida">
+                            <i class="ph ph-navigation-arrow-fill" style="color: #999; cursor: pointer;"></i>
+                        </div>
+                        <div class="line"></div>
+                        <div class="input-wrapper">
+                            <span class="square-destination"></span>
+                            <input type="text" id="destino-input" placeholder="Ubicación de destino">
+                        </div>
+                    </div>
+
+                    <button class="btn-prices" onclick="handleVerPrecios()">Ver precios</button>
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <img src="assets/images/EasyTaxiImagen.png" alt="EasyTaxi Palma - Tu taxi en Palma de Mallorca">
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Check if user is logged in and update navbar
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuario = localStorage.getItem('usuario');
+            const navRight = document.getElementById('nav-right');
+            
+            if (usuario) {
+                try {
+                    const userObj = JSON.parse(usuario);
+                    const userName = userObj.nombre || 'Usuario';
+                    
+                    // Replace login/register buttons with user info and logout
+                    navRight.innerHTML = `
+                        <a href="#"><i class="ph ph-globe"></i> ES</a>
+                        <div style="display: flex; align-items: center; gap: 10px; color: black; font-weight: 500;">
+                            <i class="ph ph-user-circle" style="font-size: 20px;"></i>
+                            <span>${userName}</span>
+                        </div>
+                        <a href="#" onclick="cerrarSesion()" style="background: white; color: black; padding: 8px 16px; border-radius: 20px; font-weight: 600;">Cerrar sesión</a>
+                    `;
+                } catch (e) {
+                    console.error('Error parsing user data');
+                }
+            }
+        });
+
+        function handleVerPrecios() {
+            // Check if user is logged in
+            const usuario = localStorage.getItem('usuario');
+            
+            if (!usuario) {
+                // Not logged in - redirect to login
+                if (confirm('Necesitas iniciar sesión para solicitar un taxi. ¿Ir a iniciar sesión?')) {
+                    window.location.href = 'login.html';
+                }
+            } else {
+                // Logged in - process booking (to be implemented)
+                alert('Funcionalidad de reserva en desarrollo...');
+            }
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuario');
+            window.location.reload();
+        }
+    </script>
+
 </body>
 </html>

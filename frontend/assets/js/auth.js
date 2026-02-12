@@ -109,7 +109,7 @@ async function loginUsuario(event) {
       
       mostrarMensaje('¡Login exitoso! Bienvenido...', 'success');
       setTimeout(() => {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'index.html';
       }, 1500);
     } else {
       mostrarMensaje(data.mensaje, 'error');
