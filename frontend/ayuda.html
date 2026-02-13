@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda y Soporte - EasyTaxi Palma</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f9f9f9;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 80px;
+            background: #FDB913;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+            color: black;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a, .nav-right a {
+            color: black;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover, .nav-right a:hover {
+            opacity: 0.7;
+        }
+
+        .nav-links a.active {
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .btn-register {
+            background: white;
+            color: black !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Language Dropdown */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-btn {
+            background: transparent;
+            border: none;
+            color: black;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .language-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 150px;
+            display: none;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 16px;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-option:hover {
+            background: #f6f6f6;
+        }
+
+        .language-option.active {
+            background: #FDB91320;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            padding: 80px 80px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 40px auto 0;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 60px 18px 24px;
+            border-radius: 50px;
+            border: none;
+            font-size: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #333;
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #000;
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 50px;
+            text-align: center;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Quick Help Cards */
+        .help-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .help-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .help-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .help-card-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+
+        .help-card h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .help-card p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* FAQ Section */
+        .faq-container {
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+
+        .faq-item {
+            background: white;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .faq-question {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: #f9f9f9;
+        }
+
+        .faq-question h4 {
+            font-size: 17px;
+            color: #333;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .faq-icon {
+            font-size: 20px;
+            color: #FDB913;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer-content {
+            padding: 0 25px 20px 25px;
+            color: #666;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        /* Contact Section */
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: #FDB91320;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            color: #FDB913;
+        }
+
+        .contact-card h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .contact-card p {
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .contact-link {
+            color: #FDB913;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 16px;
+            transition: opacity 0.3s;
+        }
+
+        .contact-link:hover {
+            opacity: 0.7;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            color: #FDB913;
+        }
+
+        /* Business Hours */
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin: 30px auto 0;
+        }
+
+        .hours-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+
+        .hours-card h4 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .hours-card p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: #27ae60;
+            color: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .content {
+                padding: 60px 20px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .help-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUpModal 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideUpModal {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .modal-message {
+            color: #666;
+            text-align: center;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(253, 185, 19, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="logo">EasyTaxi Palma</a>
+            <ul class="nav-links">
+                <li><a href="conductores.html" id="nav-drivers">Conductores</a></li>
+                <li><a href="ayuda.html" class="active" id="nav-help">Ayuda</a></li>
+            </ul>
+        </div>
+        <div class="nav-right" id="nav-right">
+            <div class="language-selector">
+                <button class="language-btn" onclick="toggleLanguageDropdown()">
+                    <i class="ph ph-globe"></i>
+                    <span id="current-lang">ES</span>
+                    <i class="ph ph-caret-down" style="font-size: 12px;"></i>
+                </button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <div class="language-option" onclick="changeLanguage('es', 'ES')">
+                        🇪🇸 Español
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('en', 'EN')">
+                        🇬🇧 English
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('ca', 'CA')">
+                        🏴 Català
+                    </div>
+                </div>
+            </div>
+            <a href="login.html" id="btn-login">Inicia sesión</a>
+            <a href="register.html" class="btn-register" id="btn-register">Registrarse</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1 id="hero-title">¿En qué podemos ayudarte?</h1>
+        <p id="hero-subtitle">Encuentra respuestas rápidas a tus preguntas o contacta con nuestro equipo de soporte. Estamos aquí para hacer tu experiencia con EasyTaxi Palma lo más fácil posible.</p>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" id="search-input" placeholder="Busca tu pregunta...">
+            <button class="search-btn" onclick="handleSearch()">
+                <i class="ph ph-magnifying-glass"></i>
+            </button>
+        </div>
+    </section>
+
+    <div class="content">
+        <!-- Quick Help Section -->
+        <section class="section">
+            <h2 class="section-title" id="quick-help-title">Acceso rápido</h2>
+            <p class="section-subtitle" id="quick-help-subtitle">Encuentra ayuda rápida sobre los temas más comunes.</p>
+            
+            <div class="help-cards">
+                <div class="help-card" onclick="scrollToSection('faq')">
+                    <div class="help-card-icon">
+                        <i class="ph ph-question"></i>
+                    </div>
+                    <h3 id="card1-title">Preguntas frecuentes</h3>
+                    <p id="card1-text">Respuestas a las dudas más habituales sobre nuestro servicio.</p>
+                </div>
+                
+                <div class="help-card" onclick="scrollToSection('contact')">
+                    <div class="help-card-icon">
+                        <i class="ph ph-chat-circle-dots"></i>
+                    </div>
+                    <h3 id="card2-title">Contacto directo</h3>
+                    <p id="card2-text">Habla con nuestro equipo de soporte por múltiples canales.</p>
+                </div>
+                
+                <div class="help-card" onclick="handleHowToUse()">
+                    <div class="help-card-icon">
+                        <i class="ph ph-book-open"></i>
+                    </div>
+                    <h3 id="card3-title">Guía de uso</h3>
+                    <p id="card3-text">Aprende cómo usar la aplicación paso a paso.</p>
+                </div>
+                
+                <div class="help-card" onclick="handleSafety()">
+                    <div class="help-card-icon">
+                        <i class="ph ph-shield-check"></i>
+                    </div>
+                    <h3 id="card4-title">Seguridad</h3>
+                    <p id="card4-text">Información sobre nuestras medidas de seguridad.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="section" id="faq">
+            <h2 class="section-title" id="faq-title">Preguntas frecuentes</h2>
+            <p class="section-subtitle" id="faq-subtitle">Las respuestas a las preguntas más comunes sobre EasyTaxi Palma.</p>
+            
+            <div class="faq-container">
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q1">¿Cómo puedo solicitar un taxi?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a1">
+                            Para solicitar un taxi, primero debes registrarte e iniciar sesión en la aplicación. Luego, introduce tu punto de recogida y destino en la página principal, haz clic en "Ver precios" y confirma tu reserva. Recibirás la información del conductor asignado en tiempo real.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q2">¿Cuáles son las formas de pago disponibles?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a2">
+                            Aceptamos pagos en efectivo y con tarjeta de crédito/débito directamente en el vehículo. Próximamente habilitaremos el pago a través de la aplicación con tarjeta, Apple Pay y Google Pay para mayor comodidad.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q3">¿Puedo cancelar una reserva?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a3">
+                            Sí, puedes cancelar una reserva sin cargo si lo haces con al menos 5 minutos de antelación antes de la hora de recogida. Las cancelaciones tardías o cuando el conductor ya está en camino pueden tener un cargo mínimo de cancelación.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q4">¿Los conductores están verificados?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a4">
+                            Absolutamente. Todos nuestros conductores pasan por un riguroso proceso de verificación que incluye comprobación de antecedentes penales, licencia profesional, seguro del vehículo e inspección técnica. Tu seguridad es nuestra prioridad.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q5">¿Cómo se calculan las tarifas?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a5">
+                            Las tarifas se calculan según la tarifa oficial de taxis de Palma, que incluye una bajada de bandera más el precio por kilómetro recorrido. También se aplican suplementos legales según horario, festivos o destino (aeropuerto, puerto, etc.).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q6">¿Puedo programar un viaje con antelación?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a6">
+                            Esta funcionalidad estará disponible próximamente. Podrás reservar taxis con hasta 24 horas de antelación para asegurarte de tener transporte en el momento que lo necesites.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q7">¿Qué hago si olvido algo en el taxi?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a7">
+                            Contacta inmediatamente con nuestro servicio de atención al cliente a través del teléfono o email. Tenemos un registro completo de todos los viajes, por lo que podremos contactar rápidamente con el conductor para recuperar tus pertenencias.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h4 id="q8">¿Hay servicio 24/7?</h4>
+                        <i class="ph ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content" id="a8">
+                            Sí, la aplicación funciona las 24 horas del día, los 7 días de la semana. Siempre habrá conductores disponibles, aunque la disponibilidad puede variar según la hora y la demanda en ese momento.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <h2 class="section-title" id="contact-title">Contacta con nosotros</h2>
+            <p class="section-subtitle" id="contact-subtitle">Estamos disponibles para ayudarte. Elige el canal que prefieras.</p>
+            
+            <div class="contact-methods">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="ph ph-phone"></i>
+                    </div>
+                    <h3 id="phone-title">Teléfono</h3>
+                    <p id="phone-text">Llámanos directamente</p>
+                    <a href="tel:+34971234567" class="contact-link">+34 971 23 45 67</a>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="ph ph-envelope"></i>
+                    </div>
+                    <h3 id="email-title">Email</h3>
+                    <p id="email-text">Escríbenos tu consulta</p>
+                    <a href="mailto:soporte@easytaxipalma.com" class="contact-link">soporte@easytaxipalma.com</a>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="ph ph-whatsapp-logo"></i>
+                    </div>
+                    <h3 id="whatsapp-title">WhatsApp</h3>
+                    <p id="whatsapp-text">Chat directo y rápido</p>
+                    <a href="https://wa.me/34971234567" target="_blank" class="contact-link">+34 971 23 45 67</a>
+                </div>
+            </div>
+
+            <div class="social-links">
+                <a href="#" class="social-btn" title="Facebook">
+                    <i class="ph ph-facebook-logo"></i>
+                </a>
+                <a href="#" class="social-btn" title="Instagram">
+                    <i class="ph ph-instagram-logo"></i>
+                </a>
+                <a href="#" class="social-btn" title="Twitter">
+                    <i class="ph ph-twitter-logo"></i>
+                </a>
+                <a href="#" class="social-btn" title="LinkedIn">
+                    <i class="ph ph-linkedin-logo"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Business Hours -->
+        <section class="section">
+            <h2 class="section-title" id="hours-title">Horario de atención</h2>
+            
+            <div class="hours-grid">
+                <div class="hours-card">
+                    <h4 id="service-title">Servicio de taxis</h4>
+                    <p id="service-hours">24 horas / 7 días</p>
+                    <span class="badge" id="service-badge">DISPONIBLE AHORA</span>
+                </div>
+                
+                <div class="hours-card">
+                    <h4 id="support-title">Soporte al cliente</h4>
+                    <p id="support-hours">Lun - Dom: 8:00 - 22:00</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Custom Modal -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">
+                <i class="ph ph-info"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Título</h3>
+            <p class="modal-message" id="modalMessage">Mensaje</p>
+            <div class="modal-buttons" id="modalButtons">
+                <!-- Buttons will be inserted dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Custom Modal Functions
+        function showCustomModal(config) {
+            const modal = document.getElementById('customModal');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+            const buttonsContainer = document.getElementById('modalButtons');
+
+            icon.innerHTML = config.icon || '<i class="ph ph-info"></i>';
+            title.textContent = config.title || '';
+            message.textContent = config.message || '';
+
+            buttonsContainer.innerHTML = '';
+            
+            if (config.buttons && config.buttons.length > 0) {
+                config.buttons.forEach(btn => {
+                    const button = document.createElement('button');
+                    button.className = `modal-btn ${btn.primary ? 'modal-btn-primary' : 'modal-btn-secondary'}`;
+                    button.textContent = btn.text;
+                    button.onclick = () => {
+                        hideCustomModal();
+                        if (btn.onClick) btn.onClick();
+                    };
+                    buttonsContainer.appendChild(button);
+                });
+            }
+
+            modal.classList.add('show');
+        }
+
+        function hideCustomModal() {
+            const modal = document.getElementById('customModal');
+            modal.classList.remove('show');
+        }
+
+        document.getElementById('customModal').addEventListener('click', (e) => {
+            if (e.target.id === 'customModal') {
+                hideCustomModal();
+            }
+        });
+
+        // Translations
+        const translations = {
+            es: {
+                navDrivers: 'Conductores',
+                navHelp: 'Ayuda',
+                btnLogin: 'Inicia sesión',
+                btnRegister: 'Registrarse',
+                heroTitle: '¿En qué podemos ayudarte?',
+                heroSubtitle: 'Encuentra respuestas rápidas a tus preguntas o contacta con nuestro equipo de soporte. Estamos aquí para hacer tu experiencia con EasyTaxi Palma lo más fácil posible.',
+                searchPlaceholder: 'Busca tu pregunta...',
+                quickHelpTitle: 'Acceso rápido',
+                quickHelpSubtitle: 'Encuentra ayuda rápida sobre los temas más comunes.',
+                card1Title: 'Preguntas frecuentes',
+                card1Text: 'Respuestas a las dudas más habituales sobre nuestro servicio.',
+                card2Title: 'Contacto directo',
+                card2Text: 'Habla con nuestro equipo de soporte por múltiples canales.',
+                card3Title: 'Guía de uso',
+                card3Text: 'Aprende cómo usar la aplicación paso a paso.',
+                card4Title: 'Seguridad',
+                card4Text: 'Información sobre nuestras medidas de seguridad.',
+                faqTitle: 'Preguntas frecuentes',
+                faqSubtitle: 'Las respuestas a las preguntas más comunes sobre EasyTaxi Palma.',
+                q1: '¿Cómo puedo solicitar un taxi?',
+                a1: 'Para solicitar un taxi, primero debes registrarte e iniciar sesión en la aplicación. Luego, introduce tu punto de recogida y destino en la página principal, haz clic en "Ver precios" y confirma tu reserva. Recibirás la información del conductor asignado en tiempo real.',
+                q2: '¿Cuáles son las formas de pago disponibles?',
+                a2: 'Aceptamos pagos en efectivo y con tarjeta de crédito/débito directamente en el vehículo. Próximamente habilitaremos el pago a través de la aplicación con tarjeta, Apple Pay y Google Pay para mayor comodidad.',
+                q3: '¿Puedo cancelar una reserva?',
+                a3: 'Sí, puedes cancelar una reserva sin cargo si lo haces con al menos 5 minutos de antelación antes de la hora de recogida. Las cancelaciones tardías o cuando el conductor ya está en camino pueden tener un cargo mínimo de cancelación.',
+                q4: '¿Los conductores están verificados?',
+                a4: 'Absolutamente. Todos nuestros conductores pasan por un riguroso proceso de verificación que incluye comprobación de antecedentes penales, licencia profesional, seguro del vehículo e inspección técnica. Tu seguridad es nuestra prioridad.',
+                q5: '¿Cómo se calculan las tarifas?',
+                a5: 'Las tarifas se calculan según la tarifa oficial de taxis de Palma, que incluye una bajada de bandera más el precio por kilómetro recorrido. También se aplican suplementos legales según horario, festivos o destino (aeropuerto, puerto, etc.).',
+                q6: '¿Puedo programar un viaje con antelación?',
+                a6: 'Esta funcionalidad estará disponible próximamente. Podrás reservar taxis con hasta 24 horas de antelación para asegurarte de tener transporte en el momento que lo necesites.',
+                q7: '¿Qué hago si olvido algo en el taxi?',
+                a7: 'Contacta inmediatamente con nuestro servicio de atención al cliente a través del teléfono o email. Tenemos un registro completo de todos los viajes, por lo que podremos contactar rápidamente con el conductor para recuperar tus pertenencias.',
+                q8: '¿Hay servicio 24/7?',
+                a8: 'Sí, la aplicación funciona las 24 horas del día, los 7 días de la semana. Siempre habrá conductores disponibles, aunque la disponibilidad puede variar según la hora y la demanda en ese momento.',
+                contactTitle: 'Contacta con nosotros',
+                contactSubtitle: 'Estamos disponibles para ayudarte. Elige el canal que prefieras.',
+                phoneTitle: 'Teléfono',
+                phoneText: 'Llámanos directamente',
+                emailTitle: 'Email',
+                emailText: 'Escríbenos tu consulta',
+                whatsappTitle: 'WhatsApp',
+                whatsappText: 'Chat directo y rápido',
+                hoursTitle: 'Horario de atención',
+                serviceTitle: 'Servicio de taxis',
+                serviceHours: '24 horas / 7 días',
+                serviceBadge: 'DISPONIBLE AHORA',
+                supportTitle: 'Soporte al cliente',
+                supportHours: 'Lun - Dom: 8:00 - 22:00',
+                comingSoonTitle: 'Próximamente',
+                comingSoonMessage: 'Esta funcionalidad estará disponible pronto.',
+                okButton: 'Entendido'
+            },
+            en: {
+                navDrivers: 'Drivers',
+                navHelp: 'Help',
+                btnLogin: 'Sign In',
+                btnRegister: 'Register',
+                heroTitle: 'How can we help you?',
+                heroSubtitle: 'Find quick answers to your questions or contact our support team. We are here to make your EasyTaxi Palma experience as easy as possible.',
+                searchPlaceholder: 'Search your question...',
+                quickHelpTitle: 'Quick Access',
+                quickHelpSubtitle: 'Find quick help on the most common topics.',
+                card1Title: 'FAQs',
+                card1Text: 'Answers to the most common questions about our service.',
+                card2Title: 'Direct Contact',
+                card2Text: 'Talk to our support team through multiple channels.',
+                card3Title: 'User Guide',
+                card3Text: 'Learn how to use the app step by step.',
+                card4Title: 'Safety',
+                card4Text: 'Information about our safety measures.',
+                faqTitle: 'Frequently Asked Questions',
+                faqSubtitle: 'Answers to the most common questions about EasyTaxi Palma.',
+                q1: 'How can I request a taxi?',
+                a1: 'To request a taxi, you must first register and log in to the app. Then, enter your pick-up point and destination on the main page, click "See prices" and confirm your booking. You will receive the assigned driver information in real time.',
+                q2: 'What payment methods are available?',
+                a2: 'We accept cash and credit/debit card payments directly in the vehicle. Soon we will enable payment through the app with card, Apple Pay and Google Pay for greater convenience.',
+                q3: 'Can I cancel a booking?',
+                a3: 'Yes, you can cancel a booking free of charge if you do so at least 5 minutes before the pick-up time. Late cancellations or when the driver is already on the way may have a minimum cancellation charge.',
+                q4: 'Are drivers verified?',
+                a4: 'Absolutely. All our drivers undergo a rigorous verification process that includes criminal background checks, professional license, vehicle insurance and technical inspection. Your safety is our priority.',
+                q5: 'How are fares calculated?',
+                a5: 'Fares are calculated according to the official Palma taxi rate, which includes a flag drop plus the price per kilometer traveled. Legal surcharges also apply depending on time, holidays or destination (airport, port, etc.).',
+                q6: 'Can I schedule a trip in advance?',
+                a6: 'This functionality will be available soon. You will be able to book taxis up to 24 hours in advance to ensure you have transport when you need it.',
+                q7: 'What do I do if I forget something in the taxi?',
+                a7: 'Contact our customer service immediately by phone or email. We have a complete record of all trips, so we can quickly contact the driver to recover your belongings.',
+                q8: 'Is there 24/7 service?',
+                a8: 'Yes, the app works 24 hours a day, 7 days a week. There will always be drivers available, although availability may vary depending on the time and demand at that moment.',
+                contactTitle: 'Contact Us',
+                contactSubtitle: 'We are available to help you. Choose your preferred channel.',
+                phoneTitle: 'Phone',
+                phoneText: 'Call us directly',
+                emailTitle: 'Email',
+                emailText: 'Write us your question',
+                whatsappTitle: 'WhatsApp',
+                whatsappText: 'Direct and fast chat',
+                hoursTitle: 'Service Hours',
+                serviceTitle: 'Taxi Service',
+                serviceHours: '24 hours / 7 days',
+                serviceBadge: 'AVAILABLE NOW',
+                supportTitle: 'Customer Support',
+                supportHours: 'Mon - Sun: 8:00 AM - 10:00 PM',
+                comingSoonTitle: 'Coming Soon',
+                comingSoonMessage: 'This feature will be available soon.',
+                okButton: 'OK'
+            },
+            ca: {
+                navDrivers: 'Conductors',
+                navHelp: 'Ajuda',
+                btnLogin: 'Inicia sessió',
+                btnRegister: 'Registra\'t',
+                heroTitle: 'En què et podem ajudar?',
+                heroSubtitle: 'Troba respostes ràpides a les teves preguntes o contacta amb el nostre equip de suport. Estem aquí per fer la teva experiència amb EasyTaxi Palma el més fàcil possible.',
+                searchPlaceholder: 'Cerca la teva pregunta...',
+                quickHelpTitle: 'Accés ràpid',
+                quickHelpSubtitle: 'Troba ajuda ràpida sobre els temes més comuns.',
+                card1Title: 'Preguntes freqüents',
+                card1Text: 'Respostes als dubtes més habituals sobre el nostre servei.',
+                card2Title: 'Contacte directe',
+                card2Text: 'Parla amb el nostre equip de suport per múltiples canals.',
+                card3Title: 'Guia d\'ús',
+                card3Text: 'Aprèn com utilitzar l\'aplicació pas a pas.',
+                card4Title: 'Seguretat',
+                card4Text: 'Informació sobre les nostres mesures de seguretat.',
+                faqTitle: 'Preguntes freqüents',
+                faqSubtitle: 'Les respostes a les preguntes més comunes sobre EasyTaxi Palma.',
+                q1: 'Com puc sol·licitar un taxi?',
+                a1: 'Per sol·licitar un taxi, primer has de registrar-te i iniciar sessió a l\'aplicació. Després, introdueix el teu punt de recollida i destinació a la pàgina principal, fes clic a "Veure preus" i confirma la teva reserva. Rebràs la informació del conductor assignat en temps real.',
+                q2: 'Quines són les formes de pagament disponibles?',
+                a2: 'Acceptem pagaments en efectiu i amb targeta de crèdit/dèbit directament al vehicle. Pròximament habilitarem el pagament a través de l\'aplicació amb targeta, Apple Pay i Google Pay per a més comoditat.',
+                q3: 'Puc cancel·lar una reserva?',
+                a3: 'Sí, pots cancel·lar una reserva sense càrrec si ho fas amb almenys 5 minuts d\'antelació abans de l\'hora de recollida. Les cancel·lacions tardanes o quan el conductor ja està en camí poden tenir un càrrec mínim de cancel·lació.',
+                q4: 'Els conductors estan verificats?',
+                a4: 'Absolutament. Tots els nostres conductors passen per un rigorós procés de verificació que inclou comprovació d\'antecedents penals, llicència professional, assegurança del vehicle i inspecció tècnica. La teva seguretat és la nostra prioritat.',
+                q5: 'Com es calculen les tarifes?',
+                a5: 'Les tarifes es calculen segons la tarifa oficial de taxis de Palma, que inclou una baixada de bandera més el preu per quilòmetre recorregut. També s\'apliquen suplements legals segons horari, festius o destinació (aeroport, port, etc.).',
+                q6: 'Puc programar un viatge amb antelació?',
+                a6: 'Aquesta funcionalitat estarà disponible pròximament. Podràs reservar taxis amb fins a 24 hores d\'antelació per assegurar-te de tenir transport en el moment que ho necessitis.',
+                q7: 'Què faig si oblido alguna cosa al taxi?',
+                a7: 'Contacta immediatament amb el nostre servei d\'atenció al client a través del telèfon o email. Tenim un registre complet de tots els viatges, per la qual cosa podrem contactar ràpidament amb el conductor per recuperar les teves pertinences.',
+                q8: 'Hi ha servei 24/7?',
+                a8: 'Sí, l\'aplicació funciona les 24 hores del dia, els 7 dies de la setmana. Sempre hi haurà conductors disponibles, encara que la disponibilitat pot variar segons l\'hora i la demanda en aquell moment.',
+                contactTitle: 'Contacta amb nosaltres',
+                contactSubtitle: 'Estem disponibles per ajudar-te. Tria el canal que prefereixis.',
+                phoneTitle: 'Telèfon',
+                phoneText: 'Truca\'ns directament',
+                emailTitle: 'Email',
+                emailText: 'Escriu-nos la teva consulta',
+                whatsappTitle: 'WhatsApp',
+                whatsappText: 'Xat directe i ràpid',
+                hoursTitle: 'Horari d\'atenció',
+                serviceTitle: 'Servei de taxis',
+                serviceHours: '24 hores / 7 dies',
+                serviceBadge: 'DISPONIBLE ARA',
+                supportTitle: 'Suport al client',
+                supportHours: 'Dill - Dium: 8:00 - 22:00',
+                comingSoonTitle: 'Pròximament',
+                comingSoonMessage: 'Aquesta funcionalitat estarà disponible aviat.',
+                okButton: 'Entès'
+            }
+        };
+
+        // FAQ Toggle
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+
+        // Scroll to section
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Handle card clicks
+        function handleHowToUse() {
+            const lang = localStorage.getItem('language') || 'es';
+            const t = translations[lang];
+            showCustomModal({
+                icon: '<i class="ph ph-book-open"></i>',
+                title: t.comingSoonTitle,
+                message: t.comingSoonMessage,
+                buttons: [{ text: t.okButton, primary: true }]
+            });
+        }
+
+        function handleSafety() {
+            const lang = localStorage.getItem('language') || 'es';
+            const t = translations[lang];
+            showCustomModal({
+                icon: '<i class="ph ph-shield-check"></i>',
+                title: t.comingSoonTitle,
+                message: t.comingSoonMessage,
+                buttons: [{ text: t.okButton, primary: true }]
+            });
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                const lang = localStorage.getItem('language') || 'es';
+                const t = translations[lang];
+                showCustomModal({
+                    icon: '<i class="ph ph-magnifying-glass"></i>',
+                    title: t.comingSoonTitle,
+                    message: t.comingSoonMessage,
+                    buttons: [{ text: t.okButton, primary: true }]
+                });
+            }
+        }
+
+        // Language functions
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('language-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function changeLanguage(langCode, langDisplay) {
+            localStorage.setItem('language', langCode);
+            document.getElementById('current-lang').textContent = langDisplay;
+            toggleLanguageDropdown();
+            
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            applyTranslations(langCode);
+        }
+
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations.es;
+            
+            // Nav
+            document.getElementById('nav-drivers').textContent = t.navDrivers;
+            document.getElementById('nav-help').textContent = t.navHelp;
+            
+            const btnLogin = document.getElementById('btn-login');
+            const btnRegister = document.getElementById('btn-register');
+            if (btnLogin) btnLogin.textContent = t.btnLogin;
+            if (btnRegister) btnRegister.textContent = t.btnRegister;
+            
+            // Hero
+            document.getElementById('hero-title').textContent = t.heroTitle;
+            document.getElementById('hero-subtitle').textContent = t.heroSubtitle;
+            document.getElementById('search-input').placeholder = t.searchPlaceholder;
+            
+            // Quick Help
+            document.getElementById('quick-help-title').textContent = t.quickHelpTitle;
+            document.getElementById('quick-help-subtitle').textContent = t.quickHelpSubtitle;
+            document.getElementById('card1-title').textContent = t.card1Title;
+            document.getElementById('card1-text').textContent = t.card1Text;
+            document.getElementById('card2-title').textContent = t.card2Title;
+            document.getElementById('card2-text').textContent = t.card2Text;
+            document.getElementById('card3-title').textContent = t.card3Title;
+            document.getElementById('card3-text').textContent = t.card3Text;
+            document.getElementById('card4-title').textContent = t.card4Title;
+            document.getElementById('card4-text').textContent = t.card4Text;
+            
+            // FAQ
+            document.getElementById('faq-title').textContent = t.faqTitle;
+            document.getElementById('faq-subtitle').textContent = t.faqSubtitle;
+            document.getElementById('q1').textContent = t.q1;
+            document.getElementById('a1').textContent = t.a1;
+            document.getElementById('q2').textContent = t.q2;
+            document.getElementById('a2').textContent = t.a2;
+            document.getElementById('q3').textContent = t.q3;
+            document.getElementById('a3').textContent = t.a3;
+            document.getElementById('q4').textContent = t.q4;
+            document.getElementById('a4').textContent = t.a4;
+            document.getElementById('q5').textContent = t.q5;
+            document.getElementById('a5').textContent = t.a5;
+            document.getElementById('q6').textContent = t.q6;
+            document.getElementById('a6').textContent = t.a6;
+            document.getElementById('q7').textContent = t.q7;
+            document.getElementById('a7').textContent = t.a7;
+            document.getElementById('q8').textContent = t.q8;
+            document.getElementById('a8').textContent = t.a8;
+            
+            // Contact
+            document.getElementById('contact-title').textContent = t.contactTitle;
+            document.getElementById('contact-subtitle').textContent = t.contactSubtitle;
+            document.getElementById('phone-title').textContent = t.phoneTitle;
+            document.getElementById('phone-text').textContent = t.phoneText;
+            document.getElementById('email-title').textContent = t.emailTitle;
+            document.getElementById('email-text').textContent = t.emailText;
+            document.getElementById('whatsapp-title').textContent = t.whatsappTitle;
+            document.getElementById('whatsapp-text').textContent = t.whatsappText;
+            
+            // Hours
+            document.getElementById('hours-title').textContent = t.hoursTitle;
+            document.getElementById('service-title').textContent = t.serviceTitle;
+            document.getElementById('service-hours').textContent = t.serviceHours;
+            document.getElementById('service-badge').textContent = t.serviceBadge;
+            document.getElementById('support-title').textContent = t.supportTitle;
+            document.getElementById('support-hours').textContent = t.supportHours;
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const selector = document.querySelector('.language-selector');
+            const dropdown = document.getElementById('language-dropdown');
+            if (selector && !selector.contains(e.target)) {
+                dropdown?.classList.remove('show');
+            }
+        });
+
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('language') || 'es';
+            const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
+            document.getElementById('current-lang').textContent = langMap[savedLang];
+            
+            const options = document.querySelectorAll('.language-option');
+            options.forEach((opt, index) => {
+                const langs = ['es', 'en', 'ca'];
+                if (langs[index] === savedLang) {
+                    opt.classList.add('active');
+                }
+            });
+            
+            applyTranslations(savedLang);
+            
+            const usuario = localStorage.getItem('usuario');
+            const navRight = document.getElementById('nav-right');
+            
+            if (usuario) {
+                try {
+                    const userObj = JSON.parse(usuario);
+                    const userName = userObj.nombre || 'Usuario';
+                    
+                    const t = translations[savedLang];
+                    navRight.innerHTML = `
+                        <div class="language-selector">
+                            <button class="language-btn" onclick="toggleLanguageDropdown()">
+                                <i class="ph ph-globe"></i>
+                                <span id="current-lang">${langMap[savedLang]}</span>
+                                <i class="ph ph-caret-down" style="font-size: 12px;"></i>
+                            </button>
+                            <div class="language-dropdown" id="language-dropdown">
+                                <div class="language-option ${savedLang === 'es' ? 'active' : ''}" onclick="changeLanguage('es', 'ES')">
+                                    🇪🇸 Español
+                                </div>
+                                <div class="language-option ${savedLang === 'en' ? 'active' : ''}" onclick="changeLanguage('en', 'EN')">
+                                    🇬🇧 English
+                                </div>
+                                <div class="language-option ${savedLang === 'ca' ? 'active' : ''}" onclick="changeLanguage('ca', 'CA')">
+                                    🏴 Català
+                                </div>
+                            </div>
+                        </div>
+                        <a href="perfil.html" style="display: flex; align-items: center; gap: 10px; color: black; font-weight: 500; text-decoration: none; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                            <i class="ph ph-user-circle" style="font-size: 20px;"></i>
+                            <span>${userName}</span>
+                        </a>
+                        <a href="#" onclick="cerrarSesion()" class="btn-register">Cerrar sesión</a>
+                    `;
+                } catch (e) {
+                    console.error('Error parsing user data');
+                }
+            }
+        });
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuario');
+            window.location.reload();
+        }
+
+        // Enter key for search
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+    </script>
+
+</body>
+</html>

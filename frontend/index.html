@@ -414,6 +414,117 @@
             position: relative;
         }
 
+        /* Custom Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .modal-message {
+            color: #666;
+            text-align: center;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(253, 185, 19, 0.4);
+        }
+
+        .modal-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .navbar {
@@ -435,6 +546,18 @@
             .hero-image {
                 margin-top: 40px;
             }
+
+            .modal-content {
+                padding: 25px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -444,8 +567,8 @@
         <div class="nav-left">
             <div class="logo">EasyTaxi Palma</div>
             <ul class="nav-links">
-                <li><a href="#">Conductores</a></li>
-                <li><a href="#">Ayuda</a></li>
+                <li><a href="conductores.html">Conductores</a></li>
+                <li><a href="ayuda.html">Ayuda</a></li>
             </ul>
         </div>
         <div class="nav-right" id="nav-right">
@@ -512,7 +635,68 @@
         </section>
     </main>
 
+    <!-- Custom Modal -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">
+                <i class="ph ph-warning"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Título</h3>
+            <p class="modal-message" id="modalMessage">Mensaje</p>
+            <div class="modal-buttons" id="modalButtons">
+                <!-- Buttons will be inserted dynamically -->
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Custom Modal Functions
+        function showCustomModal(config) {
+            const modal = document.getElementById('customModal');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+            const buttonsContainer = document.getElementById('modalButtons');
+
+            // Set icon
+            icon.innerHTML = config.icon || '<i class="ph ph-info"></i>';
+            
+            // Set title and message
+            title.textContent = config.title || '';
+            message.textContent = config.message || '';
+
+            // Clear and create buttons
+            buttonsContainer.innerHTML = '';
+            
+            if (config.buttons && config.buttons.length > 0) {
+                config.buttons.forEach(btn => {
+                    const button = document.createElement('button');
+                    button.className = `modal-btn ${btn.primary ? 'modal-btn-primary' : 'modal-btn-secondary'}`;
+                    button.textContent = btn.text;
+                    button.onclick = () => {
+                        hideCustomModal();
+                        if (btn.onClick) btn.onClick();
+                    };
+                    buttonsContainer.appendChild(button);
+                });
+            }
+
+            // Show modal
+            modal.classList.add('show');
+        }
+
+        function hideCustomModal() {
+            const modal = document.getElementById('customModal');
+            modal.classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('customModal').addEventListener('click', (e) => {
+            if (e.target.id === 'customModal') {
+                hideCustomModal();
+            }
+        });
+
         // Base de datos local de ubicaciones en Palma de Mallorca
         const palmaLocations = [
             // Aeropuertos y Transporte
@@ -659,18 +843,36 @@
                     },
                     (error) => {
                         console.error('Error getting location:', error);
-                        alert(messages[savedLang].error);
+                        const savedLang = localStorage.getItem('language') || 'es';
+                        const errorMessages = {
+                            es: { title: 'Error de ubicación', message: 'No se pudo obtener tu ubicación actual. Por favor, verifica los permisos de ubicación en tu navegador.', button: 'Entendido' },
+                            en: { title: 'Location Error', message: 'Could not get your current location. Please check location permissions in your browser.', button: 'OK' },
+                            ca: { title: 'Error d\'ubicació', message: 'No s\'ha pogut obtenir la teva ubicació actual. Si us plau, verifica els permisos d\'ubicació al teu navegador.', button: 'Entès' }
+                        };
+                        const msg = errorMessages[savedLang];
+                        showCustomModal({
+                            icon: '<i class="ph ph-x-circle"></i>',
+                            title: msg.title,
+                            message: msg.message,
+                            buttons: [{ text: msg.button, primary: true }]
+                        });
                         document.getElementById('origen-input').value = '';
                     }
                 );
             } else {
                 const savedLang = localStorage.getItem('language') || 'es';
-                const msgs = {
-                    es: 'Tu navegador no soporta geolocalización',
-                    en: 'Your browser does not support geolocation',
-                    ca: 'El teu navegador no suporta geolocalització'
+                const errorMessages = {
+                    es: { title: 'Geolocalización no disponible', message: 'Tu navegador no soporta geolocalización. Por favor, ingresa tu ubicación manualmente.', button: 'Entendido' },
+                    en: { title: 'Geolocation Unavailable', message: 'Your browser does not support geolocation. Please enter your location manually.', button: 'OK' },
+                    ca: { title: 'Geolocalització no disponible', message: 'El teu navegador no suporta geolocalització. Si us plau, introdueix la teva ubicació manualment.', button: 'Entès' }
                 };
-                alert(msgs[savedLang]);
+                const msg = errorMessages[savedLang];
+                showCustomModal({
+                    icon: '<i class="ph ph-x-circle"></i>',
+                    title: msg.title,
+                    message: msg.message,
+                    buttons: [{ text: msg.button, primary: true }]
+                });
             }
         }
 
@@ -1036,13 +1238,60 @@
             const t = translations[lang];
             
             if (!usuario) {
-                // Not logged in - redirect to login
-                if (confirm(t.loginPrompt)) {
-                    window.location.href = 'login.html';
-                }
+                // Not logged in - show custom modal
+                const modalContent = {
+                    es: {
+                        icon: '<i class="ph ph-user-circle"></i>',
+                        title: 'Inicia sesión',
+                        message: 'Necesitas iniciar sesión para solicitar un taxi. ¿Quieres ir a la página de inicio de sesión?',
+                        buttons: [
+                            { text: 'Cancelar', primary: false },
+                            { text: 'Iniciar sesión', primary: true, onClick: () => window.location.href = 'login.html' }
+                        ]
+                    },
+                    en: {
+                        icon: '<i class="ph ph-user-circle"></i>',
+                        title: 'Sign In',
+                        message: 'You need to sign in to request a taxi. Do you want to go to the login page?',
+                        buttons: [
+                            { text: 'Cancel', primary: false },
+                            { text: 'Sign In', primary: true, onClick: () => window.location.href = 'login.html' }
+                        ]
+                    },
+                    ca: {
+                        icon: '<i class="ph ph-user-circle"></i>',
+                        title: 'Inicia sessió',
+                        message: 'Necessites iniciar sessió per sol·licitar un taxi. Vols anar a la pàgina d\'inici de sessió?',
+                        buttons: [
+                            { text: 'Cancel·lar', primary: false },
+                            { text: 'Iniciar sessió', primary: true, onClick: () => window.location.href = 'login.html' }
+                        ]
+                    }
+                };
+                showCustomModal(modalContent[lang]);
             } else {
-                // Logged in - process booking (to be implemented)
-                alert(t.devAlert);
+                // Logged in - show development alert with custom modal
+                const devModalContent = {
+                    es: {
+                        icon: '<i class="ph ph-wrench"></i>',
+                        title: 'En desarrollo',
+                        message: 'La funcionalidad de reserva está en desarrollo. Pronto estará disponible.',
+                        buttons: [{ text: 'Entendido', primary: true }]
+                    },
+                    en: {
+                        icon: '<i class="ph ph-wrench"></i>',
+                        title: 'In Development',
+                        message: 'Booking functionality is in development. It will be available soon.',
+                        buttons: [{ text: 'OK', primary: true }]
+                    },
+                    ca: {
+                        icon: '<i class="ph ph-wrench"></i>',
+                        title: 'En desenvolupament',
+                        message: 'La funcionalitat de reserva està en desenvolupament. Aviat estarà disponible.',
+                        buttons: [{ text: 'Entès', primary: true }]
+                    }
+                };
+                showCustomModal(devModalContent[lang]);
             }
         }
 

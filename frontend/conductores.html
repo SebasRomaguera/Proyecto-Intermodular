@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conductores - EasyTaxi Palma</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f9f9f9;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 80px;
+            background: #FDB913;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+            color: black;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a, .nav-right a {
+            color: black;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover, .nav-right a:hover {
+            opacity: 0.7;
+        }
+
+        .nav-links a.active {
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .btn-register {
+            background: white;
+            color: black !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Language Dropdown */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-btn {
+            background: transparent;
+            border: none;
+            color: black;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .language-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 150px;
+            display: none;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 16px;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-option:hover {
+            background: #f6f6f6;
+        }
+
+        .language-option.active {
+            background: #FDB91320;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            padding: 80px 80px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 50px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 50px;
+            text-align: center;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Requirements List */
+        .requirements-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .requirement-item {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .requirement-icon {
+            width: 44px;
+            height: 44px;
+            background: #FDB91320;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #FDB913;
+            font-size: 22px;
+        }
+
+        .requirement-content h4 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .requirement-content p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 auto 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #FDB913 0%, transparent 100%);
+            z-index: 1;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step h4 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
+            padding: 60px 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+        }
+
+        .cta-section h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            background: white;
+            color: #FDB913;
+            padding: 16px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .content {
+                padding: 60px 20px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .requirements-list {
+                grid-template-columns: 1fr;
+            }
+
+            .process-steps {
+                flex-direction: column;
+            }
+
+            .step::after {
+                display: none;
+            }
+
+            .cta-section h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="logo">EasyTaxi Palma</a>
+            <ul class="nav-links">
+                <li><a href="conductores.html" class="active" id="nav-drivers">Conductores</a></li>
+                <li><a href="ayuda.html" id="nav-help">Ayuda</a></li>
+            </ul>
+        </div>
+        <div class="nav-right" id="nav-right">
+            <div class="language-selector">
+                <button class="language-btn" onclick="toggleLanguageDropdown()">
+                    <i class="ph ph-globe"></i>
+                    <span id="current-lang">ES</span>
+                    <i class="ph ph-caret-down" style="font-size: 12px;"></i>
+                </button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <div class="language-option" onclick="changeLanguage('es', 'ES')">
+                        🇪🇸 Español
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('en', 'EN')">
+                        🇬🇧 English
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('ca', 'CA')">
+                        🏴 Català
+                    </div>
+                </div>
+            </div>
+            <a href="login.html" id="btn-login">Inicia sesión</a>
+            <a href="register.html" class="btn-register" id="btn-register">Registrarse</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1 id="hero-title">Conductores verificados y profesionales</h1>
+        <p id="hero-subtitle">En EasyTaxi Palma, la seguridad y calidad del servicio son nuestra prioridad. Todos nuestros conductores pasan por un riguroso proceso de selección y verificación para garantizar tu tranquilidad en cada viaje.</p>
+        
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">100%</span>
+                <span class="stat-label" id="stat-verified">Verificados</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">500+</span>
+                <span class="stat-label" id="stat-drivers">Conductores</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">4.8★</span>
+                <span class="stat-label" id="stat-rating">Valoración media</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="content">
+        <!-- Verification Section -->
+        <section class="section">
+            <h2 class="section-title" id="verification-title">Proceso de verificación riguroso</h2>
+            <p class="section-subtitle" id="verification-subtitle">Cada conductor debe cumplir con estrictos estándares de seguridad y profesionalidad antes de unirse a nuestra plataforma.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-identification-card"></i>
+                    </div>
+                    <h3 id="feature1-title">Documentación verificada</h3>
+                    <p id="feature1-text">Verificamos licencia de conducir, antecedentes penales, seguro del vehículo y toda la documentación legal requerida.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-car"></i>
+                    </div>
+                    <h3 id="feature2-title">Vehículos inspeccionados</h3>
+                    <p id="feature2-text">Todos los vehículos pasan por inspecciones técnicas regulares para garantizar condiciones óptimas de seguridad y comodidad.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-graduation-cap"></i>
+                    </div>
+                    <h3 id="feature3-title">Formación continua</h3>
+                    <p id="feature3-text">Nuestros conductores reciben formación en atención al cliente, uso de la aplicación y normativas de seguridad vial.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-star"></i>
+                    </div>
+                    <h3 id="feature4-title">Sistema de valoraciones</h3>
+                    <p id="feature4-text">Los usuarios pueden valorar su experiencia, lo que nos ayuda a mantener altos estándares de calidad en el servicio.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-shield-check"></i>
+                    </div>
+                    <h3 id="feature5-title">Seguro completo</h3>
+                    <p id="feature5-text">Todos los viajes están cubiertos por un seguro integral que protege tanto a pasajeros como a conductores.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-headset"></i>
+                    </div>
+                    <h3 id="feature6-title">Soporte 24/7</h3>
+                    <p id="feature6-text">Contamos con un equipo de soporte disponible las 24 horas para resolver cualquier incidencia durante el viaje.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Requirements Section -->
+        <section class="section">
+            <h2 class="section-title" id="requirements-title">Requisitos para ser conductor</h2>
+            <p class="section-subtitle" id="requirements-subtitle">Si estás interesado en unirte como conductor, estos son los requisitos básicos que debes cumplir.</p>
+            
+            <div class="requirements-list">
+                <div class="requirement-item">
+                    <div class="requirement-icon">
+                        <i class="ph ph-number-circle-one"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h4 id="req1-title">Licencia profesional</h4>
+                        <p id="req1-text">Licencia de taxi válida y en vigor con al menos 2 años de antigüedad.</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-item">
+                    <div class="requirement-icon">
+                        <i class="ph ph-number-circle-two"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h4 id="req2-title">Vehículo adecuado</h4>
+                        <p id="req2-text">Vehículo autorizado como taxi, con ITV en vigor y antigüedad menor a 10 años.</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-item">
+                    <div class="requirement-icon">
+                        <i class="ph ph-number-circle-three"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h4 id="req3-title">Seguro completo</h4>
+                        <p id="req3-text">Seguro de responsabilidad civil y de ocupantes actualizado y válido.</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-item">
+                    <div class="requirement-icon">
+                        <i class="ph ph-number-circle-four"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h4 id="req4-title">Antecedentes limpios</h4>
+                        <p id="req4-text">Certificado de antecedentes penales sin delitos graves en los últimos 5 años.</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-item">
+                    <div class="requirement-icon">
+                        <i class="ph ph-number-circle-five"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h4 id="req5-title">Dispositivo móvil</h4>
+                        <p id="req5-text">Smartphone con GPS, conexión a internet y compatible con la aplicación.</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-item">
+                    <div class="requirement-icon">
+                        <i class="ph ph-number-circle-six"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h4 id="req6-title">Disponibilidad horaria</h4>
+                        <p id="req6-text">Compromiso mínimo de disponibilidad para garantizar la calidad del servicio.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section class="section">
+            <h2 class="section-title" id="process-title">Proceso de incorporación</h2>
+            <p class="section-subtitle" id="process-subtitle">Un proceso simple y transparente para unirte a nuestro equipo de conductores profesionales.</p>
+            
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4 id="step1-title">Solicitud</h4>
+                    <p id="step1-text">Completa el formulario online con tus datos y documentación.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4 id="step2-title">Verificación</h4>
+                    <p id="step2-text">Revisamos tu documentación y realizamos las comprobaciones necesarias.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4 id="step3-title">Formación</h4>
+                    <p id="step3-text">Sesión de formación sobre el uso de la app y protocolos del servicio.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4 id="step4-title">Activación</h4>
+                    <p id="step4-text">Una vez aprobado, activa tu cuenta y empieza a aceptar viajes.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2 id="cta-title">¿Listo para unirte?</h2>
+            <p id="cta-text">Forma parte del equipo de conductores profesionales de EasyTaxi Palma y mejora tus ingresos en tu ciudad.</p>
+            <button class="cta-button" onclick="handleDriverSignup()" id="cta-button">Solicitar ser conductor</button>
+        </section>
+    </div>
+
+    <!-- Custom Modal -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">
+                <i class="ph ph-info"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Título</h3>
+            <p class="modal-message" id="modalMessage">Mensaje</p>
+            <div class="modal-buttons" id="modalButtons">
+                <!-- Buttons will be inserted dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Custom Modal Functions
+        function showCustomModal(config) {
+            const modal = document.getElementById('customModal');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+            const buttonsContainer = document.getElementById('modalButtons');
+
+            // Set icon
+            icon.innerHTML = config.icon || '<i class="ph ph-info"></i>';
+            
+            // Set title and message
+            title.textContent = config.title || '';
+            message.textContent = config.message || '';
+
+            // Clear and create buttons
+            buttonsContainer.innerHTML = '';
+            
+            if (config.buttons && config.buttons.length > 0) {
+                config.buttons.forEach(btn => {
+                    const button = document.createElement('button');
+                    button.className = `modal-btn ${btn.primary ? 'modal-btn-primary' : 'modal-btn-secondary'}`;
+                    button.textContent = btn.text;
+                    button.onclick = () => {
+                        hideCustomModal();
+                        if (btn.onClick) btn.onClick();
+                    };
+                    buttonsContainer.appendChild(button);
+                });
+            }
+
+            // Show modal
+            modal.classList.add('show');
+        }
+
+        function hideCustomModal() {
+            const modal = document.getElementById('customModal');
+            modal.classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('customModal').addEventListener('click', (e) => {
+            if (e.target.id === 'customModal') {
+                hideCustomModal();
+            }
+        });
+
+        // Translations
+        const translations = {
+            es: {
+                navDrivers: 'Conductores',
+                navHelp: 'Ayuda',
+                btnLogin: 'Inicia sesión',
+                btnRegister: 'Registrarse',
+                heroTitle: 'Conductores verificados y profesionales',
+                heroSubtitle: 'En EasyTaxi Palma, la seguridad y calidad del servicio son nuestra prioridad. Todos nuestros conductores pasan por un riguroso proceso de selección y verificación para garantizar tu tranquilidad en cada viaje.',
+                statVerified: 'Verificados',
+                statDrivers: 'Conductores',
+                statRating: 'Valoración media',
+                verificationTitle: 'Proceso de verificación riguroso',
+                verificationSubtitle: 'Cada conductor debe cumplir con estrictos estándares de seguridad y profesionalidad antes de unirse a nuestra plataforma.',
+                feature1Title: 'Documentación verificada',
+                feature1Text: 'Verificamos licencia de conducir, antecedentes penales, seguro del vehículo y toda la documentación legal requerida.',
+                feature2Title: 'Vehículos inspeccionados',
+                feature2Text: 'Todos los vehículos pasan por inspecciones técnicas regulares para garantizar condiciones óptimas de seguridad y comodidad.',
+                feature3Title: 'Formación continua',
+                feature3Text: 'Nuestros conductores reciben formación en atención al cliente, uso de la aplicación y normativas de seguridad vial.',
+                feature4Title: 'Sistema de valoraciones',
+                feature4Text: 'Los usuarios pueden valorar su experiencia, lo que nos ayuda a mantener altos estándares de calidad en el servicio.',
+                feature5Title: 'Seguro completo',
+                feature5Text: 'Todos los viajes están cubiertos por un seguro integral que protege tanto a pasajeros como a conductores.',
+                feature6Title: 'Soporte 24/7',
+                feature6Text: 'Contamos con un equipo de soporte disponible las 24 horas para resolver cualquier incidencia durante el viaje.',
+                requirementsTitle: 'Requisitos para ser conductor',
+                requirementsSubtitle: 'Si estás interesado en unirte como conductor, estos son los requisitos básicos que debes cumplir.',
+                req1Title: 'Licencia profesional',
+                req1Text: 'Licencia de taxi válida y en vigor con al menos 2 años de antigüedad.',
+                req2Title: 'Vehículo adecuado',
+                req2Text: 'Vehículo autorizado como taxi, con ITV en vigor y antigüedad menor a 10 años.',
+                req3Title: 'Seguro completo',
+                req3Text: 'Seguro de responsabilidad civil y de ocupantes actualizado y válido.',
+                req4Title: 'Antecedentes limpios',
+                req4Text: 'Certificado de antecedentes penales sin delitos graves en los últimos 5 años.',
+                req5Title: 'Dispositivo móvil',
+                req5Text: 'Smartphone con GPS, conexión a internet y compatible con la aplicación.',
+                req6Title: 'Disponibilidad horaria',
+                req6Text: 'Compromiso mínimo de disponibilidad para garantizar la calidad del servicio.',
+                processTitle: 'Proceso de incorporación',
+                processSubtitle: 'Un proceso simple y transparente para unirte a nuestro equipo de conductores profesionales.',
+                step1Title: 'Solicitud',
+                step1Text: 'Completa el formulario online con tus datos y documentación.',
+                step2Title: 'Verificación',
+                step2Text: 'Revisamos tu documentación y realizamos las comprobaciones necesarias.',
+                step3Title: 'Formación',
+                step3Text: 'Sesión de formación sobre el uso de la app y protocolos del servicio.',
+                step4Title: 'Activación',
+                step4Text: 'Una vez aprobado, activa tu cuenta y empieza a aceptar viajes.',
+                ctaTitle: '¿Listo para unirte?',
+                ctaText: 'Forma parte del equipo de conductores profesionales de EasyTaxi Palma y mejora tus ingresos en tu ciudad.',
+                ctaButton: 'Solicitar ser conductor',
+                comingSoonTitle: 'Próximamente',
+                comingSoonMessage: 'El formulario de solicitud para conductores estará disponible pronto. Mientras tanto, puedes contactarnos por email.',
+                comingSoonButton: 'Entendido'
+            },
+            en: {
+                navDrivers: 'Drivers',
+                navHelp: 'Help',
+                btnLogin: 'Sign In',
+                btnRegister: 'Register',
+                heroTitle: 'Verified and professional drivers',
+                heroSubtitle: 'At EasyTaxi Palma, safety and service quality are our priority. All our drivers undergo a rigorous selection and verification process to ensure your peace of mind on every trip.',
+                statVerified: 'Verified',
+                statDrivers: 'Drivers',
+                statRating: 'Average rating',
+                verificationTitle: 'Rigorous verification process',
+                verificationSubtitle: 'Every driver must meet strict safety and professionalism standards before joining our platform.',
+                feature1Title: 'Verified documentation',
+                feature1Text: 'We verify driver\'s license, criminal records, vehicle insurance and all required legal documentation.',
+                feature2Title: 'Inspected vehicles',
+                feature2Text: 'All vehicles undergo regular technical inspections to ensure optimal safety and comfort conditions.',
+                feature3Title: 'Continuous training',
+                feature3Text: 'Our drivers receive training in customer service, app usage, and road safety regulations.',
+                feature4Title: 'Rating system',
+                feature4Text: 'Users can rate their experience, which helps us maintain high quality standards in service.',
+                feature5Title: 'Full insurance',
+                feature5Text: 'All trips are covered by comprehensive insurance that protects both passengers and drivers.',
+                feature6Title: '24/7 Support',
+                feature6Text: 'We have a support team available 24 hours to resolve any incident during the trip.',
+                requirementsTitle: 'Requirements to be a driver',
+                requirementsSubtitle: 'If you are interested in joining as a driver, these are the basic requirements you must meet.',
+                req1Title: 'Professional license',
+                req1Text: 'Valid taxi license in force with at least 2 years of seniority.',
+                req2Title: 'Adequate vehicle',
+                req2Text: 'Vehicle authorized as taxi, with current MOT and less than 10 years old.',
+                req3Title: 'Full insurance',
+                req3Text: 'Updated and valid liability and occupant insurance.',
+                req4Title: 'Clean record',
+                req4Text: 'Criminal record certificate without serious crimes in the last 5 years.',
+                req5Title: 'Mobile device',
+                req5Text: 'Smartphone with GPS, internet connection and compatible with the app.',
+                req6Title: 'Time availability',
+                req6Text: 'Minimum availability commitment to guarantee service quality.',
+                processTitle: 'Onboarding process',
+                processSubtitle: 'A simple and transparent process to join our team of professional drivers.',
+                step1Title: 'Application',
+                step1Text: 'Complete the online form with your data and documentation.',
+                step2Title: 'Verification',
+                step2Text: 'We review your documentation and perform necessary checks.',
+                step3Title: 'Training',
+                step3Text: 'Training session on app usage and service protocols.',
+                step4Title: 'Activation',
+                step4Text: 'Once approved, activate your account and start accepting trips.',
+                ctaTitle: 'Ready to join?',
+                ctaText: 'Be part of the professional drivers team at EasyTaxi Palma and improve your income in your city.',
+                ctaButton: 'Apply to be a driver',
+                comingSoonTitle: 'Coming Soon',
+                comingSoonMessage: 'The driver application form will be available soon. In the meantime, you can contact us by email.',
+                comingSoonButton: 'OK'
+            },
+            ca: {
+                navDrivers: 'Conductors',
+                navHelp: 'Ajuda',
+                btnLogin: 'Inicia sessió',
+                btnRegister: 'Registra\'t',
+                heroTitle: 'Conductors verificats i professionals',
+                heroSubtitle: 'A EasyTaxi Palma, la seguretat i qualitat del servei són la nostra prioritat. Tots els nostres conductors passen per un rigorós procés de selecció i verificació per garantir la teva tranquil·litat en cada viatge.',
+                statVerified: 'Verificats',
+                statDrivers: 'Conductors',
+                statRating: 'Valoració mitjana',
+                verificationTitle: 'Procés de verificació rigorós',
+                verificationSubtitle: 'Cada conductor ha de complir amb estrictes estàndards de seguretat i professionalitat abans d\'unir-se a la nostra plataforma.',
+                feature1Title: 'Documentació verificada',
+                feature1Text: 'Verifiquem llicència de conduir, antecedents penals, assegurança del vehicle i tota la documentació legal requerida.',
+                feature2Title: 'Vehicles inspeccionats',
+                feature2Text: 'Tots els vehicles passen per inspeccions tècniques regulars per garantir condicions òptimes de seguretat i comoditat.',
+                feature3Title: 'Formació contínua',
+                feature3Text: 'Els nostres conductors reben formació en atenció al client, ús de l\'aplicació i normatives de seguretat viària.',
+                feature4Title: 'Sistema de valoracions',
+                feature4Text: 'Els usuaris poden valorar la seva experiència, el que ens ajuda a mantenir alts estàndards de qualitat en el servei.',
+                feature5Title: 'Assegurança completa',
+                feature5Text: 'Tots els viatges estan coberts per una assegurança integral que protegeix tant a passatgers com a conductors.',
+                feature6Title: 'Suport 24/7',
+                feature6Text: 'Comptem amb un equip de suport disponible les 24 hores per resoldre qualsevol incidència durant el viatge.',
+                requirementsTitle: 'Requisits per ser conductor',
+                requirementsSubtitle: 'Si estàs interessat en unir-te com a conductor, aquests són els requisits bàsics que has de complir.',
+                req1Title: 'Llicència professional',
+                req1Text: 'Llicència de taxi vàlida i en vigor amb almenys 2 anys d\'antiguitat.',
+                req2Title: 'Vehicle adequat',
+                req2Text: 'Vehicle autoritzat com a taxi, amb ITV en vigor i antiguitat menor a 10 anys.',
+                req3Title: 'Assegurança completa',
+                req3Text: 'Assegurança de responsabilitat civil i d\'ocupants actualitzada i vàlida.',
+                req4Title: 'Antecedents nets',
+                req4Text: 'Certificat d\'antecedents penals sense delictes greus en els últims 5 anys.',
+                req5Title: 'Dispositiu mòbil',
+                req5Text: 'Smartphone amb GPS, connexió a internet i compatible amb l\'aplicació.',
+                req6Title: 'Disponibilitat horària',
+                req6Text: 'Compromís mínim de disponibilitat per garantir la qualitat del servei.',
+                processTitle: 'Procés d\'incorporació',
+                processSubtitle: 'Un procés simple i transparent per unir-te al nostre equip de conductors professionals.',
+                step1Title: 'Sol·licitud',
+                step1Text: 'Completa el formulari online amb les teves dades i documentació.',
+                step2Title: 'Verificació',
+                step2Text: 'Revisem la teva documentació i realitzem les comprovacions necessàries.',
+                step3Title: 'Formació',
+                step3Text: 'Sessió de formació sobre l\'ús de la app i protocols del servei.',
+                step4Title: 'Activació',
+                step4Text: 'Una vegada aprovat, activa el teu compte i comença a acceptar viatges.',
+                ctaTitle: 'Llest per unir-te?',
+                ctaText: 'Forma part de l\'equip de conductors professionals d\'EasyTaxi Palma i millora els teus ingressos a la teva ciutat.',
+                ctaButton: 'Sol·licitar ser conductor',
+                comingSoonTitle: 'Pròximament',
+                comingSoonMessage: 'El formulari de sol·licitud per conductors estarà disponible aviat. Mentre tant, pots contactar-nos per email.',
+                comingSoonButton: 'Entès'
+            }
+        };
+
+        // Language functions
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('language-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function changeLanguage(langCode, langDisplay) {
+            localStorage.setItem('language', langCode);
+            document.getElementById('current-lang').textContent = langDisplay;
+            toggleLanguageDropdown();
+            
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            applyTranslations(langCode);
+        }
+
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations.es;
+            
+            // Nav
+            document.getElementById('nav-drivers').textContent = t.navDrivers;
+            document.getElementById('nav-help').textContent = t.navHelp;
+            
+            const btnLogin = document.getElementById('btn-login');
+            const btnRegister = document.getElementById('btn-register');
+            if (btnLogin) btnLogin.textContent = t.btnLogin;
+            if (btnRegister) btnRegister.textContent = t.btnRegister;
+            
+            // Hero
+            document.getElementById('hero-title').textContent = t.heroTitle;
+            document.getElementById('hero-subtitle').textContent = t.heroSubtitle;
+            document.getElementById('stat-verified').textContent = t.statVerified;
+            document.getElementById('stat-drivers').textContent = t.statDrivers;
+            document.getElementById('stat-rating').textContent = t.statRating;
+            
+            // Verification
+            document.getElementById('verification-title').textContent = t.verificationTitle;
+            document.getElementById('verification-subtitle').textContent = t.verificationSubtitle;
+            document.getElementById('feature1-title').textContent = t.feature1Title;
+            document.getElementById('feature1-text').textContent = t.feature1Text;
+            document.getElementById('feature2-title').textContent = t.feature2Title;
+            document.getElementById('feature2-text').textContent = t.feature2Text;
+            document.getElementById('feature3-title').textContent = t.feature3Title;
+            document.getElementById('feature3-text').textContent = t.feature3Text;
+            document.getElementById('feature4-title').textContent = t.feature4Title;
+            document.getElementById('feature4-text').textContent = t.feature4Text;
+            document.getElementById('feature5-title').textContent = t.feature5Title;
+            document.getElementById('feature5-text').textContent = t.feature5Text;
+            document.getElementById('feature6-title').textContent = t.feature6Title;
+            document.getElementById('feature6-text').textContent = t.feature6Text;
+            
+            // Requirements
+            document.getElementById('requirements-title').textContent = t.requirementsTitle;
+            document.getElementById('requirements-subtitle').textContent = t.requirementsSubtitle;
+            document.getElementById('req1-title').textContent = t.req1Title;
+            document.getElementById('req1-text').textContent = t.req1Text;
+            document.getElementById('req2-title').textContent = t.req2Title;
+            document.getElementById('req2-text').textContent = t.req2Text;
+            document.getElementById('req3-title').textContent = t.req3Title;
+            document.getElementById('req3-text').textContent = t.req3Text;
+            document.getElementById('req4-title').textContent = t.req4Title;
+            document.getElementById('req4-text').textContent = t.req4Text;
+            document.getElementById('req5-title').textContent = t.req5Title;
+            document.getElementById('req5-text').textContent = t.req5Text;
+            document.getElementById('req6-title').textContent = t.req6Title;
+            document.getElementById('req6-text').textContent = t.req6Text;
+            
+            // Process
+            document.getElementById('process-title').textContent = t.processTitle;
+            document.getElementById('process-subtitle').textContent = t.processSubtitle;
+            document.getElementById('step1-title').textContent = t.step1Title;
+            document.getElementById('step1-text').textContent = t.step1Text;
+            document.getElementById('step2-title').textContent = t.step2Title;
+            document.getElementById('step2-text').textContent = t.step2Text;
+            document.getElementById('step3-title').textContent = t.step3Title;
+            document.getElementById('step3-text').textContent = t.step3Text;
+            document.getElementById('step4-title').textContent = t.step4Title;
+            document.getElementById('step4-text').textContent = t.step4Text;
+            
+            // CTA
+            document.getElementById('cta-title').textContent = t.ctaTitle;
+            document.getElementById('cta-text').textContent = t.ctaText;
+            document.getElementById('cta-button').textContent = t.ctaButton;
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const selector = document.querySelector('.language-selector');
+            const dropdown = document.getElementById('language-dropdown');
+            if (selector && !selector.contains(e.target)) {
+                dropdown?.classList.remove('show');
+            }
+        });
+
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('language') || 'es';
+            const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
+            document.getElementById('current-lang').textContent = langMap[savedLang];
+            
+            const options = document.querySelectorAll('.language-option');
+            options.forEach((opt, index) => {
+                const langs = ['es', 'en', 'ca'];
+                if (langs[index] === savedLang) {
+                    opt.classList.add('active');
+                }
+            });
+            
+            applyTranslations(savedLang);
+            
+            const usuario = localStorage.getItem('usuario');
+            const navRight = document.getElementById('nav-right');
+            
+            if (usuario) {
+                try {
+                    const userObj = JSON.parse(usuario);
+                    const userName = userObj.nombre || 'Usuario';
+                    
+                    const t = translations[savedLang];
+                    navRight.innerHTML = `
+                        <div class="language-selector">
+                            <button class="language-btn" onclick="toggleLanguageDropdown()">
+                                <i class="ph ph-globe"></i>
+                                <span id="current-lang">${langMap[savedLang]}</span>
+                                <i class="ph ph-caret-down" style="font-size: 12px;"></i>
+                            </button>
+                            <div class="language-dropdown" id="language-dropdown">
+                                <div class="language-option ${savedLang === 'es' ? 'active' : ''}" onclick="changeLanguage('es', 'ES')">
+                                    🇪🇸 Español
+                                </div>
+                                <div class="language-option ${savedLang === 'en' ? 'active' : ''}" onclick="changeLanguage('en', 'EN')">
+                                    🇬🇧 English
+                                </div>
+                                <div class="language-option ${savedLang === 'ca' ? 'active' : ''}" onclick="changeLanguage('ca', 'CA')">
+                                    🏴 Català
+                                </div>
+                            </div>
+                        </div>
+                        <a href="perfil.html" style="display: flex; align-items: center; gap: 10px; color: black; font-weight: 500; text-decoration: none; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                            <i class="ph ph-user-circle" style="font-size: 20px;"></i>
+                            <span>${userName}</span>
+                        </a>
+                        <a href="#" onclick="cerrarSesion()" class="btn-logout">Cerrar sesión</a>
+                    `;
+                } catch (e) {
+                    console.error('Error parsing user data');
+                }
+            }
+        });
+
+        function handleDriverSignup() {
+            const lang = localStorage.getItem('language') || 'es';
+            const t = translations[lang];
+            
+            // Show custom modal
+            showCustomModal({
+                icon: '<i class="ph ph-clock"></i>',
+                title: t.comingSoonTitle,
+                message: t.comingSoonMessage,
+                buttons: [{ text: t.comingSoonButton, primary: true }]
+            });
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuario');
+            window.location.reload();
+        }
+    </script>
+
+</body>
+</html>
