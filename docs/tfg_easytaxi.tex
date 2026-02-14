@@ -1,0 +1,1211 @@
+\documentclass[12pt,a4paper]{article}
+
+% Paquetes necesarios
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tocloft}
+\usepackage{setspace}
+
+% Configuración de márgenes
+\geometry{
+    left=3cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+% Configuración de encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{EasyTaxi Palma}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Configuración de colores para código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Configuración de listings
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% Interlineado
+\onehalfspacing
+
+% Información del documento
+\title{\textbf{EasyTaxi Palma} \\ \large Aplicación web para la reserva y petición de taxis en Palma de Mallorca}
+\author{Sebastià Romaguera Camps}
+\date{Febrero 2026}
+
+\begin{document}
+
+% ============================================
+% PORTADA
+% ============================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge\bfseries EasyTaxi Palma\par}
+    \vspace{1cm}
+    {\Large Aplicación web para la reserva y petición de taxis en Palma de Mallorca\par}
+    \vspace{2cm}
+    
+    {\large\itshape Sebastià Romaguera Camps\par}
+    \vspace{1cm}
+    
+    {\large Proyecto Intermodular\par}
+    {\large Ciclo Formativo de Grado Superior\par}
+    {\large Desarrollo de Aplicaciones Web (IFC33X)\par}
+    \vspace{2cm}
+    
+    {\large Febrero 2026\par}
+    \vspace{1cm}
+    
+    {\normalsize Versión: UD1A - Primera versión funcional\par}
+    
+    \vfill
+    
+    {\small Este documento presenta el desarrollo del proyecto EasyTaxi Palma, una aplicación web moderna para la gestión y reserva de taxis en Palma de Mallorca, desarrollada como parte del Proyecto Intermodular del ciclo DAW.\par}
+    
+\end{titlepage}
+
+% ============================================
+% ÍNDICE
+% ============================================
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================
+% RESUMEN
+% ============================================
+\section*{Resumen}
+\addcontentsline{toc}{section}{Resumen}
+
+EasyTaxi Palma es una aplicación web diseñada para modernizar el sector del taxi en Palma de Mallorca mediante la digitalización del proceso de reserva y solicitud de taxis. El proyecto nace de la experiencia personal del autor trabajando como taxista, identificando las carencias tecnológicas del sector frente a plataformas modernas como Uber o Cabify.
+
+La aplicación implementa un sistema completo de registro y autenticación de usuarios, una interfaz intuitiva y responsive, y una arquitectura cliente-servidor robusta utilizando tecnologías modernas como Node.js, Express, MongoDB y JavaScript vanilla. El sistema garantiza la seguridad mediante encriptación de contraseñas con bcrypt y validación exhaustiva de datos tanto en frontend como en backend.
+
+El estado actual del proyecto (versión UD1A) incluye un sistema funcional de gestión de usuarios con registro, login, perfil personalizado y múltiples páginas informativas. Las próximas fases incorporarán geolocalización en tiempo real, sistema de reservas, cálculo de tarifas y mapas interactivos con Leaflet.
+
+\textbf{Palabras clave:} Aplicación web, taxi, Node.js, MongoDB, Express, JavaScript, geolocalización, sistema de reservas, API REST.
+
+\newpage
+
+% ============================================
+% 1. INTRODUCCIÓN Y CONTEXTO PERSONAL
+% ============================================
+\section{Introducción y contexto personal}
+
+He elegido este proyecto porque el verano pasado estuve trabajando como taxista en Palma de Mallorca durante cinco meses y pude ver de primera mano los problemas que tiene el sector. Muchos procesos siguen siendo muy tradicionales y eso hace que el servicio sea menos ágil y cómodo para los clientes.
+
+Con la llegada de las VTC (Vehículos de Transporte con Conductor), como Uber o Cabify, el taxi tradicional se ha quedado atrás en cuanto a tecnología, rapidez y facilidad de uso. Por eso considero necesario que el sector se modernice y ofrezca una alternativa digital que permita competir con esas empresas. 
+
+Mi idea es crear una aplicación web que permita reservar y solicitar taxis en Palma de forma sencilla, segura, rápida y con una geolocalización a tiempo real. Con los conocimientos que adquirí el año pasado en el ciclo de Desarrollo de Aplicaciones Web y todo lo que voy a aprender este año, creo que puedo aportar una solución real a este problema y demostrar mi progreso como desarrollador.
+
+\subsection{Problemática actual del sector}
+
+Durante mi experiencia como taxista, identifiqué varios problemas fundamentales:
+
+\begin{itemize}
+    \item \textbf{Falta de digitalización:} La mayoría de solicitudes se realizan mediante llamadas telefónicas a centralitas, un proceso lento y poco eficiente.
+    \item \textbf{Kilómetros en vacío:} Los taxistas recorren grandes distancias sin pasajeros buscando clientes, lo que incrementa costes y reduce rentabilidad.
+    \item \textbf{Desventaja competitiva:} Plataformas como Uber ofrecen una experiencia de usuario superior con seguimiento en tiempo real, estimación de precios y pago digital.
+    \item \textbf{Accesibilidad limitada:} Personas mayores o con movilidad reducida tienen dificultades para solicitar taxis de forma tradicional.
+    \item \textbf{Falta de transparencia:} Los usuarios no tienen visibilidad del tiempo de espera ni de la ubicación del taxi asignado.
+\end{itemize}
+
+\subsection{Motivación del proyecto}
+
+Este proyecto representa para mí la oportunidad de:
+
+\begin{enumerate}
+    \item Aportar una solución práctica a un problema real que conozco de primera mano.
+    \item Aplicar los conocimientos adquiridos en el ciclo formativo en un contexto profesional.
+    \item Desarrollar un proyecto completo desde cero, incluyendo análisis, diseño, implementación y documentación.
+    \item Demostrar mi evolución como desarrollador web full-stack.
+    \item Crear una base sólida que pueda evolucionar hacia un producto real en el futuro.
+\end{enumerate}
+
+\newpage
+
+% ============================================
+% 2. OBJETIVOS DEL PROYECTO
+% ============================================
+\section{Objetivos del proyecto}
+
+\subsection{Objetivo general}
+
+Desarrollar una aplicación web funcional que permita solicitar, reservar y gestionar taxis en Palma de Mallorca con geolocalización a tiempo real de manera rápida, segura y accesible.
+
+\subsection{Objetivos específicos}
+
+\begin{enumerate}
+    \item \textbf{Implementar un sistema de registro y autenticación de usuarios y conductores.}
+    \begin{itemize}
+        \item Registro con validación de datos (nombre, email, contraseña, teléfono).
+        \item Login con autenticación segura.
+        \item Gestión de sesiones de usuario.
+        \item Página de perfil personalizada.
+    \end{itemize}
+    
+    \item \textbf{Diseñar un mapa interactivo que muestre los taxis disponibles y permita hacer reservas en tiempo real.}
+    \begin{itemize}
+        \item Integración de Leaflet para visualización de mapas.
+        \item Geolocalización del usuario.
+        \item Visualización de taxis cercanos en el mapa.
+        \item Cálculo de rutas óptimas.
+    \end{itemize}
+    
+    \item \textbf{Crear un sistema de gestión de reservas con confirmación y estado del servicio.}
+    \begin{itemize}
+        \item Estados: pendiente, confirmado, en camino, completado, cancelado.
+        \item Notificaciones en tiempo real del estado del servicio.
+        \item Historial de reservas del usuario.
+        \item Sistema de valoraciones y comentarios.
+    \end{itemize}
+    
+    \item \textbf{Garantizar la seguridad y protección de datos personales.}
+    \begin{itemize}
+        \item Encriptación de contraseñas con bcrypt.
+        \item Implementación de tokens JWT para autenticación.
+        \item Validación exhaustiva de datos en cliente y servidor.
+        \item Cumplimiento de normativas de protección de datos.
+    \end{itemize}
+    
+    \item \textbf{Diseñar una interfaz accesible e intuitiva.}
+    \begin{itemize}
+        \item Diseño responsive adaptable a móviles, tablets y escritorio.
+        \item Interfaz multiidioma (español, inglés, catalán).
+        \item Cumplimiento de estándares de accesibilidad web.
+        \item Sistema de mensajes modales personalizados.
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+
+% ============================================
+% 3. TECNOLOGÍAS UTILIZADAS
+% ============================================
+\section{Tecnologías utilizadas}
+
+La elección del stack tecnológico se ha realizado considerando criterios de eficiencia, escalabilidad, facilidad de desarrollo y experiencia personal adquirida durante la formación y prácticas profesionales.
+
+\subsection{Backend}
+
+\subsubsection{Node.js}
+
+Node.js es el entorno de ejecución principal del backend. He elegido Node.js por varias razones:
+
+\begin{itemize}
+    \item Es el lenguaje que he aprendido y utilizado en la empresa durante mis prácticas.
+    \item Permite usar JavaScript tanto en frontend como en backend, manteniendo consistencia.
+    \item Gran ecosistema de paquetes mediante npm.
+    \item Excelente rendimiento para aplicaciones en tiempo real.
+    \item Amplia comunidad y documentación.
+\end{itemize}
+
+\subsubsection{Express.js}
+
+Framework web minimalista para Node.js que facilita la creación de APIs REST. Proporciona:
+
+\begin{itemize}
+    \item Sistema de routing robusto y flexible.
+    \item Middleware para procesamiento de peticiones.
+    \item Manejo simplificado de HTTP requests y responses.
+    \item Fácil integración con otros módulos.
+\end{itemize}
+
+\subsubsection{MongoDB + Mongoose}
+
+MongoDB es la base de datos NoSQL elegida por:
+
+\begin{itemize}
+    \item Flexibilidad de esquema, ideal para desarrollo ágil.
+    \item Excelente rendimiento con grandes volúmenes de datos.
+    \item Fácil escalabilidad horizontal.
+    \item Licencia open source (Community Edition).
+    \item Mongoose proporciona ODM (Object Document Mapping) con validación y tipado.
+\end{itemize}
+
+\subsubsection{Librerías de seguridad}
+
+\begin{itemize}
+    \item \textbf{bcryptjs:} Encriptación de contraseñas mediante algoritmo de hashing robusto.
+    \item \textbf{cors:} Gestión de Cross-Origin Resource Sharing para comunicación segura cliente-servidor.
+    \item \textbf{dotenv:} Gestión de variables de entorno para configuraciones sensibles.
+\end{itemize}
+
+\subsection{Frontend}
+
+\subsubsection{HTML5, CSS3 y JavaScript ES6+}
+
+El frontend está desarrollado con tecnologías web estándar:
+
+\begin{itemize}
+    \item \textbf{HTML5:} Estructura semántica y accesible.
+    \item \textbf{CSS3:} Diseño responsive con flexbox, grid y media queries.
+    \item \textbf{JavaScript ES6+:} Lógica de aplicación con características modernas (arrow functions, async/await, destructuring).
+\end{itemize}
+
+\subsubsection{Phosphor Icons}
+
+Librería de iconos moderna y completa que proporciona más de 6,000 iconos consistentes y personalizables.
+
+\subsubsection{Fetch API}
+
+API nativa de JavaScript para realizar peticiones HTTP asíncronas al backend, reemplazando librerías externas como Axios.
+
+\subsection{Herramientas de desarrollo}
+
+\begin{itemize}
+    \item \textbf{Git/GitHub:} Control de versiones y repositorio remoto.
+    \item \textbf{VS Code:} Editor de código con extensiones para desarrollo web.
+    \item \textbf{Nodemon:} Recarga automática del servidor durante el desarrollo.
+    \item \textbf{Docker:} Contenedorización de MongoDB para facilitar el despliegue.
+    \item \textbf{Trello:} Gestión de tareas y metodología ágil.
+\end{itemize}
+
+\subsection{Tecnologías futuras planificadas}
+
+\begin{itemize}
+    \item \textbf{JSON Web Tokens (JWT):} Autenticación stateless y segura.
+    \item \textbf{Leaflet:} Librería de mapas interactivos open source.
+    \item \textbf{OpenStreetMap:} Proveedor de datos cartográficos gratuito.
+    \item \textbf{Socket.io:} Comunicación en tiempo real entre cliente y servidor.
+\end{itemize}
+
+\newpage
+
+% ============================================
+% 4. ARQUITECTURA Y DISEÑO DEL SISTEMA
+% ============================================
+\section{Arquitectura y diseño del sistema}
+
+\subsection{Arquitectura general}
+
+EasyTaxi Palma sigue una arquitectura \textbf{cliente-servidor de tres capas}:
+
+\begin{enumerate}
+    \item \textbf{Capa de presentación (Frontend):} Interfaz web SPA (Single Page Application).
+    \item \textbf{Capa de lógica de negocio (Backend):} API REST con Express.
+    \item \textbf{Capa de datos (Base de datos):} MongoDB con Mongoose ODM.
+\end{enumerate}
+
+\begin{verbatim}
+┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
+│                 │  HTTP   │                 │  CRUD   │                 │
+│    Frontend     │◄───────►│   Backend API   │◄───────►│    MongoDB      │
+│  (HTML/CSS/JS)  │  JSON   │  (Node/Express) │         │                 │
+│                 │         │                 │         │                 │
+└─────────────────┘         └─────────────────┘         └─────────────────┘
+     Cliente                      Servidor                 Base de datos
+\end{verbatim}
+
+\subsection{Estructura de directorios}
+
+La estructura del proyecto está organizada de forma modular:
+
+\begin{lstlisting}[language=bash, caption=Estructura del proyecto]
+Proyecto-Intermodular/
+├── backend/
+│   ├── node_modules/
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── database.js
+│   │   ├── controllers/
+│   │   │   └── authController.js
+│   │   ├── models/
+│   │   │   └── Usuario.js
+│   │   └── routes/
+│   │       └── authRoutes.js
+│   ├── .env
+│   ├── package.json
+│   └── server.js
+├── frontend/
+│   ├── assets/
+│   │   ├── css/
+│   │   │   └── styles.css
+│   │   ├── images/
+│   │   │   └── EasyTaxiImagen.png
+│   │   └── js/
+│   │       └── auth.js
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   ├── perfil.html
+│   ├── conductores.html
+│   └── ayuda.html
+├── docs/
+│   ├── tecnica.md
+│   └── tfg_easytaxi.tex
+├── docker-compose.yml
+└── README.md
+\end{lstlisting}
+
+\subsection{Modelo de datos}
+
+El modelo de datos actual incluye la entidad \texttt{Usuario}:
+
+\begin{lstlisting}[language=JavaScript, caption=Modelo Usuario (Mongoose)]
+const usuarioSchema = new mongoose.Schema({
+    nombre: {
+        type: String,
+        required: [true, 'El nombre es obligatorio'],
+        trim: true
+    },
+    email: {
+        type: String,
+        required: [true, 'El email es obligatorio'],
+        unique: true,
+        lowercase: true,
+        trim: true
+    },
+    password: {
+        type: String,
+        required: [true, 'La contrasena es obligatoria'],
+        minlength: 6
+    },
+    telefono: {
+        type: String,
+        required: [true, 'El telefono es obligatorio']
+    },
+    fechaRegistro: {
+        type: Date,
+        default: Date.now
+    }
+});
+\end{lstlisting}
+
+\subsection{API REST - Endpoints}
+
+La API implementada actualmente incluye:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Método} & \textbf{Endpoint} & \textbf{Descripción} \\
+\hline
+POST & /api/auth/register & Registro de nuevo usuario \\
+POST & /api/auth/login & Autenticación de usuario \\
+GET & / & Información de la API \\
+\hline
+\end{tabular}
+\caption{Endpoints de la API REST}
+\end{table}
+
+\subsection{Flujo de autenticación}
+
+\begin{enumerate}
+    \item El usuario completa el formulario de registro/login.
+    \item JavaScript valida los datos en el cliente.
+    \item Se envía petición POST al backend mediante Fetch API.
+    \item El backend valida los datos nuevamente.
+    \item Para registro: se encripta la contraseña con bcrypt y se guarda en MongoDB.
+    \item Para login: se compara la contraseña hasheada.
+    \item Si es exitoso, se devuelve información del usuario (sin contraseña).
+    \item El frontend almacena los datos en localStorage.
+    \item Se actualiza la interfaz mostrando información personalizada.
+\end{enumerate}
+
+\newpage
+
+% ============================================
+% 5. DESARROLLO E IMPLEMENTACIÓN
+% ============================================
+\section{Desarrollo e implementación}
+
+\subsection{Estado actual del proyecto (Versión UD1A)}
+
+El proyecto se encuentra en su primera versión funcional con las siguientes características implementadas:
+
+\subsubsection{Sistema de autenticación completo}
+
+\begin{itemize}
+    \item \textbf{Registro de usuarios:}
+    \begin{itemize}
+        \item Formulario con validación en tiempo real.
+        \item Campos: nombre, email, teléfono, contraseña, confirmación de contraseña.
+        \item Mensajes de error específicos y traducidos.
+        \item Redirección automática tras registro exitoso.
+    \end{itemize}
+    
+    \item \textbf{Login de usuarios:}
+    \begin{itemize}
+        \item Autenticación mediante email y contraseña.
+        \item Validación de credenciales.
+        \item Gestión de sesión con localStorage.
+        \item Redirección a página principal.
+    \end{itemize}
+    
+    \item \textbf{Seguridad implementada:}
+    \begin{itemize}
+        \item Encriptación de contraseñas con bcrypt (10 rounds de salt).
+        \item Validación exhaustiva en frontend y backend.
+        \item Protección contra inyección de código.
+        \item Manejo de errores robusto.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Interfaz de usuario}
+
+\begin{itemize}
+    \item \textbf{Página principal (index.html):}
+    \begin{itemize}
+        \item Hero section con formulario de solicitud de taxi.
+        \item Campos de origen y destino.
+        \item Botón de ubicación actual.
+        \item Sugerencias de ubicaciones populares de Palma.
+        \item Adaptación según estado de sesión del usuario.
+    \end{itemize}
+    
+    \item \textbf{Página de perfil (perfil.html):}
+    \begin{itemize}
+        \item Información personal del usuario.
+        \item Sistema de insignias y estadísticas.
+        \item Historial de viajes (preparado para implementación).
+        \item Configuración de cuenta.
+    \end{itemize}
+    
+    \item \textbf{Página de conductores (conductores.html):}
+    \begin{itemize}
+        \item Información sobre el proceso de verificación.
+        \item Requisitos para ser conductor.
+        \item Proceso de incorporación en 4 pasos.
+        \item Estadísticas del servicio (100\% verificados, 500+ conductores, 4.8★).
+        \item Formulario CTA para solicitar ser conductor.
+    \end{itemize}
+    
+    \item \textbf{Página de ayuda (ayuda.html):}
+    \begin{itemize}
+        \item Sección de preguntas frecuentes (FAQ) con 8 preguntas.
+        \item Información de contacto múltiple (teléfono, email, WhatsApp).
+        \item Horarios de atención.
+        \item Enlaces a redes sociales.
+        \item Barra de búsqueda (preparada para implementación).
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Características de diseño}
+
+\begin{itemize}
+    \item \textbf{Diseño responsive:}
+    \begin{itemize}
+        \item Adaptación automática a móviles, tablets y escritorio.
+        \item Media queries para diferentes tamaños de pantalla.
+        \item Menú de navegación adaptativo.
+    \end{itemize}
+    
+    \item \textbf{Sistema multiidioma:}
+    \begin{itemize}
+        \item Soporte para español, inglés y catalán.
+        \item Selector de idioma en navbar.
+        \item Persistencia de preferencia en localStorage.
+        \item Traducción completa de toda la interfaz.
+    \end{itemize}
+    
+    \item \textbf{Modales personalizados:}
+    \begin{itemize}
+        \item Sistema de modales custom reemplazando alert() nativo.
+        \item Diseño coherente con la identidad visual de la app.
+        \item Animaciones suaves de entrada/salida.
+        \item Botones personalizables (primarios y secundarios).
+    \end{itemize}
+    
+    \item \textbf{Paleta de colores corporativa:}
+    \begin{itemize}
+        \item Color primario: \#FDB913 (amarillo taxi característico).
+        \item Gradientes: \#FDB913 a \#FFA500.
+        \item Contraste alto para legibilidad.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Backend implementado}
+
+\subsubsection{Servidor Express}
+
+\begin{lstlisting}[language=JavaScript, caption=Configuración del servidor]
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const connectDB = require('./src/config/database');
+const authRoutes = require('./src/routes/authRoutes');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Conectar a la base de datos
+connectDB();
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Rutas
+app.use('/api/auth', authRoutes);
+
+// Ruta de prueba
+app.get('/', (req, res) => {
+    res.json({
+        mensaje: 'EasyTaxi Palma API',
+        version: '1.0.0',
+        estado: 'Activo'
+    });
+});
+
+// Inicio del servidor
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en puerto ${PORT}`);
+});
+\end{lstlisting}
+
+\subsubsection{Controlador de autenticación}
+
+El controlador \texttt{authController.js} implementa:
+
+\begin{itemize}
+    \item Registro de usuarios con validación completa.
+    \item Verificación de emails duplicados.
+    \item Encriptación de contraseñas.
+    \item Login con comparación de hashes.
+    \item Manejo de errores específicos.
+\end{itemize}
+
+\subsection{Base de datos}
+
+MongoDB se ejecuta mediante Docker Compose:
+
+\begin{lstlisting}[language=yaml, caption=docker-compose.yml]
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: easytaxi-mongodb
+    restart: always
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_DATABASE: easytaxi
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
+\end{lstlisting}
+
+\subsection{Sistema de ubicaciones}
+
+Actualmente implementado con base de datos local de JavaScript que incluye:
+
+\begin{itemize}
+    \item Aeropuerto y transportes principales.
+    \item Hoteles de 5 y 4 estrellas.
+    \item Centros comerciales.
+    \item Zonas turísticas (Catedral, Bellver, Paseo Marítimo).
+    \item Playas principales.
+    \item Hospitales y centros de salud.
+    \item Puntos de interés cultural.
+\end{itemize}
+
+Total: más de 100 ubicaciones preprogramadas con información de nombre, dirección, icono y categoría.
+
+\newpage
+
+% ============================================
+% 6. IMPACTO Y ASPECTOS ÉTICOS
+% ============================================
+\section{Impacto y aspectos éticos}
+
+\subsection{Accesibilidad}
+
+La aplicación se ha creado cumpliendo con buenas prácticas de accesibilidad web (WCAG 2.1):
+
+\begin{itemize}
+    \item \textbf{Etiquetas ARIA:} Implementación de roles, states y properties para tecnologías asistivas.
+    \item \textbf{Contraste de colores:} Ratio mínimo de 4.5:1 entre texto y fondo.
+    \item \textbf{Diseño responsive:} Adaptación completa a diferentes tamaños de pantalla y dispositivos.
+    \item \textbf{Navegación con teclado:} Todos los elementos interactivos son accesibles mediante Tab.
+    \item \textbf{Texto legible:} Tipografía clara (Segoe UI) con tamaños adecuados.
+    \item \textbf{Iconos con significado:} Uso de Phosphor Icons con labels descriptivos.
+    \item \textbf{Formularios accesibles:} Labels asociados correctamente, mensajes de error claros.
+\end{itemize}
+
+De este modo, se asegura que cualquier individuo, incluso quienes presenten alguna limitación visual o motriz, pueda emplearla sin dificultades.
+
+\subsection{Usabilidad}
+
+EasyTaxi tiene una interfaz limpia e intuitiva siguiendo principios de UX/UI:
+
+\begin{itemize}
+    \item \textbf{Simplicidad:} Procesos de registro y solicitud en pocos pasos.
+    \item \textbf{Feedback inmediato:} Mensajes claros de éxito, error y validación.
+    \item \textbf{Consistencia:} Patrones de diseño coherentes en todas las páginas.
+    \item \textbf{Prevención de errores:} Validación en tiempo real de formularios.
+    \item \textbf{Affordance:} Elementos claramente identificables como interactivos.
+    \item \textbf{Multiidioma:} Adaptación al idioma preferido del usuario.
+\end{itemize}
+
+Se prioriza la experiencia del usuario por encima del aspecto visual complejo, buscando que personas de todas las edades puedan usar la aplicación, especialmente personas mayores que tradicionalmente tienen más dificultades con la tecnología.
+
+\subsection{Protección de datos (RGPD)}
+
+Se tratarán datos personales como nombre, email, ubicación y contraseñas. Para protegerlos se aplican medidas técnicas y organizativas:
+
+\subsubsection{Medidas técnicas implementadas}
+
+\begin{enumerate}
+    \item \textbf{Cifrado de contraseñas:}
+    \begin{itemize}
+        \item Uso de bcrypt con 10 rounds de salt.
+        \item Las contraseñas nunca se almacenan en texto plano.
+        \item Las contraseñas nunca se devuelven en respuestas de la API.
+    \end{itemize}
+    
+    \item \textbf{Validación exhaustiva:}
+    \begin{itemize}
+        \item Validación en cliente (JavaScript).
+        \item Validación en servidor (Mongoose + Express).
+        \item Sanitización de inputs para prevenir inyección.
+    \end{itemize}
+    
+    \item \textbf{Conexión segura:}
+    \begin{itemize}
+        \item HTTPS en producción (planificado).
+        \item CORS correctamente configurado.
+    \end{itemize}
+    
+    \item \textbf{Gestión de sesiones:}
+    \begin{itemize}
+        \item Actualmente: localStorage (desarrollo).
+        \item Futuro: JWT con expiración y refresh tokens.
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Medidas organizativas planificadas}
+
+\begin{itemize}
+    \item Política de privacidad accesible y clara.
+    \item Consentimiento explícito para tratamiento de datos.
+    \item Derecho al olvido (eliminación de cuenta).
+    \item Portabilidad de datos.
+    \item Minimización de datos: solo se solicitan datos necesarios.
+    \item Transparencia en el uso de datos de ubicación.
+\end{itemize}
+
+\textbf{Ningún dato se compartirá con terceros sin consentimiento explícito del usuario.}
+
+\subsection{Licencias de software}
+
+Todo el software utilizado cumple con licencias de código abierto o gratuitas:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Tecnología} & \textbf{Licencia} \\
+\hline
+Node.js & MIT License \\
+Express.js & MIT License \\
+MongoDB (Community Edition) & SSPL (Server Side Public License) \\
+Mongoose & MIT License \\
+bcryptjs & MIT License \\
+Phosphor Icons & MIT License \\
+Leaflet & BSD 2-Clause \\
+OpenStreetMap & ODbL (Open Database License) \\
+\hline
+\end{tabular}
+\caption{Licencias de software utilizadas}
+\end{table}
+
+\subsection{Diversidad e inclusión}
+
+EasyTaxi se centra principalmente en crear una interfaz muy sencilla y visible para incluir a las personas mayores que se quedan sin servicio por no poder usar tecnologías complejas o levantar la mano en la calle para detener un taxi.
+
+\begin{itemize}
+    \item \textbf{Interfaz simplificada:} Procesos claros sin pasos innecesarios.
+    \item \textbf{Textos grandes y legibles:} Evitando fuentes pequeñas o difíciles de leer.
+    \item \textbf{Iconos descriptivos:} Complementando el texto con iconos claros.
+    \item \textbf{Colores de alto contraste:} Facilitando la lectura.
+    \item \textbf{Botones grandes:} Fáciles de pulsar en dispositivos táctiles.
+\end{itemize}
+
+Además, uno de los propósitos de la app es evitar que los taxistas hagan tantos kilómetros en vacío y puedan recoger a la persona más cercana para evitar gastos innecesarios y reducir el impacto medioambiental.
+
+\subsection{Impacto medioambiental}
+
+\begin{itemize}
+    \item \textbf{Reducción de kilómetros en vacío:} Asignación inteligente del taxi más cercano.
+    \item \textbf{Optimización de rutas:} Menor consumo de combustible.
+    \item \textbf{Digitalización del servicio:} Reducción de llamadas telefónicas y desplazamientos innecesarios.
+    \item \textbf{Servidor eficiente:} Node.js tiene bajo consumo de recursos comparado con otras tecnologías.
+\end{itemize}
+
+\newpage
+
+% ============================================
+% 7. METODOLOGÍA DE DESARROLLO
+% ============================================
+\section{Metodología de desarrollo}
+
+\subsection{Metodología ágil con Trello}
+
+El desarrollo del proyecto sigue principios de metodología ágil utilizando Trello para la gestión de tareas:
+
+\begin{itemize}
+    \item \textbf{Sprint planning:} Definición de objetivos para cada iteración (UD1A, UD1B, etc.).
+    \item \textbf{User stories:} Definición de funcionalidades desde la perspectiva del usuario.
+    \item \textbf{Tablero Kanban:} Columnas: Backlog, To Do, In Progress, Testing, Done.
+    \item \textbf{Revisión continua:} Evaluación de cada funcionalidad implementada.
+\end{itemize}
+
+\subsection{Control de versiones con Git}
+
+\begin{itemize}
+    \item Uso de Git para control de versiones local.
+    \item Repositorio remoto en GitHub.
+    \item Commits descriptivos siguiendo convenciones:
+    \begin{itemize}
+        \item \texttt{feat:} nueva funcionalidad.
+        \item \texttt{fix:} corrección de errores.
+        \item \texttt{docs:} cambios en documentación.
+        \item \texttt{style:} cambios de formato/estilos.
+        \item \texttt{refactor:} refactorización de código.
+    \end{itemize}
+    \item Branches para diferentes funcionalidades (planificado).
+\end{itemize}
+
+\subsection{Testing y validación}
+
+\begin{itemize}
+    \item \textbf{Testing manual:} Pruebas exhaustivas de cada funcionalidad.
+    \item \textbf{Testing en múltiples navegadores:} Chrome, Firefox, Safari, Edge.
+    \item \textbf{Testing responsive:} Dispositivos móviles, tablets y escritorio.
+    \item \textbf{Validación de código:} HTML Validator, CSS Validator.
+    \item \textbf{Testing futuro:} Jest para backend, Cypress para e2e.
+\end{itemize}
+
+\newpage
+
+% ============================================
+% 8. PRÓXIMOS PASOS Y TRABAJO FUTURO
+% ============================================
+\section{Próximos pasos y trabajo futuro}
+
+\subsection{Fase UD1B - Geolocalización y mapas}
+
+\begin{enumerate}
+    \item \textbf{Implementación de Leaflet:}
+    \begin{itemize}
+        \item Integración de la librería de mapas.
+        \item Configuración de OpenStreetMap como proveedor.
+        \item Personalización de marcadores y estilos.
+    \end{itemize}
+    
+    \item \textbf{Geolocalización del usuario:}
+    \begin{itemize}
+        \item Uso de Geolocation API.
+        \item Solicitud de permisos.
+        \item Detección automática de ubicación.
+    \end{itemize}
+    
+    \item \textbf{Visualización de taxis:}
+    \begin{itemize}
+        \item Marcadores de taxis disponibles en el mapa.
+        \item Actualización en tiempo real de posiciones.
+        \item Cálculo de distancias.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Fase UD2 - Sistema de reservas}
+
+\begin{enumerate}
+    \item \textbf{Modelo de datos Reserva:}
+    \begin{itemize}
+        \item Campos: usuario, conductor, origen, destino, fecha, estado, precio.
+        \item Relaciones con Usuario y Conductor.
+    \end{itemize}
+    
+    \item \textbf{Flujo de reserva:}
+    \begin{itemize}
+        \item Selección de origen y destino.
+        \item Cálculo de precio estimado.
+        \item Asignación de taxi más cercano.
+        \item Confirmación de reserva.
+        \item Notificaciones en tiempo real.
+    \end{itemize}
+    
+    \item \textbf{Estados de reserva:}
+    \begin{itemize}
+        \item Pendiente: esperando confirmación.
+        \item Confirmado: taxi asignado.
+        \item En camino: taxi dirigiéndose al punto de recogida.
+        \item En curso: pasajero en el vehículo.
+        \item Completado: viaje finalizado.
+        \item Cancelado: reserva cancelada.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Fase UD3 - Funcionalidades avanzadas}
+
+\begin{enumerate}
+    \item \textbf{Sistema de valoraciones:}
+    \begin{itemize}
+        \item Valoración del servicio (1-5 estrellas).
+        \item Comentarios opcionales.
+        \item Historial de valoraciones por conductor.
+    \end{itemize}
+    
+    \item \textbf{Pagos integrados:}
+    \begin{itemize}
+        \item Integración de pasarela de pago (Stripe).
+        \item Pago con tarjeta en la app.
+        \item Historial de pagos.
+        \item Facturación automática.
+    \end{itemize}
+    
+    \item \textbf{Notificaciones push:}
+    \begin{itemize}
+        \item Confirmación de reserva.
+        \item Taxi en camino.
+        \item Llegada del taxi.
+        \item Finalización del servicio.
+    \end{itemize}
+    
+    \item \textbf{Chat en tiempo real:}
+    \begin{itemize}
+        \item Conversación entre usuario y conductor.
+        \item Socket.io para comunicación bidireccional.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Mejoras de seguridad}
+
+\begin{itemize}
+    \item Implementación completa de JWT.
+    \item Autenticación de dos factores (2FA).
+    \item Rate limiting en la API.
+    \item Logs de auditoría.
+    \item Certificado SSL en producción.
+\end{itemize}
+
+\subsection{Optimizaciones}
+
+\begin{itemize}
+    \item Caché de ubicaciones populares.
+    \item Lazy loading de imágenes.
+    \item Minificación de CSS y JavaScript.
+    \item Service Workers para PWA.
+    \item Optimización de consultas a MongoDB.
+\end{itemize}
+
+\subsection{Expansión futura}
+
+\begin{itemize}
+    \item Aplicación móvil nativa (React Native).
+    \item Panel de administración para gestión de conductores.
+    \item Sistema de bonos y promociones.
+    \item Integración con servicios de transporte público.
+    \item Expansión a otras ciudades de Mallorca.
+\end{itemize}
+
+\newpage
+
+% ============================================
+% 9. CONCLUSIONES
+% ============================================
+\section{Conclusiones}
+
+\subsection{Logros alcanzados}
+
+El desarrollo de EasyTaxi Palma en su fase UD1A ha permitido alcanzar los siguientes logros:
+
+\begin{enumerate}
+    \item \textbf{Sistema funcional de autenticación:} Implementación completa de registro y login con las mejores prácticas de seguridad.
+    
+    \item \textbf{Arquitectura escalable:} Diseño modular que facilita la incorporación de nuevas funcionalidades.
+    
+    \item \textbf{Interfaz profesional:} Diseño moderno, responsive y multiidioma que proporciona una excelente experiencia de usuario.
+    
+    \item \textbf{Base sólida:} Estructura del proyecto bien organizada que permite el crecimiento ordenado del sistema.
+    
+    \item \textbf{Cumplimiento de requisitos éticos:} Implementación de medidas de accesibilidad, usabilidad y protección de datos.
+\end{enumerate}
+
+\subsection{Competencias adquiridas}
+
+Durante el desarrollo del proyecto he desarrollado y consolidado competencias clave:
+
+\begin{itemize}
+    \item \textbf{Desarrollo full-stack:} Capacidad de trabajar tanto en frontend como en backend.
+    \item \textbf{Diseño de APIs REST:} Arquitectura y implementación de endpoints eficientes.
+    \item \textbf{Seguridad web:} Implementación de medidas de protección de datos y contraseñas.
+    \item \textbf{Bases de datos NoSQL:} Diseño de esquemas y consultas con MongoDB.
+    \item \textbf{UX/UI Design:} Creación de interfaces intuitivas y accesibles.
+    \item \textbf{Control de versiones:} Uso profesional de Git y GitHub.
+    \item \textbf{Documentación técnica:} Creación de documentación clara y completa.
+    \item \textbf{Metodología ágil:} Gestión de proyecto mediante iteraciones y sprints.
+\end{itemize}
+
+\subsection{Retos superados}
+
+\begin{itemize}
+    \item \textbf{Validación completa:} Implementar validación robusta tanto en cliente como en servidor.
+    \item \textbf{Sistema multiidioma:} Diseñar una solución escalable para internacionalización.
+    \item \textbf{Modales personalizados:} Reemplazar elementos nativos del navegador manteniendo funcionalidad.
+    \item \textbf{Responsive design:} Adaptar la interfaz a múltiples tamaños de pantalla sin perder usabilidad.
+    \item \textbf{Gestión de estado:} Sincronizar el estado de sesión entre diferentes páginas.
+\end{itemize}
+
+\subsection{Reflexión personal}
+
+Este proyecto representa mucho más que un trabajo académico para mí. Es la materialización de una necesidad real que identifiqué durante mi experiencia laboral como taxista. He podido aplicar conocimientos técnicos para aportar una solución a un sector que necesita urgentemente modernizarse.
+
+El desarrollo ha sido constantemente desafiante, obligándome a investigar, aprender nuevas tecnologías y resolver problemas complejos. Cada funcionalidad implementada me ha aportado aprendizaje valioso que sé que aplicaré en mi futura carrera profesional.
+
+Estoy satisfecho con los resultados obtenidos hasta ahora, y motivado para continuar desarrollando las próximas fases del proyecto. EasyTaxi Palma tiene potencial para convertirse en una aplicación real que pueda ayudar tanto a taxistas como a usuarios de Palma de Mallorca.
+
+\subsection{Viabilidad del proyecto}
+
+EasyTaxi Palma es un proyecto técnicamente viable y necesario:
+
+\begin{itemize}
+    \item \textbf{Necesidad real del mercado:} Existe demanda de soluciones digitales en el sector del taxi.
+    \item \textbf{Tecnologías maduras:} Stack tecnológico probado y estable.
+    \item \textbf{Escalabilidad:} Arquitectura preparada para crecer.
+    \item \textbf{Coste reducido:} Uso de tecnologías open source minimiza costes.
+    \item \textbf{Base funcional:} El proyecto ya tiene una base sólida sobre la que construir.
+\end{itemize}
+
+Con las próximas fases de desarrollo completadas, el proyecto podría evolucionar hacia un MVP (Minimum Viable Product) que podría presentarse a asociaciones de taxistas y realizar pruebas piloto reales.
+
+\newpage
+
+% ============================================
+% 10. BIBLIOGRAFÍA Y REFERENCIAS
+% ============================================
+\section{Bibliografía y referencias}
+
+\subsection{Documentación oficial}
+
+\begin{enumerate}
+    \item Node.js Documentation. (2026). \textit{Node.js Official Documentation}. Recuperado de \url{https://nodejs.org/docs/}
+    
+    \item Express.js Guide. (2026). \textit{Express.js Official Documentation}. Recuperado de \url{https://expressjs.com/}
+    
+    \item MongoDB Manual. (2026). \textit{MongoDB Official Documentation}. Recuperado de \url{https://docs.mongodb.com/}
+    
+    \item Mongoose Documentation. (2026). \textit{Mongoose ODM}. Recuperado de \url{https://mongoosejs.com/docs/}
+    
+    \item MDN Web Docs. (2026). \textit{JavaScript | MDN}. Mozilla Developer Network. Recuperado de \url{https://developer.mozilla.org/en-US/docs/Web/JavaScript}
+    
+    \item Leaflet Documentation. (2026). \textit{Leaflet - a JavaScript library for interactive maps}. Recuperado de \url{https://leafletjs.com/}
+\end{enumerate}
+
+\subsection{Libros y recursos educativos}
+
+\begin{enumerate}
+    \setcounter{enumi}{6}
+    
+    \item Flanagan, D. (2020). \textit{JavaScript: The Definitive Guide} (7th ed.). O'Reilly Media.
+    
+    \item Young, A., Meck, B., \& Cantelon, M. (2017). \textit{Node.js in Action} (2nd ed.). Manning Publications.
+    
+    \item Hahn, E. (2014). \textit{Express in Action: Writing, building, and testing Node.js applications}. Manning Publications.
+    
+    \item Banker, K. (2016). \textit{MongoDB in Action} (2nd ed.). Manning Publications.
+\end{enumerate}
+
+\subsection{Artículos y guías web}
+
+\begin{enumerate}
+    \setcounter{enumi}{10}
+    
+    \item OWASP Foundation. (2021). \textit{OWASP Top Ten Web Application Security Risks}. Recuperado de \url{https://owasp.org/www-project-top-ten/}
+    
+    \item W3C. (2018). \textit{Web Content Accessibility Guidelines (WCAG) 2.1}. Recuperado de \url{https://www.w3.org/WAI/WCAG21/quickref/}
+    
+    \item Google Developers. (2026). \textit{Web Fundamentals}. Recuperado de \url{https://developers.google.com/web/fundamentals}
+    
+    \item Nielsen Norman Group. (2020). \textit{Usability Heuristics for User Interface Design}. Recuperado de \url{https://www.nngroup.com/articles/ten-usability-heuristics/}
+\end{enumerate}
+
+\subsection{Herramientas y librerías}
+
+\begin{enumerate}
+    \setcounter{enumi}{14}
+    
+    \item Phosphor Icons. (2026). \textit{A flexible icon family for interfaces, diagrams, presentations}. Recuperado de \url{https://phosphoricons.com/}
+    
+    \item Docker Documentation. (2026). \textit{Docker Documentation}. Recuperado de \url{https://docs.docker.com/}
+    
+    \item Git Documentation. (2026). \textit{Git Reference Manual}. Recuperado de \url{https://git-scm.com/docs}
+\end{enumerate}
+
+\subsection{Legislación y normativa}
+
+\begin{enumerate}
+    \setcounter{enumi}{17}
+    
+    \item Parlamento Europeo. (2016). \textit{Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales} (RGPD).
+    
+    \item Agencia Española de Protección de Datos. (2018). \textit{Guía para el cumplimiento del RGPD}. Recuperado de \url{https://www.aepd.es/}
+    
+    \item Gobierno de las Islas Baleares. (2023). \textit{Normativa del servicio de taxi en Palma de Mallorca}. Consejería de Movilidad y Vivienda.
+\end{enumerate}
+
+\subsection{Recursos de consulta durante el desarrollo}
+
+\begin{enumerate}
+    \setcounter{enumi}{20}
+    
+    \item Stack Overflow. (2026). \textit{Stack Overflow - Where Developers Learn, Share, \& Build Careers}. Recuperado de \url{https://stackoverflow.com/}
+    
+    \item GitHub. (2026). \textit{Open source projects and repositories}. Recuperado de \url{https://github.com/}
+    
+    \item CSS-Tricks. (2026). \textit{CSS-Tricks - Tips, Tricks, and Techniques on using CSS}. Recuperado de \url{https://css-tricks.com/}
+\end{enumerate}
+
+\newpage
+
+% ============================================
+% ANEXOS
+% ============================================
+\section*{Anexos}
+\addcontentsline{toc}{section}{Anexos}
+
+\subsection*{Anexo A: Capturas de pantalla}
+\addcontentsline{toc}{subsection}{Anexo A: Capturas de pantalla}
+
+\textit{Nota: En la versión final se incluirían capturas de pantalla de:}
+\begin{itemize}
+    \item Página principal (index.html)
+    \item Formulario de registro (register.html)
+    \item Formulario de login (login.html)
+    \item Página de perfil de usuario (perfil.html)
+    \item Página de conductores (conductores.html)
+    \item Página de ayuda (ayuda.html)
+    \item Vista responsive en diferentes dispositivos
+    \item Modales personalizados
+    \item Selector de idiomas
+\end{itemize}
+
+\subsection*{Anexo B: Diagrama de base de datos}
+\addcontentsline{toc}{subsection}{Anexo B: Diagrama de base de datos}
+
+\textit{Nota: En la versión final se incluiría un diagrama E-R (Entidad-Relación) mostrando:}
+\begin{itemize}
+    \item Entidad Usuario (actual)
+    \item Entidad Conductor (planificada)
+    \item Entidad Reserva (planificada)
+    \item Relaciones entre entidades
+\end{itemize}
+
+\subsection*{Anexo C: Flujos de usuario}
+\addcontentsline{toc}{subsection}{Anexo C: Flujos de usuario}
+
+\textit{Nota: En la versión final se incluirían diagramas de flujo de:}
+\begin{itemize}
+    \item Proceso de registro
+    \item Proceso de login
+    \item Flujo de solicitud de taxi (planificado)
+    \item Flujo de reserva (planificado)
+\end{itemize}
+
+\subsection*{Anexo D: Código fuente relevante}
+\addcontentsline{toc}{subsection}{Anexo D: Código fuente relevante}
+
+\textit{El código completo está disponible en el repositorio GitHub del proyecto.}
+
+Extractos de código más relevantes incluidos en el documento:
+\begin{itemize}
+    \item Modelo de Usuario (Mongoose)
+    \item Configuración del servidor Express
+    \item Docker Compose para MongoDB
+\end{itemize}
+
+\newpage
+
+% ============================================
+% DECLARACIÓN DE AUTORÍA
+% ============================================
+\section*{Declaración de autoría}
+\addcontentsline{toc}{section}{Declaración de autoría}
+
+\vspace{1cm}
+
+Yo, \textbf{Sebastià Romaguera Camps}, declaro que este Trabajo de Fin de Grado titulado \textit{``EasyTaxi Palma: Aplicación web para la reserva y petición de taxis en Palma de Mallorca''} ha sido realizado íntegramente por mí, bajo la orientación y supervisión de los profesores del ciclo formativo de Desarrollo de Aplicaciones Web.
+
+Todo el trabajo ha sido escrito por mí, incluyendo:
+\begin{itemize}
+    \item Análisis de requisitos
+    \item Diseño de la arquitectura del sistema
+    \item Implementación del código (frontend y backend)
+    \item Documentación técnica
+    \item Este documento
+\end{itemize}
+
+Salvo en los casos específicos que se indican a continuación, el trabajo es completamente original:
+
+\begin{itemize}
+    \item He utilizado inteligencia artificial (GitHub Copilot y ChatGPT) como herramienta de consulta para:
+    \begin{itemize}
+        \item Decisiones sobre qué tecnologías usar y por qué.
+        \item Resolución de dudas técnicas específicas.
+        \item Sugerencias de buenas prácticas de programación.
+    \end{itemize}
+    \item He consultado documentación oficial de las tecnologías empleadas.
+    \item He revisado ejemplos de código en Stack Overflow y GitHub para resolver problemas específicos.
+\end{itemize}
+
+Todas las fuentes consultadas están debidamente citadas en la sección de bibliografía de este documento.
+
+\vspace{1cm}
+
+Es un proyecto que tengo ganas de crear ya que he vivido de primera mano lo que es el sector del taxi y quiero mejorarlo mediante la tecnología. La motivación personal y la experiencia real trabajando como taxista son el motor principal de este proyecto.
+
+\vspace{2cm}
+
+Declaro que este trabajo no ha sido presentado anteriormente para la obtención de ningún título académico y que no contiene material copiado de otras fuentes sin la debida atribución.
+
+\vspace{3cm}
+
+\noindent
+\rule{7cm}{0.4pt}
+
+\noindent
+Sebastià Romaguera Camps
+
+\noindent
+Palma de Mallorca, Febrero de 2026
+
+\end{document}
