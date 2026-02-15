@@ -2,7 +2,7 @@
 Aplicación web para la reserva y solicitud de taxis en Palma de Mallorca
 
 ## � Estado del proyecto
-**Versión actual:** UD1A - Primera versión funcional  
+**Versión actual:** UD1B - Sistema de viajes implementado  
 **Fecha:** Febrero 2026  
 **Estado:** ✅ En desarrollo activo  
 
@@ -15,14 +15,19 @@ Aplicación web para la reserva y solicitud de taxis en Palma de Mallorca
 - ✅ API REST funcional (Express)
 - ✅ Interfaz de usuario responsive
 - ✅ Gestión de sesiones con localStorage
+- ✅ **Sistema de solicitud de viajes**
+- ✅ **Asignación automática de conductores**
+- ✅ **Tracking en tiempo real con timeline**
+- ✅ **Cálculo de precios y tiempos estimados**
+- ✅ **Sistema de valoraciones**
+- ✅ **Cancelación de viajes**
 
-### Próximas funcionalidades (UD1B y siguientes)
+### Próximas funcionalidades (UD1C y siguientes)
 - ⏳ Tokens JWT para autenticación
-- ⏳ Sistema de reservas de taxi
+- ⏳ Historial de viajes del usuario
 - ⏳ Mapa interactivo con Leaflet
-- ⏳ Simulación de taxi en movimiento
-- ⏳ Cálculo del taxi más cercano
-- ⏳ Historial de reservas
+- ⏳ WebSockets para actualizaciones en tiempo real
+- ⏳ Sistema de notificaciones push
 
 ---
 
@@ -232,7 +237,66 @@ Proyecto-Intermodular/
 ```
 
 ---
+## 🚖 Cómo probar el sistema de viajes
 
+### 1. Iniciar los servicios
+
+```bash
+# Terminal 1: Iniciar MongoDB
+docker-compose up -d
+
+# Terminal 2: Iniciar backend
+cd backend
+npm start
+
+# Terminal 3: Iniciar frontend
+cd frontend
+python3 -m http.server 8080
+```
+
+### 2. Crear conductores de prueba (solo primera vez)
+
+```bash
+cd backend
+node seed-conductores.js
+```
+
+Esto creará 5 conductores disponibles:
+- Juan García López (Toyota Prius)
+- María Rodríguez Martín (Seat León)
+- Pedro Sánchez Fernández (Volkswagen Passat)
+- Ana Martínez Díaz (Nissan Leaf)
+- Carlos López Ruiz (Ford Mondeo)
+
+### 3. Probar la aplicación
+
+1. Accede a http://localhost:8080/index.html
+2. Regístrate o inicia sesión
+3. En la página principal, ingresa:
+   - **Origen:** Calle Mayor, 5
+   - **Destino:** Aeropuerto de Palma
+4. Click en "Ver precios"
+5. Se te asignará un conductor automáticamente
+6. Verás la página de tracking con:
+   - Timeline visual (Asignado → En camino → Llegando)
+   - Barra de progreso animada
+   - Tiempo restante actualizado cada 3 segundos
+   - Información del conductor y vehículo
+   - Precio estimado
+7. Cuando el viaje se complete (100%), podrás valorar al conductor
+8. Puedes cancelar el viaje en cualquier momento antes de completarse
+
+### API Endpoints disponibles
+
+```
+POST   /api/viajes/solicitar      - Solicitar un nuevo viaje
+GET    /api/viajes/:id/estado     - Obtener estado del viaje
+GET    /api/viajes/historial      - Historial de viajes
+POST   /api/viajes/:id/cancelar   - Cancelar viaje
+POST   /api/viajes/:id/valorar    - Valorar viaje completado
+```
+
+---
 ## �📚 Bibliografía y recursos consultados
 - MDN Web Docs – Accesibilidad y buenas prácticas.  
 - Leaflet Documentation – Mapas interactivos con OpenStreetMap.  

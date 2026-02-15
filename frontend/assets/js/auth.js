@@ -144,6 +144,8 @@ async function loginUsuario(event) {
     if (data.success) {
       // Guardar información del usuario en localStorage
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
+      localStorage.setItem('userEmail', data.usuario.email);
+      localStorage.setItem('userId', data.usuario._id);
       
       mostrarMensaje(getTranslation('loginSuccess'), 'success');
       setTimeout(() => {

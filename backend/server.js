@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./src/config/database');
 const authRoutes = require('./src/routes/authRoutes');
+const viajeRoutes = require('./src/routes/viajeRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rutas
 app.use('/api/auth', authRoutes);
+app.use('/api/viajes', viajeRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

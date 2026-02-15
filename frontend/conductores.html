@@ -466,6 +466,7 @@
             <ul class="nav-links">
                 <li><a href="conductores.html" class="active" id="nav-drivers">Conductores</a></li>
                 <li><a href="ayuda.html" id="nav-help">Ayuda</a></li>
+                <li id="nav-viajes" style="display: none;"><a href="historial-viajes.html">Tus viajes</a></li>
             </ul>
         </div>
         <div class="nav-right" id="nav-right">
@@ -1023,11 +1024,17 @@
             
             const usuario = localStorage.getItem('usuario');
             const navRight = document.getElementById('nav-right');
+            const navViajes = document.getElementById('nav-viajes');
             
             if (usuario) {
                 try {
                     const userObj = JSON.parse(usuario);
                     const userName = userObj.nombre || 'Usuario';
+                    
+                    // Mostrar enlace "Tus viajes"
+                    if (navViajes) {
+                        navViajes.style.display = 'block';
+                    }
                     
                     const t = translations[savedLang];
                     navRight.innerHTML = `

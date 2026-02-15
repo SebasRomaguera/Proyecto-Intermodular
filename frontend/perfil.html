@@ -310,6 +310,7 @@
             <a href="index.html" class="logo">EasyTaxi Palma</a>
             <ul class="nav-links">
                 <li><a href="index.html">Inicio</a></li>
+                <li><a href="historial-viajes.html">Tus viajes</a></li>
                 <li><a href="ayuda.html">Ayuda</a></li>
             </ul>
         </div>
@@ -618,6 +619,16 @@
 
             const usuarioStr = localStorage.getItem('usuario');
             const usuario = JSON.parse(usuarioStr);
+
+            // Verificar que el usuario tenga _id (necesario para actualizar)
+            if (!usuario._id) {
+                mostrarMensaje(t.errorSessionExpired || 'Por favor, cierra sesión y vuelve a iniciar sesión para continuar.', 'error');
+                setTimeout(() => {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
 
             try {
                 const updateData = {

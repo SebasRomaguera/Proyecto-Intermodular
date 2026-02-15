@@ -460,6 +460,15 @@
             }
         }
 
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .modal-icon {
             width: 60px;
             height: 60px;
@@ -569,6 +578,7 @@
             <ul class="nav-links">
                 <li><a href="conductores.html">Conductores</a></li>
                 <li><a href="ayuda.html">Ayuda</a></li>
+                <li id="nav-viajes" style="display: none;"><a href="historial-viajes.html" id="nav-viajes-link">Tus viajes</a></li>
             </ul>
         </div>
         <div class="nav-right" id="nav-right">
@@ -602,7 +612,7 @@
                     <i class="ph ph-map-pin-fill"></i> Palma, ES
                 </div>
                 
-                <h1>Solicita un taxi para ahora o para más tarde</h1>
+                <h1>Solicita un taxi ahora o reserva para más tarde</h1>
                 <p>Añade los datos del viaje, súbete y ¡en marcha!</p>
 
                 <div class="input-group">
@@ -1066,13 +1076,14 @@
         const translations = {
             es: {
                 city: 'Palma, ES',
-                title: 'Solicita un taxi para ahora o para más tarde',
+                title: 'Solicita un taxi ahora o reserva para más tarde',
                 subtitle: 'Añade los datos del viaje, súbete y ¡en marcha!',
                 pickupPlaceholder: 'Ubicación de recogida',
                 destPlaceholder: 'Ubicación de destino',
                 pricesBtn: 'Ver precios',
                 navDrivers: 'Conductores',
                 navHelp: 'Ayuda',
+                navTrips: 'Tus viajes',
                 btnLogin: 'Inicia sesión',
                 btnRegister: 'Registrarse',
                 btnLogout: 'Cerrar sesión',
@@ -1088,6 +1099,7 @@
                 pricesBtn: 'See prices',
                 navDrivers: 'Drivers',
                 navHelp: 'Help',
+                navTrips: 'Your trips',
                 btnLogin: 'Log in',
                 btnRegister: 'Sign up',
                 btnLogout: 'Log out',
@@ -1103,6 +1115,7 @@
                 pricesBtn: 'Veure preus',
                 navDrivers: 'Conductors',
                 navHelp: 'Ajuda',
+                navTrips: 'Els teus viatges',
                 btnLogin: 'Inicia sessió',
                 btnRegister: 'Registra\'t',
                 btnLogout: 'Tanca sessió',
@@ -1155,6 +1168,12 @@
                 navLinks[0].textContent = t.navDrivers;
                 navLinks[1].textContent = t.navHelp;
             }
+            
+            // Update "Tus viajes" link if visible
+            const navViajesLink = document.getElementById('nav-viajes-link');
+            if (navViajesLink) {
+                navViajesLink.textContent = t.navTrips;
+            }
         }
 
         // Close dropdown when clicking outside
@@ -1191,11 +1210,17 @@
             
             const usuario = localStorage.getItem('usuario');
             const navRight = document.getElementById('nav-right');
+            const navViajes = document.getElementById('nav-viajes');
             
             if (usuario) {
                 try {
                     const userObj = JSON.parse(usuario);
                     const userName = userObj.nombre || 'Usuario';
+                    
+                    // Mostrar enlace "Tus viajes"
+                    if (navViajes) {
+                        navViajes.style.display = 'block';
+                    }
                     
                     // Replace login/register buttons with user info and logout
                     const savedLang = localStorage.getItem('language') || 'es';
@@ -1270,28 +1295,183 @@
                 };
                 showCustomModal(modalContent[lang]);
             } else {
-                // Logged in - show development alert with custom modal
-                const devModalContent = {
+                // Logged in - solicitar viaje
+                solicitarViaje();
+            }
+        }
+
+        async function solicitarViaje() {
+            const origen = document.getElementById('origen-input').value.trim();
+            const destino = document.getElementById('destino-input').value.trim();
+            const lang = localStorage.getItem('language') || 'es';
+
+            // Validar que haya origen y destino
+            if (!origen || !destino) {
+                const validationModal = {
                     es: {
-                        icon: '<i class="ph ph-wrench"></i>',
-                        title: 'En desarrollo',
-                        message: 'La funcionalidad de reserva está en desarrollo. Pronto estará disponible.',
+                        icon: '<i class="ph ph-warning"></i>',
+                        title: 'Datos incompletos',
+                        message: 'Por favor, ingresa el origen y el destino del viaje.',
                         buttons: [{ text: 'Entendido', primary: true }]
                     },
                     en: {
-                        icon: '<i class="ph ph-wrench"></i>',
-                        title: 'In Development',
-                        message: 'Booking functionality is in development. It will be available soon.',
+                        icon: '<i class="ph ph-warning"></i>',
+                        title: 'Incomplete Data',
+                        message: 'Please enter the origin and destination of the trip.',
                         buttons: [{ text: 'OK', primary: true }]
                     },
                     ca: {
-                        icon: '<i class="ph ph-wrench"></i>',
-                        title: 'En desenvolupament',
-                        message: 'La funcionalitat de reserva està en desenvolupament. Aviat estarà disponible.',
+                        icon: '<i class="ph ph-warning"></i>',
+                        title: 'Dades incompletes',
+                        message: 'Si us plau, introdueix l\'origen i la destinació del viatge.',
                         buttons: [{ text: 'Entès', primary: true }]
                     }
                 };
-                showCustomModal(devModalContent[lang]);
+                showCustomModal(validationModal[lang]);
+                return;
+            }
+
+            // Mostrar modal de carga
+            const loadingModal = {
+                es: {
+                    icon: '<i class="ph ph-spinner" style="animation: spin 1s linear infinite;"></i>',
+                    title: 'Buscando conductor...',
+                    message: 'Estamos buscando el mejor conductor disponible para ti.',
+                    buttons: []
+                },
+                en: {
+                    icon: '<i class="ph ph-spinner" style="animation: spin 1s linear infinite;"></i>',
+                    title: 'Looking for driver...',
+                    message: 'We are looking for the best available driver for you.',
+                    buttons: []
+                },
+                ca: {
+                    icon: '<i class="ph ph-spinner" style="animation: spin 1s linear infinite;"></i>',
+                    title: 'Cercant conductor...',
+                    message: 'Estem cercant el millor conductor disponible per a tu.',
+                    buttons: []
+                }
+            };
+            showCustomModal(loadingModal[lang]);
+
+            try {
+                let userEmail = localStorage.getItem('userEmail');
+                
+                // Si no hay email guardado, intentar obtenerlo del objeto usuario
+                if (!userEmail) {
+                    const usuarioStr = localStorage.getItem('usuario');
+                    if (usuarioStr) {
+                        const usuario = JSON.parse(usuarioStr);
+                        userEmail = usuario.email;
+                        // Guardar para futuras peticiones
+                        localStorage.setItem('userEmail', userEmail);
+                        if (usuario._id) {
+                            localStorage.setItem('userId', usuario._id);
+                        }
+                    }
+                }
+                
+                // Si aún no hay email, mostrar error
+                if (!userEmail) {
+                    hideCustomModal();
+                    const sessionModal = {
+                        es: {
+                            icon: '<i class="ph ph-warning"></i>',
+                            title: 'Sesión expirada',
+                            message: 'Por favor, cierra sesión y vuelve a iniciar sesión.',
+                            buttons: [{ 
+                                text: 'Ir a Login', 
+                                primary: true, 
+                                onClick: () => window.location.href = 'login.html' 
+                            }]
+                        },
+                        en: {
+                            icon: '<i class="ph ph-warning"></i>',
+                            title: 'Session expired',
+                            message: 'Please log out and log in again.',
+                            buttons: [{ 
+                                text: 'Go to Login', 
+                                primary: true, 
+                                onClick: () => window.location.href = 'login.html' 
+                            }]
+                        },
+                        ca: {
+                            icon: '<i class="ph ph-warning"></i>',
+                            title: 'Sessió expirada',
+                            message: 'Si us plau, tanca la sessió i torna a iniciar sessió.',
+                            buttons: [{ 
+                                text: 'Anar a Login', 
+                                primary: true, 
+                                onClick: () => window.location.href = 'login.html' 
+                            }]
+                        }
+                    };
+                    showCustomModal(sessionModal[lang]);
+                    return;
+                }
+                
+                const response = await fetch('http://localhost:3000/api/viajes/solicitar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-email': userEmail
+                    },
+                    body: JSON.stringify({ origen, destino })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirigir a la página de viaje en curso
+                    window.location.href = `viaje-en-curso.html?id=${data.viaje.id}`;
+                } else {
+                    hideCustomModal();
+                    const errorModal = {
+                        es: {
+                            icon: '<i class="ph ph-x-circle"></i>',
+                            title: 'Error',
+                            message: data.mensaje || 'No se pudo solicitar el viaje.',
+                            buttons: [{ text: 'Entendido', primary: true }]
+                        },
+                        en: {
+                            icon: '<i class="ph ph-x-circle"></i>',
+                            title: 'Error',
+                            message: data.mensaje || 'Could not request the trip.',
+                            buttons: [{ text: 'OK', primary: true }]
+                        },
+                        ca: {
+                            icon: '<i class="ph ph-x-circle"></i>',
+                            title: 'Error',
+                            message: data.mensaje || 'No s\'ha pogut sol·licitar el viatge.',
+                            buttons: [{ text: 'Entès', primary: true }]
+                        }
+                    };
+                    showCustomModal(errorModal[lang]);
+                }
+            } catch (error) {
+                console.error('Error al solicitar viaje:', error);
+                hideCustomModal();
+                const errorModal = {
+                    es: {
+                        icon: '<i class="ph ph-x-circle"></i>',
+                        title: 'Error de conexión',
+                        message: 'No se pudo conectar con el servidor. Intenta nuevamente.',
+                        buttons: [{ text: 'Entendido', primary: true }]
+                    },
+                    en: {
+                        icon: '<i class="ph ph-x-circle"></i>',
+                        title: 'Connection error',
+                        message: 'Could not connect to the server. Please try again.',
+                        buttons: [{ text: 'OK', primary: true }]
+                    },
+                    ca: {
+                        icon: '<i class="ph ph-x-circle"></i>',
+                        title: 'Error de connexió',
+                        message: 'No s\'ha pogut connectar amb el servidor. Torna-ho a provar.',
+                        buttons: [{ text: 'Entès', primary: true }]
+                    }
+                };
+                showCustomModal(errorModal[lang]);
             }
         }
 

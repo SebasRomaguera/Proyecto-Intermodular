@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viaje en Curso - EasyTaxi Palma</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .viaje-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .conductor-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .conductor-nombre {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .conductor-valoracion {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .conductor-vehiculo {
+            font-size: 18px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+
+        .timeline {
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .timeline-point {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 2;
+            background: white;
+            border: 3px solid #ddd;
+            color: #999;
+        }
+
+        .timeline-point.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .timeline-point.completed {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .timeline-connector {
+            flex: 1;
+            height: 4px;
+            background: #e5e7eb;
+            margin: 0 10px;
+        }
+
+        .timeline-connector.completed {
+            background: #10b981;
+        }
+
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+
+        .timeline-label {
+            flex: 1;
+            text-align: center;
+        }
+
+        .timeline-label.active {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tiempo-restante {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .info-viaje {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+
+        .info-item i {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #667eea;
+        }
+
+        .precio-estimado {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .btn-cancelar {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-cancelar:hover {
+            background: #dc2626;
+        }
+
+        .estado-completado {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .estado-completado h2 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+
+        .valoracion-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+
+        .estrellas {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 40px;
+            margin: 20px 0;
+        }
+
+        .estrella {
+            cursor: pointer;
+            color: #d1d5db;
+            transition: color 0.2s;
+        }
+
+        .estrella:hover,
+        .estrella.active {
+            color: #fbbf24;
+        }
+
+        .btn-valorar {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .btn-valorar:hover {
+            background: #5568d3;
+        }
+
+        .language-option:hover {
+            background: #f3f4f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="viaje-container">
+        <div id="contenido-viaje">
+            <!-- Se llenará dinámicamente -->
+        </div>
+    </div>
+
+    <script>
+        // Traducciones
+        const translations = {
+            es: {
+                timelineAssigned: 'Asignado',
+                timelineOnWay: 'En camino',
+                timelineArriving: 'Llegando',
+                arriveInMinute: 'Llegará en ~1 minuto',
+                arriveInMinutes: 'Llegará en ~{minutes} minutos',
+                taxiArrived: '¡Tu taxi ha llegado!',
+                origin: 'Origen',
+                destination: 'Destino',
+                estimatedPrice: 'Precio estimado',
+                cancelTrip: 'Cancelar viaje',
+                tripCompleted: '¡Viaje completado!',
+                enjoyTrip: 'Esperamos que hayas disfrutado del viaje',
+                rateExperience: '¿Cómo fue tu experiencia?',
+                submitRating: 'Enviar valoración',
+                thanks: '¡Gracias por tu valoración!',
+                backHome: 'Volver al inicio',
+                confirmCancel: '¿Estás seguro de que quieres cancelar este viaje?',
+                tripCancelled: 'Viaje cancelado',
+                redirecting: 'Redirigiendo...',
+                selectRating: 'Por favor selecciona una valoración',
+                errorLoadingTrip: 'Error al cargar el viaje',
+                errorCancellingTrip: 'Error al cancelar el viaje',
+                errorRating: 'Error al enviar la valoración'
+            },
+            en: {
+                timelineAssigned: 'Assigned',
+                timelineOnWay: 'On the way',
+                timelineArriving: 'Arriving',
+                arriveInMinute: 'Arriving in ~1 minute',
+                arriveInMinutes: 'Arriving in ~{minutes} minutes',
+                taxiArrived: 'Your taxi has arrived!',
+                origin: 'Origin',
+                destination: 'Destination',
+                estimatedPrice: 'Estimated price',
+                cancelTrip: 'Cancel trip',
+                tripCompleted: 'Trip completed!',
+                enjoyTrip: 'We hope you enjoyed your trip',
+                rateExperience: 'How was your experience?',
+                submitRating: 'Submit rating',
+                thanks: 'Thanks for your rating!',
+                backHome: 'Back to home',
+                confirmCancel: 'Are you sure you want to cancel this trip?',
+                tripCancelled: 'Trip cancelled',
+                redirecting: 'Redirecting...',
+                selectRating: 'Please select a rating',
+                errorLoadingTrip: 'Error loading trip',
+                errorCancellingTrip: 'Error cancelling trip',
+                errorRating: 'Error submitting rating'
+            },
+            ca: {
+                timelineAssigned: 'Assignat',
+                timelineOnWay: 'En camí',
+                timelineArriving: 'Arribant',
+                arriveInMinute: 'Arribarà en ~1 minut',
+                arriveInMinutes: 'Arribarà en ~{minutes} minuts',
+                taxiArrived: 'El teu taxi ha arribat!',
+                origin: 'Origen',
+                destination: 'Destinació',
+                estimatedPrice: 'Preu estimat',
+                cancelTrip: 'Cancel·lar viatge',
+                tripCompleted: 'Viatge completat!',
+                enjoyTrip: 'Esperem que hagis gaudit del viatge',
+                rateExperience: 'Com ha estat la teva experiència?',
+                submitRating: 'Enviar valoració',
+                thanks: 'Gràcies per la teva valoració!',
+                backHome: 'Tornar a l\'inici',
+                confirmCancel: 'Estàs segur que vols cancel·lar aquest viatge?',
+                tripCancelled: 'Viatge cancel·lat',
+                redirecting: 'Redirigint...',
+                selectRating: 'Si us plau selecciona una valoració',
+                errorLoadingTrip: 'Error al carregar el viatge',
+                errorCancellingTrip: 'Error al cancel·lar el viatge',
+                errorRating: 'Error al enviar la valoració'
+            }
+        };
+
+        let currentLang = localStorage.getItem('language') || 'es';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const viajeId = urlParams.get('id');
+        let intervalId;
+        let viajeCompletado = false;
+        window.lastViajeData = null;
+
+        if (!viajeId) {
+            window.location.href = 'index.html';
+        }
+
+        // Función helper para obtener email del usuario
+        function getUserEmail() {
+            let userEmail = localStorage.getItem('userEmail');
+            
+            if (!userEmail) {
+                const usuarioStr = localStorage.getItem('usuario');
+                if (usuarioStr) {
+                    const usuario = JSON.parse(usuarioStr);
+                    userEmail = usuario.email;
+                    localStorage.setItem('userEmail', userEmail);
+                }
+            }
+            
+            return userEmail;
+        }
+
+        async function obtenerEstadoViaje() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/estado`);
+                const data = await response.json();
+
+                if (data.success) {
+                    window.lastViajeData = data.viaje;
+                    mostrarViaje(data.viaje);
+                    
+                    if (data.viaje.estado === 'completado' && !viajeCompletado) {
+                        viajeCompletado = true;
+                        clearInterval(intervalId);
+                        mostrarViajeCompletado(data.viaje);
+                    }
+                }
+            } catch (error) {
+                console.error('Error al obtener estado del viaje:', error);
+            }
+        }
+
+        function mostrarViaje(viaje) {
+            const t = translations[currentLang];
+            const conductor = viaje.conductor;
+            const progreso = viaje.progreso;
+            const tiempoRestante = viaje.tiempoRestante;
+            
+            // Determinar estados de la timeline
+            const estados = {
+                asignado: viaje.estado === 'asignado',
+                en_camino: ['en_camino', 'llegando', 'completado'].includes(viaje.estado),
+                llegando: ['llegando', 'completado'].includes(viaje.estado)
+            };
+
+            let tiempoTexto;
+            if (tiempoRestante > 0) {
+                if (tiempoRestante === 1) {
+                    tiempoTexto = t.arriveInMinute;
+                } else {
+                    tiempoTexto = t.arriveInMinutes.replace('{minutes}', tiempoRestante);
+                }
+            } else {
+                tiempoTexto = t.taxiArrived;
+            }
+
+            const html = `
+                <div class="conductor-card">
+                    <div class="conductor-nombre">${conductor.nombre} ${conductor.apellidos}</div>
+                    <div class="conductor-valoracion">⭐ ${conductor.valoracion}</div>
+                    <div class="conductor-vehiculo">${conductor.vehiculo.marca} ${conductor.vehiculo.modelo}</div>
+                    <div class="conductor-vehiculo">${conductor.vehiculo.color} • ${conductor.vehiculo.matricula}</div>
+                    <div class="conductor-vehiculo" style="margin-top: 10px;">
+                        <i class="ph ph-phone"></i> ${conductor.telefono}
+                    </div>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-line">
+                        <div class="timeline-point ${estados.asignado ? 'active' : 'completed'}">
+                            <i class="ph-fill ph-check-circle"></i>
+                        </div>
+                        <div class="timeline-connector ${estados.en_camino ? 'completed' : ''}"></div>
+                        <div class="timeline-point ${estados.en_camino && !estados.llegando ? 'active' : estados.llegando ? 'completed' : ''}">
+                            <i class="ph-fill ph-car"></i>
+                        </div>
+                        <div class="timeline-connector ${estados.llegando ? 'completed' : ''}"></div>
+                        <div class="timeline-point ${estados.llegando ? 'active' : ''}">
+                            <i class="ph-fill ph-map-pin"></i>
+                        </div>
+                    </div>
+                    <div class="timeline-labels">
+                        <div class="timeline-label ${estados.asignado ? 'active' : ''}">${t.timelineAssigned}</div>
+                        <div class="timeline-label ${estados.en_camino && !estados.llegando ? 'active' : ''}">${t.timelineOnWay}</div>
+                        <div class="timeline-label ${estados.llegando ? 'active' : ''}">${t.timelineArriving}</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progreso}%">
+                        ${progreso}%
+                    </div>
+                </div>
+
+                ${tiempoRestante > 0 ? `
+                    <div class="tiempo-restante">
+                        <i class="ph ph-clock"></i> 
+                        ${tiempoTexto}
+                    </div>
+                ` : `
+                    <div class="tiempo-restante" style="color: #10b981;">
+                        <i class="ph-fill ph-check-circle"></i> ${tiempoTexto}
+                    </div>
+                `}
+
+                <div class="info-viaje">
+                    <div class="info-item">
+                        <i class="ph-fill ph-map-pin"></i>
+                        <div>
+                            <strong>${t.origin}:</strong><br>
+                            ${viaje.origen}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="ph-fill ph-flag"></i>
+                        <div>
+                            <strong>${t.destination}:</strong><br>
+                            ${viaje.destino}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="precio-estimado">
+                    💰 ${t.estimatedPrice}: ${viaje.precioEstimado}€
+                </div>
+
+                ${viaje.estado !== 'completado' ? `
+                    <button class="btn-cancelar" onclick="cancelarViaje()">
+                        <i class="ph ph-x-circle"></i> ${t.cancelTrip}
+                    </button>
+                ` : ''}
+            `;
+
+            document.getElementById('contenido-viaje').innerHTML = html;
+        }
+
+        function mostrarViajeCompletado(viaje) {
+            const t = translations[currentLang];
+            const html = `
+                <div class="estado-completado">
+                    <h2>🎉 ${t.tripCompleted}</h2>
+                    <p>${t.enjoyTrip}</p>
+                </div>
+
+                <div class="valoracion-container">
+                    <h3 style="text-align: center; margin-bottom: 20px;">${t.rateExperience}</h3>
+                    <div class="estrellas" id="estrellas">
+                        <span class="estrella" data-valor="1">★</span>
+                        <span class="estrella" data-valor="2">★</span>
+                        <span class="estrella" data-valor="3">★</span>
+                        <span class="estrella" data-valor="4">★</span>
+                        <span class="estrella" data-valor="5">★</span>
+                    </div>
+                    <button class="btn-valorar" onclick="enviarValoracion()" id="btn-valorar" disabled>
+                        ${t.submitRating}
+                    </button>
+                </div>
+
+                <button class="btn-cancelar" style="background: #667eea; margin-top: 20px;" onclick="window.location.href='index.html'">
+                    <i class="ph ph-house"></i> ${t.backHome}
+                </button>
+            `;
+
+            document.getElementById('contenido-viaje').innerHTML = html;
+
+            // Sistema de valoración con estrellas
+            let valoracionSeleccionada = 0;
+            const estrellas = document.querySelectorAll('.estrella');
+            
+            estrellas.forEach(estrella => {
+                estrella.addEventListener('click', function() {
+                    valoracionSeleccionada = parseInt(this.dataset.valor);
+                    actualizarEstrellas(valoracionSeleccionada);
+                    document.getElementById('btn-valorar').disabled = false;
+                });
+                
+                estrella.addEventListener('mouseenter', function() {
+                    const valor = parseInt(this.dataset.valor);
+                    actualizarEstrellas(valor);
+                });
+            });
+            
+            document.getElementById('estrellas').addEventListener('mouseleave', function() {
+                actualizarEstrellas(valoracionSeleccionada);
+            });
+            
+            function actualizarEstrellas(valor) {
+                estrellas.forEach((estrella, index) => {
+                    if (index < valor) {
+                        estrella.classList.add('active');
+                    } else {
+                        estrella.classList.remove('active');
+                    }
+                });
+            }
+            
+            window.valoracionSeleccionada = valoracionSeleccionada;
+            window.actualizarEstrellas = actualizarEstrellas;
+        }
+
+        async function cancelarViaje() {
+            const t = translations[currentLang];
+            if (!confirm(t.confirmCancel)) {
+                return;
+            }
+
+            try {
+                const userEmail = getUserEmail();
+                const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/cancelar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-email': userEmail
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(t.tripCancelled);
+                    window.location.href = 'index.html';
+                } else {
+                    alert(data.mensaje);
+                }
+            } catch (error) {
+                console.error('Error al cancelar viaje:', error);
+                alert(t.errorCancellingTrip);
+            }
+        }
+
+        async function enviarValoracion() {
+            const t = translations[currentLang];
+            const valoracion = window.valoracionSeleccionada;
+            
+            if (valoracion === 0) {
+                alert(t.selectRating);
+                return;
+            }
+
+            try {
+                const userEmail = getUserEmail();
+                const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/valorar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-email': userEmail
+                    },
+                    body: JSON.stringify({ valoracion })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(t.thanks);
+                    window.location.href = 'index.html';
+                } else {
+                    alert(data.mensaje);
+                }
+            } catch (error) {
+                console.error('Error al valorar viaje:', error);
+                alert(t.errorRating);
+            }
+        }
+
+        // Iniciar polling
+        obtenerEstadoViaje();
+        intervalId = setInterval(obtenerEstadoViaje, 3000); // Actualizar cada 3 segundos
+    </script>
+</body>
+</html>
