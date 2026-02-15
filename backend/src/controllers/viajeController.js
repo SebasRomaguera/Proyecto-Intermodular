@@ -11,15 +11,15 @@ const calcularPrecio = (distanciaKm) => {
 
 // Función para calcular tiempo estimado (simplificado)
 const calcularTiempo = (distanciaKm) => {
-  const velocidadPromedio = 30; // km/h en ciudad
+  const velocidadPromedio = 60; // km/h en ciudad (aumentado para viajes más rápidos)
   const minutos = (distanciaKm / velocidadPromedio) * 60;
-  return Math.max(Math.round(minutos), 3); // Mínimo 3 minutos
+  return Math.max(Math.round(minutos), 1); // Mínimo 1 minuto
 };
 
 // Función para estimar distancia (simplificado - en producción usar API)
 const estimarDistancia = (origen, destino) => {
-  // Simulación: distancia aleatoria entre 2-15 km
-  return Math.random() * (15 - 2) + 2;
+  // Simulación: distancia aleatoria entre 1-5 km (reducido para viajes más cortos)
+  return Math.random() * (5 - 1) + 1;
 };
 
 // Solicitar un viaje
@@ -119,9 +119,18 @@ exports.obtenerEstadoViaje = async (req, res) => {
       });
     }
 
+    // Guardar el estado anterior
+    const estadoAnterior = viaje.estado;
+
     // Calcular progreso actual
     viaje.calcularProgreso();
     await viaje.save();
+
+    // Si el viaje acaba de completarse, liberar al conductor
+    if (estadoAnterior !== 'completado' && viaje.estado === 'completado') {
+      await Conductor.findByIdAndUpdate(viaje.conductor._id, { estado: 'disponible' });
+      console.log(`🚕 Conductor ${viaje.conductor.nombre} liberado (viaje completado)`);
+    }
 
     const tiempoRestante = viaje.tiempoRestante();
 
@@ -219,6 +228,7 @@ exports.cancelarViaje = async (req, res) => {
 
     // Liberar al conductor
     await Conductor.findByIdAndUpdate(viaje.conductor, { estado: 'disponible' });
+    console.log(`🚕 Conductor liberado (viaje cancelado)`);
 
     res.json({
       success: true,
