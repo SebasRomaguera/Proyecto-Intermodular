@@ -115,7 +115,6 @@
             background: #e5e7eb;
             border-radius: 10px;
             height: 30px;
-            overflow: hidden;
             margin: 30px 0;
             position: relative;
         }
@@ -124,12 +123,40 @@
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             height: 100%;
             transition: width 1s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
-            color: white;
+            justify-content: center;
             font-weight: bold;
+            color: #4b5563;
+            z-index: 1;
+        }
+
+        .progress-text-white {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            z-index: 2;
+            transition: clip-path 1s ease;
         }
 
         .tiempo-restante {
@@ -245,9 +272,130 @@
         .language-option:hover {
             background: #f3f4f6;
         }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .modal-message {
+            text-align: center;
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn-cancel {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-btn-confirm {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #dc2626;
+        }
+
+        .modal-btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: #5568d3;
+        }
     </style>
 </head>
 <body>
+    <!-- Modal de confirmación -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon" id="modal-icon">⚠️</div>
+                <h3 class="modal-title" id="modal-title">Confirmar acción</h3>
+            </div>
+            <p class="modal-message" id="modal-message">¿Estás seguro?</p>
+            <div class="modal-buttons" id="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn modal-btn-confirm" id="modal-confirm-btn">Confirmar</button>
+            </div>
+        </div>
+    </div>
     <div class="viaje-container">
         <div id="contenido-viaje">
             <!-- Se llenará dinámicamente -->
@@ -335,6 +483,46 @@
         };
 
         let currentLang = localStorage.getItem('language') || 'es';
+
+        // Funciones del modal
+        function showModal(icon, title, message, buttons) {
+            document.getElementById('modal-icon').textContent = icon;
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            
+            const modalButtons = document.getElementById('modal-buttons');
+            modalButtons.innerHTML = '';
+            
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.className = `modal-btn ${btn.class}`;
+                button.textContent = btn.text;
+                button.onclick = btn.onClick;
+                modalButtons.appendChild(button);
+            });
+            
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        function showConfirm(message, onConfirm) {
+            const cancelText = currentLang === 'es' ? 'Cancelar' : (currentLang === 'en' ? 'Cancel' : 'Cancel·lar');
+            const confirmText = currentLang === 'es' ? 'Confirmar' : (currentLang === 'en' ? 'Confirm' : 'Confirmar');
+            
+            showModal('⚠️', '', message, [
+                { text: cancelText, class: 'modal-btn-cancel', onClick: closeModal },
+                { text: confirmText, class: 'modal-btn-confirm', onClick: () => { closeModal(); onConfirm(); } }
+            ]);
+        }
+
+        function showAlert(icon, title, message, buttonText = 'OK') {
+            showModal(icon, title, message, [
+                { text: buttonText, class: 'modal-btn-primary', onClick: closeModal }
+            ]);
+        }
 
         const urlParams = new URLSearchParams(window.location.search);
         const viajeId = urlParams.get('id');
@@ -439,9 +627,9 @@
                 </div>
 
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${progreso}%">
-                        ${progreso}%
-                    </div>
+                    <div class="progress-fill" style="width: ${progreso}%"></div>
+                    <div class="progress-text">${progreso}%</div>
+                    <div class="progress-text-white" style="clip-path: inset(0 ${100-progreso}% 0 0);">${progreso}%</div>
                 </div>
 
                 ${tiempoRestante > 0 ? `
@@ -550,34 +738,35 @@
             window.actualizarEstrellas = actualizarEstrellas;
         }
 
-        async function cancelarViaje() {
+        function cancelarViaje() {
             const t = translations[currentLang];
-            if (!confirm(t.confirmCancel)) {
-                return;
-            }
+            showConfirm(t.confirmCancel, async () => {
+                try {
+                    const userEmail = getUserEmail();
+                    const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/cancelar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-user-email': userEmail
+                        }
+                    });
 
-            try {
-                const userEmail = getUserEmail();
-                const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/cancelar`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-user-email': userEmail
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const okText = currentLang === 'en' ? 'OK' : 'Aceptar';
+                        showAlert('✅', t.tripCancelled, t.redirecting, okText);
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        showAlert('❌', 'Error', data.mensaje, 'OK');
                     }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert(t.tripCancelled);
-                    window.location.href = 'index.html';
-                } else {
-                    alert(data.mensaje);
+                } catch (error) {
+                    console.error('Error al cancelar viaje:', error);
+                    showAlert('❌', 'Error', t.errorCancellingTrip, 'OK');
                 }
-            } catch (error) {
-                console.error('Error al cancelar viaje:', error);
-                alert(t.errorCancellingTrip);
-            }
+            });
         }
 
         async function enviarValoracion() {
@@ -585,7 +774,7 @@
             const valoracion = window.valoracionSeleccionada;
             
             if (valoracion === 0) {
-                alert(t.selectRating);
+                showAlert('⭐', '', t.selectRating, 'OK');
                 return;
             }
 
@@ -603,20 +792,30 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert(t.thanks);
-                    window.location.href = 'index.html';
+                    const okText = currentLang === 'en' ? 'OK' : 'Aceptar';
+                    showAlert('🎉', t.thanks, t.redirecting, okText);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
                 } else {
-                    alert(data.mensaje);
+                    showAlert('❌', 'Error', data.mensaje, 'OK');
                 }
             } catch (error) {
                 console.error('Error al valorar viaje:', error);
-                alert(t.errorRating);
+                showAlert('❌', 'Error', t.errorRating, 'OK');
             }
         }
 
         // Iniciar polling
         obtenerEstadoViaje();
         intervalId = setInterval(obtenerEstadoViaje, 3000); // Actualizar cada 3 segundos
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modal-overlay').addEventListener('click', (e) => {
+            if (e.target.id === 'modal-overlay') {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>
