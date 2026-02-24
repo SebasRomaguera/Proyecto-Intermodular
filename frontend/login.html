@@ -439,6 +439,9 @@
             }
         });
 
+        // Conectar formulario al handler de login
+        document.getElementById('loginForm').addEventListener('submit', loginUsuario);
+
         // Load saved language
         document.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('language') || 'es';

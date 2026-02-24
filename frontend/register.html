@@ -489,6 +489,9 @@
             }
         });
 
+        // Conectar formulario al handler de registro
+        document.getElementById('registerForm').addEventListener('submit', registrarUsuario);
+
         // Load saved language
         document.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('language') || 'es';
