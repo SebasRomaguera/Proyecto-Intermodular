@@ -471,8 +471,33 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+
             .navbar {
                 padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 15px;
+                margin-right: 8px;
+            }
+
+            .language-selector {
+                display: none;
+            }
+
+            #btn-login {
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            .btn-register {
+                font-size: 12px;
+                padding: 6px 10px;
+                white-space: nowrap;
             }
 
             .nav-links {
