@@ -37,7 +37,11 @@ app.use((req, res) => {
   });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
-});
+// Iniciar servidor solo en local (en Vercel se usa como función serverless)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

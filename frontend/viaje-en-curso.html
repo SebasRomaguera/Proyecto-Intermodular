@@ -609,7 +609,8 @@
 
         async function obtenerEstadoViaje() {
             try {
-                const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/estado`);
+                const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
+            const response = await fetch(`${API_URL}/viajes/${viajeId}/estado`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -800,7 +801,8 @@
             showConfirm(t.confirmCancel, async () => {
                 try {
                     const userEmail = getUserEmail();
-                    const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/cancelar`, {
+                    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
+       const response = await fetch(`${API_URL}/viajes/${viajeId}/cancelar`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -837,7 +839,8 @@
 
             try {
                 const userEmail = getUserEmail();
-                const response = await fetch(`http://localhost:3000/api/viajes/${viajeId}/valorar`, {
+                const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
+   const response = await fetch(`${API_URL}/viajes/${viajeId}/valorar`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
