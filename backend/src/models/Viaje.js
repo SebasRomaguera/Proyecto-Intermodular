@@ -66,6 +66,11 @@ const viajeSchema = new mongoose.Schema({
 
 // Método para calcular el progreso actual
 viajeSchema.methods.calcularProgreso = function() {
+  // No modificar estado si ya es terminal
+  if (this.estado === 'cancelado' || this.estado === 'completado') {
+    return this.progreso;
+  }
+
   const ahora = new Date();
   const tiempoTranscurrido = ahora - this.horaInicio;
   const duracionTotal = this.horaFinEstimada - this.horaInicio;
