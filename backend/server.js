@@ -8,13 +8,21 @@ const viajeRoutes = require('./src/routes/viajeRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Conectar a la base de datos
-connectDB();
-
 // Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware: asegurar conexión a BD antes de cada petición
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('DB connection failed:', error.message);
+    res.status(500).json({ success: false, mensaje: 'Error de conexión a la base de datos' });
+  }
+});
 
 // Rutas
 app.use('/api/auth', authRoutes);
