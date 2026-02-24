@@ -480,13 +480,16 @@
                 padding: 15px 20px;
             }
 
-            .logo {
-                font-size: 15px;
-                margin-right: 8px;
+            .logo-full {
+                display: none;
+            }
+
+            .logo-short {
+                display: inline;
             }
 
             .language-selector {
-                display: none;
+                font-size: 13px;
             }
 
             #btn-login {
@@ -674,7 +677,7 @@
 
     <nav class="navbar">
         <div class="nav-left">
-            <a href="index.html" class="logo">EasyTaxi Palma</a>
+            <a href="index.html" class="logo"><span class="logo-full">EasyTaxi Palma</span><span class="logo-short">ETP</span></a>
             <ul class="nav-links">
                 <li><a href="conductores.html" id="nav-drivers">Conductores</a></li>
                 <li><a href="ayuda.html" class="active" id="nav-help">Ayuda</a></li>

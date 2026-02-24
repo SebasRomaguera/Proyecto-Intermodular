@@ -49,6 +49,10 @@
             color: black;
         }
 
+        .logo-short {
+            display: none;
+        }
+
         .nav-links {
             display: flex;
             list-style: none;
@@ -600,13 +604,16 @@
                 gap: 8px;
             }
 
-            .logo {
-                font-size: 15px;
-                margin-right: 8px;
+            .logo-full {
+                display: none;
+            }
+
+            .logo-short {
+                display: inline;
             }
 
             .language-selector {
-                display: none;
+                font-size: 13px;
             }
 
             #btn-login {
@@ -675,7 +682,7 @@
 
     <nav class="navbar">
         <div class="nav-left">
-            <div class="logo">EasyTaxi Palma</div>
+            <div class="logo"><span class="logo-full">EasyTaxi Palma</span><span class="logo-short">ETP</span></div>
             <ul class="nav-links">
                 <li><a href="conductores.html">Conductores</a></li>
                 <li><a href="ayuda.html">Ayuda</a></li>

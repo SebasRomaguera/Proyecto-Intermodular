@@ -261,12 +261,16 @@
                 padding: 15px 20px;
             }
 
-            .logo {
-                font-size: 15px;
+            .logo-full {
+                display: none;
+            }
+
+            .logo-short {
+                display: inline;
             }
 
             .language-selector {
-                display: none;
+                font-size: 13px;
             }
 
             .login-box {
@@ -278,7 +282,7 @@
 <body>
 
     <nav class="navbar">
-        <a href="index.html" class="logo">EasyTaxi Palma</a>
+        <a href="index.html" class="logo"><span class="logo-full">EasyTaxi Palma</span><span class="logo-short">ETP</span></a>
         <div class="nav-right">
             <div class="language-selector">
                 <button class="language-btn" onclick="toggleLanguageDropdown()">
