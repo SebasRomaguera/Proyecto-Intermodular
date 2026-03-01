@@ -378,45 +378,7 @@
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="nav-left">
-            <a href="index.html" class="logo"><span class="logo-full">EasyTaxi Palma</span><span class="logo-short">ETP</span></a>
-            <ul class="nav-links">
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="historial-viajes.html">Tus viajes</a></li>
-                <li><a href="ayuda.html">Ayuda</a></li>
-            </ul>
-            <button class="hamburger-btn" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('mobile-open')" aria-label="Menú">
-                <i class="ph ph-list"></i>
-            </button>
-        </div>
-        <div class="nav-right">
-            <div class="language-selector">
-                <button class="language-btn" onclick="toggleLanguageDropdown()">
-                    <i class="ph ph-globe"></i>
-                    <span id="current-lang">ES</span>
-                    <i class="ph ph-caret-down" style="font-size: 12px;"></i>
-                </button>
-                <div class="language-dropdown" id="language-dropdown">
-                    <div class="language-option" onclick="changeLanguage('es', 'ES')">
-                        🇪🇸 Español
-                    </div>
-                    <div class="language-option" onclick="changeLanguage('en', 'EN')">
-                        🇬🇧 English
-                    </div>
-                    <div class="language-option" onclick="changeLanguage('ca', 'CA')">
-                        🏴 Català
-                    </div>
-                </div>
-            </div>
-            <a href="perfil.html" style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
-                <i class="ph ph-user-circle" style="font-size: 20px;"></i>
-                <span id="navbar-username">Usuario</span>
-            </a>
-            <a href="#" onclick="cerrarSesion()" class="btn-logout">Cerrar sesión</a>
-        </div>
-    </nav>
+    <script src="assets/js/navbar.js"></script>
 
     <main class="container">
         <div class="profile-header">
@@ -555,40 +517,14 @@
         };
 
         // Language functions
-        function toggleLanguageDropdown() {
-            const dropdown = document.getElementById('language-dropdown');
-            dropdown.classList.toggle('show');
-        }
-
-        function changeLanguage(langCode, langDisplay) {
-            localStorage.setItem('language', langCode);
-            document.getElementById('current-lang').textContent = langDisplay;
-            toggleLanguageDropdown();
-            
-            // Update active state
-            document.querySelectorAll('.language-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Apply translations
-            applyTranslations(langCode);
-        }
-
         function applyTranslations(lang) {
             const t = translations[lang] || translations.es;
             const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
             
-            // Nav links
-            const navLinks = document.querySelectorAll('.nav-links a');
-            if (navLinks.length >= 2) {
-                navLinks[0].textContent = t.navHome;
-                navLinks[1].textContent = t.navHelp;
-            }
-            
             // Logout button
-            document.querySelector('.btn-logout').textContent = t.btnLogout;
-            
+            const btnLogout = document.querySelector('.btn-logout');
+            if (btnLogout) btnLogout.textContent = t.btnLogout;
+
             // Page header
             document.getElementById('profile-title').textContent = usuario.nombre ? `${t.greeting}, ${usuario.nombre}` : t.pageTitle;
             document.querySelector('.profile-header p').textContent = t.pageSubtitle;
@@ -618,37 +554,12 @@
             document.querySelector('.btn-primary').textContent = t.btnSave;
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            const selector = document.querySelector('.language-selector');
-            const dropdown = document.getElementById('language-dropdown');
-            if (selector && !selector.contains(e.target)) {
-                dropdown?.classList.remove('show');
-            }
-        });
-
-        // Load saved language
-        function loadLanguage() {
-            const savedLang = localStorage.getItem('language') || 'es';
-            const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
-            document.getElementById('current-lang').textContent = langMap[savedLang];
-            
-            // Mark active option
-            const options = document.querySelectorAll('.language-option');
-            options.forEach((opt, index) => {
-                const langs = ['es', 'en', 'ca'];
-                if (langs[index] === savedLang) {
-                    opt.classList.add('active');
-                }
-            });
-            
-            // Apply translations
-            applyTranslations(savedLang);
-        }
+        // Language change callback para navbar.js
+        window.onLanguageChange = applyTranslations;
 
         // Check authentication and load user data
         document.addEventListener('DOMContentLoaded', () => {
-            loadLanguage();
+            applyTranslations(localStorage.getItem('language') || 'es');
             const usuarioStr = localStorage.getItem('usuario');
             
             if (!usuarioStr) {
@@ -663,7 +574,6 @@
                 document.getElementById('nombre').value = usuario.nombre || '';
                 document.getElementById('email').value = usuario.email || '';
                 document.getElementById('telefono').value = usuario.telefono || '';
-                document.getElementById('navbar-username').textContent = usuario.nombre || 'Usuario';
                 document.getElementById('profile-title').textContent = `Hola, ${usuario.nombre || 'Usuario'}`;
             } catch (e) {
                 console.error('Error parsing user data:', e);
@@ -762,10 +672,6 @@
             }, 5000);
         }
 
-        function cerrarSesion() {
-            localStorage.removeItem('usuario');
-            window.location.href = 'index.html';
-        }
     </script>
 
 </body>

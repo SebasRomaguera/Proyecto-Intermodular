@@ -372,13 +372,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-left">
-            <a href="index.html" class="btn-back">
-                <i class="ph ph-arrow-left"></i> <span id="nav-back">Volver</span>
-            </a>
-        </div>
-    </nav>
+    <script src="assets/js/navbar.js"></script>
 
     <div class="container">
         <div class="page-header">
@@ -482,7 +476,6 @@
 
         function applyTranslations(lang) {
             const t = translations[lang];
-            document.getElementById('nav-back').textContent = t.navBack;
             document.getElementById('page-title').textContent = t.pageTitle;
             document.getElementById('page-subtitle').textContent = t.pageSubtitle;
             document.getElementById('tab-completed').textContent = t.tabCompleted;
@@ -491,6 +484,9 @@
             document.getElementById('loading-text-2').textContent = t.loadingText;
             document.title = t.pageTitle + ' - EasyTaxi Palma';
         }
+
+        // Language change callback para navbar.js
+        window.onLanguageChange = applyTranslations;
 
         // Aplicar idioma guardado al cargar
         document.addEventListener('DOMContentLoaded', () => {

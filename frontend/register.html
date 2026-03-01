@@ -293,30 +293,7 @@
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <a href="index.html" class="logo"><span class="logo-full">EasyTaxi Palma</span><span class="logo-short">ETP</span></a>
-        <div class="nav-right">
-            <div class="language-selector">
-                <button class="language-btn" onclick="toggleLanguageDropdown()">
-                    <i class="ph ph-globe"></i>
-                    <span id="current-lang">ES</span>
-                    <i class="ph ph-caret-down" style="font-size: 12px;"></i>
-                </button>
-                <div class="language-dropdown" id="language-dropdown">
-                    <div class="language-option" onclick="changeLanguage('es', 'ES')">
-                        🇪🇸 Español
-                    </div>
-                    <div class="language-option" onclick="changeLanguage('en', 'EN')">
-                        🇬🇧 English
-                    </div>
-                    <div class="language-option" onclick="changeLanguage('ca', 'CA')">
-                        🏴 Català
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <script src="assets/js/navbar.js"></script>
 
     <div class="container">
         <div class="register-box">
@@ -442,25 +419,6 @@
             }
         };
 
-        // Language functions
-        function toggleLanguageDropdown() {
-            const dropdown = document.getElementById('language-dropdown');
-            dropdown.classList.toggle('show');
-        }
-
-        function changeLanguage(langCode, langDisplay) {
-            localStorage.setItem('language', langCode);
-            document.getElementById('current-lang').textContent = langDisplay;
-            toggleLanguageDropdown();
-            
-            document.querySelectorAll('.language-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            applyTranslations(langCode);
-        }
-
         function applyTranslations(lang) {
             const t = translations[lang] || translations.es;
             
@@ -480,33 +438,15 @@
             document.getElementById('link-login').textContent = t.linkLogin;
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            const selector = document.querySelector('.language-selector');
-            const dropdown = document.getElementById('language-dropdown');
-            if (selector && !selector.contains(e.target)) {
-                dropdown?.classList.remove('show');
-            }
-        });
+        // Language change callback para navbar.js
+        window.onLanguageChange = applyTranslations;
 
         // Conectar formulario al handler de registro
         document.getElementById('registerForm').addEventListener('submit', registrarUsuario);
 
-        // Load saved language
+        // Inicializar traducciones
         document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('language') || 'es';
-            const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
-            document.getElementById('current-lang').textContent = langMap[savedLang];
-            
-            const options = document.querySelectorAll('.language-option');
-            options.forEach((opt, index) => {
-                const langs = ['es', 'en', 'ca'];
-                if (langs[index] === savedLang) {
-                    opt.classList.add('active');
-                }
-            });
-            
-            applyTranslations(savedLang);
+            applyTranslations(localStorage.getItem('language') || 'es');
         });
     </script>
 

@@ -614,42 +614,7 @@
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="nav-left">
-            <a href="index.html" class="logo"><span class="logo-full">EasyTaxi Palma</span><span class="logo-short">ETP</span></a>
-            <ul class="nav-links">
-                <li><a href="conductores.html" class="active" id="nav-drivers">Conductores</a></li>
-                <li><a href="ayuda.html" id="nav-help">Ayuda</a></li>
-                <li id="nav-viajes" style="display: none;"><a href="historial-viajes.html">Tus viajes</a></li>
-            </ul>
-            <button class="hamburger-btn" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('mobile-open')" aria-label="Menú">
-                <i class="ph ph-list"></i>
-            </button>
-        </div>
-        <div class="nav-right" id="nav-right">
-            <div class="language-selector">
-                <button class="language-btn" onclick="toggleLanguageDropdown()">
-                    <i class="ph ph-globe"></i>
-                    <span id="current-lang">ES</span>
-                    <i class="ph ph-caret-down" style="font-size: 12px;"></i>
-                </button>
-                <div class="language-dropdown" id="language-dropdown">
-                    <div class="language-option" onclick="changeLanguage('es', 'ES')">
-                        🇪🇸 Español
-                    </div>
-                    <div class="language-option" onclick="changeLanguage('en', 'EN')">
-                        🇬🇧 English
-                    </div>
-                    <div class="language-option" onclick="changeLanguage('ca', 'CA')">
-                        🏴 Català
-                    </div>
-                </div>
-            </div>
-            <a href="login.html" id="btn-login">Inicia sesión</a>
-            <a href="register.html" class="btn-register" id="btn-register">Registrarse</a>
-        </div>
-    </nav>
+    <script src="assets/js/navbar.js"></script>
 
     <section class="hero">
         <h1 id="hero-title">Conductores verificados y profesionales</h1>
@@ -1067,25 +1032,6 @@
             }
         };
 
-        // Language functions
-        function toggleLanguageDropdown() {
-            const dropdown = document.getElementById('language-dropdown');
-            dropdown.classList.toggle('show');
-        }
-
-        function changeLanguage(langCode, langDisplay) {
-            localStorage.setItem('language', langCode);
-            document.getElementById('current-lang').textContent = langDisplay;
-            toggleLanguageDropdown();
-            
-            document.querySelectorAll('.language-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            applyTranslations(langCode);
-        }
-
         function applyTranslations(lang) {
             const t = translations[lang] || translations.es;
             
@@ -1155,75 +1101,12 @@
             document.getElementById('cta-button').textContent = t.ctaButton;
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            const selector = document.querySelector('.language-selector');
-            const dropdown = document.getElementById('language-dropdown');
-            if (selector && !selector.contains(e.target)) {
-                dropdown?.classList.remove('show');
-            }
-        });
+        // Language change callback para navbar.js
+        window.onLanguageChange = applyTranslations;
 
-        // Check if user is logged in
+        // Inicializar traducciones
         document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('language') || 'es';
-            const langMap = { 'es': 'ES', 'en': 'EN', 'ca': 'CA' };
-            document.getElementById('current-lang').textContent = langMap[savedLang];
-            
-            const options = document.querySelectorAll('.language-option');
-            options.forEach((opt, index) => {
-                const langs = ['es', 'en', 'ca'];
-                if (langs[index] === savedLang) {
-                    opt.classList.add('active');
-                }
-            });
-            
-            applyTranslations(savedLang);
-            
-            const usuario = localStorage.getItem('usuario');
-            const navRight = document.getElementById('nav-right');
-            const navViajes = document.getElementById('nav-viajes');
-            
-            if (usuario) {
-                try {
-                    const userObj = JSON.parse(usuario);
-                    const userName = userObj.nombre || 'Usuario';
-                    
-                    // Mostrar enlace "Tus viajes"
-                    if (navViajes) {
-                        navViajes.style.display = 'block';
-                    }
-                    
-                    const t = translations[savedLang];
-                    navRight.innerHTML = `
-                        <div class="language-selector">
-                            <button class="language-btn" onclick="toggleLanguageDropdown()">
-                                <i class="ph ph-globe"></i>
-                                <span id="current-lang">${langMap[savedLang]}</span>
-                                <i class="ph ph-caret-down" style="font-size: 12px;"></i>
-                            </button>
-                            <div class="language-dropdown" id="language-dropdown">
-                                <div class="language-option ${savedLang === 'es' ? 'active' : ''}" onclick="changeLanguage('es', 'ES')">
-                                    🇪🇸 Español
-                                </div>
-                                <div class="language-option ${savedLang === 'en' ? 'active' : ''}" onclick="changeLanguage('en', 'EN')">
-                                    🇬🇧 English
-                                </div>
-                                <div class="language-option ${savedLang === 'ca' ? 'active' : ''}" onclick="changeLanguage('ca', 'CA')">
-                                    🏴 Català
-                                </div>
-                            </div>
-                        </div>
-                        <a href="perfil.html" style="display: flex; align-items: center; gap: 10px; color: black; font-weight: 500; text-decoration: none; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
-                            <i class="ph ph-user-circle" style="font-size: 20px;"></i>
-                            <span>${userName}</span>
-                        </a>
-                        <a href="#" onclick="cerrarSesion()" class="btn-logout">Cerrar sesión</a>
-                    `;
-                } catch (e) {
-                    console.error('Error parsing user data');
-                }
-            }
+            applyTranslations(localStorage.getItem('language') || 'es');
         });
 
         function handleDriverSignup() {
@@ -1239,10 +1122,6 @@
             });
         }
 
-        function cerrarSesion() {
-            localStorage.removeItem('usuario');
-            window.location.reload();
-        }
     </script>
 
 </body>
