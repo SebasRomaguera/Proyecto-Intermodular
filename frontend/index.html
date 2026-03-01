@@ -503,7 +503,9 @@
         /* Responsive */
         @media (max-width: 768px) {
             html, body {
+                height: auto;
                 overflow-x: hidden;
+                overflow-y: auto;
                 width: 100%;
             }
 
@@ -582,8 +584,10 @@
             }
 
             .container {
-                margin: 30px auto;
-                padding: 0 15px;
+                flex: none;
+                overflow: visible;
+                padding: 20px 15px;
+                align-items: flex-start;
             }
 
             .booking-section {
