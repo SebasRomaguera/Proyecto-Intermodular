@@ -127,8 +127,8 @@
         }
 
         .language-option:last-child { border-bottom: none; }
-        .language-option:hover { background: #f8f8f8; }
-        .language-option.active { background: #FDB91320; font-weight: 600; }
+        .language-option:hover { background: #f0f0f0; }
+        .language-option.active { background: #FDB913; color: black; font-weight: 600; }
 
         /* Responsive navbar */
         @media (max-width: 768px) {
