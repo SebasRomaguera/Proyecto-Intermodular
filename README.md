@@ -3,7 +3,7 @@ Aplicación web para la reserva y solicitud de taxis en Palma de Mallorca
 
 ## � Estado del proyecto
 **Versión actual:** UD1B - Sistema de viajes implementado  
-**Fecha:** Febrero 2026  
+**Fecha:** Marzo 2026  
 **Estado:** ✅ En desarrollo activo  
 
 ### Funcionalidades implementadas
@@ -21,10 +21,11 @@ Aplicación web para la reserva y solicitud de taxis en Palma de Mallorca
 - ✅ **Cálculo de precios y tiempos estimados**
 - ✅ **Sistema de valoraciones**
 - ✅ **Cancelación de viajes**
+- ✅ **Historial de viajes del usuario**
+- ✅ **Despliegue configurado en Vercel (serverless)**
 
 ### Próximas funcionalidades (UD1C y siguientes)
 - ⏳ Tokens JWT para autenticación
-- ⏳ Historial de viajes del usuario
 - ⏳ Mapa interactivo con Leaflet
 - ⏳ WebSockets para actualizaciones en tiempo real
 - ⏳ Sistema de notificaciones push
@@ -220,6 +221,7 @@ Proyecto-Intermodular/
 │   │   ├── controllers/       # Lógica de negocio
 │   │   └── routes/            # Rutas de la API
 │   ├── .env                   # Variables de entorno
+│   ├── seed-conductores.js    # Script para crear conductores de prueba
 │   ├── package.json           # Dependencias
 │   └── server.js              # Punto de entrada
 ├── frontend/                  # Aplicación web
@@ -229,10 +231,15 @@ Proyecto-Intermodular/
 │   ├── index.html            # Página principal
 │   ├── login.html            # Login
 │   ├── register.html         # Registro
-│   └── dashboard.html        # Dashboard
+│   ├── perfil.html           # Perfil de usuario
+│   ├── conductores.html      # Info para conductores
+│   ├── ayuda.html            # Ayuda y FAQ
+│   ├── viaje-en-curso.html   # Tracking del viaje activo
+│   └── historial-viajes.html # Historial de viajes
 ├── docs/
 │   └── tecnica.md            # Documentación técnica
-├── .gitignore
+├── docker-compose.yml
+├── vercel.json               # Configuración de despliegue Vercel
 └── README.md
 ```
 
@@ -315,5 +322,5 @@ POST   /api/viajes/:id/valorar    - Valorar viaje completado
 ## 📄 Información
 Proyecto Intermodular – UT0  
 Sebastià Romaguera Camps – IFC33X  
-Febrero 2026
+Marzo 2026
 

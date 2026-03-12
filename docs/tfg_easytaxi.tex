@@ -61,7 +61,7 @@
 % Información del documento
 \title{\textbf{EasyTaxi Palma} \\ \large Aplicación web para la reserva y petición de taxis en Palma de Mallorca}
 \author{Sebastià Romaguera Camps}
-\date{Febrero 2026}
+\date{Marzo 2026}
 
 \begin{document}
 
@@ -85,10 +85,10 @@
     {\large Desarrollo de Aplicaciones Web (IFC33X)\par}
     \vspace{2cm}
     
-    {\large Febrero 2026\par}
+    {\large Marzo 2026\par}
     \vspace{1cm}
     
-    {\normalsize Versión: UD1A - Primera versión funcional\par}
+    {\normalsize Versión: UD1B - Sistema de viajes implementado\par}
     
     \vfill
     
@@ -113,7 +113,7 @@ EasyTaxi Palma es una aplicación web diseñada para modernizar el sector del ta
 
 La aplicación implementa un sistema completo de registro y autenticación de usuarios, una interfaz intuitiva y responsive, y una arquitectura cliente-servidor robusta utilizando tecnologías modernas como Node.js, Express, MongoDB y JavaScript vanilla. El sistema garantiza la seguridad mediante encriptación de contraseñas con bcrypt y validación exhaustiva de datos tanto en frontend como en backend.
 
-El estado actual del proyecto (versión UD1A) incluye un sistema funcional de gestión de usuarios con registro, login, perfil personalizado y múltiples páginas informativas. Las próximas fases incorporarán geolocalización en tiempo real, sistema de reservas, cálculo de tarifas y mapas interactivos con Leaflet.
+El estado actual del proyecto (versión UD1B) incluye un sistema funcional de gestión de usuarios con registro, login y perfil personalizado, así como un completo sistema de solicitud y seguimiento de viajes en tiempo real. La versión incorpora los modelos de datos \texttt{Conductor} y \texttt{Viaje}, una API REST ampliada con endpoints de viajes, asignación automática del conductor disponible más próximo, seguimiento del progreso mediante un timeline animado, cálculo estimado de precios y tiempos, sistema de valoraciones y posibilidad de cancelación. El proyecto está configurado para despliegue en Vercel como función serverless. Las próximas fases incorporarán autenticación JWT y geolocalización en tiempo real con mapas interactivos Leaflet.
 
 \textbf{Palabras clave:} Aplicación web, taxi, Node.js, MongoDB, Express, JavaScript, geolocalización, sistema de reservas, API REST.
 
@@ -341,12 +341,17 @@ Proyecto-Intermodular/
 │   │   ├── config/
 │   │   │   └── database.js
 │   │   ├── controllers/
-│   │   │   └── authController.js
+│   │   │   ├── authController.js
+│   │   │   └── viajeController.js
 │   │   ├── models/
-│   │   │   └── Usuario.js
+│   │   │   ├── Usuario.js
+│   │   │   ├── Conductor.js
+│   │   │   └── Viaje.js
 │   │   └── routes/
-│   │       └── authRoutes.js
+│   │       ├── authRoutes.js
+│   │       └── viajeRoutes.js
 │   ├── .env
+│   ├── seed-conductores.js
 │   ├── package.json
 │   └── server.js
 ├── frontend/
@@ -362,17 +367,20 @@ Proyecto-Intermodular/
 │   ├── register.html
 │   ├── perfil.html
 │   ├── conductores.html
-│   └── ayuda.html
+│   ├── ayuda.html
+│   ├── viaje-en-curso.html
+│   └── historial-viajes.html
 ├── docs/
 │   ├── tecnica.md
 │   └── tfg_easytaxi.tex
 ├── docker-compose.yml
+├── vercel.json
 └── README.md
 \end{lstlisting}
 
 \subsection{Modelo de datos}
 
-El modelo de datos actual incluye la entidad \texttt{Usuario}:
+El modelo de datos incluye tres entidades principales: \texttt{Usuario}, \texttt{Conductor} y \texttt{Viaje}.
 
 \begin{lstlisting}[language=JavaScript, caption=Modelo Usuario (Mongoose)]
 const usuarioSchema = new mongoose.Schema({
@@ -404,19 +412,71 @@ const usuarioSchema = new mongoose.Schema({
 });
 \end{lstlisting}
 
+\begin{lstlisting}[language=JavaScript, caption=Modelo Conductor (Mongoose)]
+const conductorSchema = new mongoose.Schema({
+    nombre:     { type: String, required: true, trim: true },
+    apellidos:  { type: String, required: true, trim: true },
+    telefono:   { type: String, required: true, trim: true },
+    vehiculo: {
+        marca:     { type: String, required: true },
+        modelo:    { type: String, required: true },
+        color:     { type: String, required: true },
+        matricula: { type: String, required: true, uppercase: true }
+    },
+    ubicacionActual: {
+        lat: { type: Number, default: 39.5696 },
+        lng: { type: Number, default: 2.6502 }
+    },
+    estado: {
+        type: String,
+        enum: ['disponible', 'ocupado', 'desconectado'],
+        default: 'disponible'
+    },
+    valoracion:  { type: Number, default: 5.0, min: 0, max: 5 },
+    totalViajes: { type: Number, default: 0 }
+}, { timestamps: true });
+\end{lstlisting}
+
+\begin{lstlisting}[language=JavaScript, caption=Modelo Viaje (Mongoose)]
+const viajeSchema = new mongoose.Schema({
+    usuario:   { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true },
+    conductor: { type: mongoose.Schema.Types.ObjectId, ref: 'Conductor', required: true },
+    origen:    { type: String, required: true, trim: true },
+    destino:   { type: String, required: true, trim: true },
+    estado: {
+        type: String,
+        enum: ['asignado', 'en_camino', 'llegando', 'completado', 'cancelado'],
+        default: 'asignado'
+    },
+    precioEstimado:         { type: Number, required: true },
+    tiempoEstimadoMinutos:  { type: Number, required: true },
+    horaInicio:             { type: Date, default: Date.now },
+    horaFinEstimada:        { type: Date, required: true },
+    progreso:               { type: Number, default: 0, min: 0, max: 100 },
+    valoracionUsuario:      { type: Number, min: 1, max: 5 },
+    comentario:             { type: String, trim: true }
+}, { timestamps: true });
+\end{lstlisting}
+
 \subsection{API REST - Endpoints}
 
 La API implementada actualmente incluye:
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|l|l|p{6cm}|}
+\begin{tabular}{|l|l|p{5.5cm}|}
 \hline
 \textbf{Método} & \textbf{Endpoint} & \textbf{Descripción} \\
 \hline
 POST & /api/auth/register & Registro de nuevo usuario \\
 POST & /api/auth/login & Autenticación de usuario \\
-GET & / & Información de la API \\
+GET  & / & Información de la API \\
+\hline
+POST & /api/viajes/solicitar & Solicitar un nuevo viaje \\
+GET  & /api/viajes/:id/estado & Estado y progreso del viaje \\
+GET  & /api/viajes/historial & Historial de viajes del usuario \\
+POST & /api/viajes/:id/cancelar & Cancelar un viaje en curso \\
+POST & /api/viajes/:id/valorar & Valorar un viaje completado \\
 \hline
 \end{tabular}
 \caption{Endpoints de la API REST}
@@ -443,9 +503,9 @@ GET & / & Información de la API \\
 % ============================================
 \section{Desarrollo e implementación}
 
-\subsection{Estado actual del proyecto (Versión UD1A)}
+\subsection{Estado actual del proyecto (Versión UD1B)}
 
-El proyecto se encuentra en su primera versión funcional con las siguientes características implementadas:
+El proyecto se encuentra en su segunda versión funcional. La versión UD1A estableció la base de autenticación y la interfaz inicial. La versión UD1B añade el sistema completo de solicitud y gestión de viajes. A continuación se detallan las características implementadas:
 
 \subsubsection{Sistema de autenticación completo}
 
@@ -512,6 +572,68 @@ El proyecto se encuentra en su primera versión funcional con las siguientes car
         \item Enlaces a redes sociales.
         \item Barra de búsqueda (preparada para implementación).
     \end{itemize}
+\end{itemize}
+
+\subsubsection{Nuevas páginas del frontend (UD1B)}
+
+\begin{itemize}
+    \item \textbf{Página de viaje en curso (viaje-en-curso.html):}
+    \begin{itemize}
+        \item Card del conductor con nombre, valoración y datos del vehículo.
+        \item Timeline visual animado con cuatro estados: Asignado, En camino, Llegando, Completado.
+        \item Barra de progreso actualizada cada 3 segundos.
+        \item Tiempo restante en minutos en cuenta regresiva.
+        \item Precio estimado visible en todo momento.
+        \item Botón de cancelación disponible hasta completarse el viaje.
+        \item Sistema de valoración (1--5 estrellas) al finalizar el viaje.
+    \end{itemize}
+    
+    \item \textbf{Página de historial de viajes (historial-viajes.html):}
+    \begin{itemize}
+        \item Listado de todos los viajes anteriores del usuario.
+        \item Tabs para filtrar por estado: todos, completados, cancelados.
+        \item Detalle de cada viaje: origen, destino, conductor, precio y valoración.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Sistema de viajes (UD1B)}
+
+\begin{itemize}
+    \item \textbf{Solicitud de viaje:}
+    \begin{itemize}
+        \item El usuario introduce origen y destino desde la página principal.
+        \item El sistema localiza automáticamente el conductor disponible.
+        \item Se calculan precio estimado y tiempo de llegada.
+        \item El conductor queda marcado como ``ocupado'' hasta finalizar el servicio.
+    \end{itemize}
+    
+    \item \textbf{Seguimiento en tiempo real:}
+    \begin{itemize}
+        \item Polling cada 3 segundos al endpoint de estado.
+        \item Progreso calculado en base a tiempos reales (\texttt{horaInicio} y \texttt{horaFinEstimada}).
+        \item Transición automática de estados: asignado → en\_camino → llegando → completado.
+        \item Al completarse el viaje, el conductor vuelve a estar disponible.
+    \end{itemize}
+    
+    \item \textbf{Valoración:}
+    \begin{itemize}
+        \item Sistema de 1 a 5 estrellas al finalizar el viaje.
+        \item La valoración queda almacenada en el documento \texttt{Viaje} en MongoDB.
+    \end{itemize}
+    
+    \item \textbf{Script de datos de prueba (seed-conductores.js):}
+    \begin{itemize}
+        \item Crea automáticamente 5 conductores de prueba en la base de datos.
+        \item Cada conductor tiene datos completos: nombre, vehículo, ubicación en Palma y valoración inicial.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Despliegue en Vercel}
+
+\begin{itemize}
+    \item Configuración \texttt{vercel.json} que expone el backend de Node.js como función serverless.
+    \item El frontend estático se sirve directamente desde Vercel CDN.
+    \item Las rutas \texttt{/api/*} se redirigen al servidor Express y el resto al frontend.
 \end{itemize}
 
 \subsubsection{Características de diseño}
@@ -821,7 +943,17 @@ El desarrollo del proyecto sigue principios de metodología ágil utilizando Tre
 % ============================================
 \section{Próximos pasos y trabajo futuro}
 
-\subsection{Fase UD1B - Geolocalización y mapas}
+\subsection{Fase UD1B - Sistema de viajes (\textbf{Completada})}
+
+\begin{enumerate}
+    \item \textbf{Modelos Conductor y Viaje:} \checkmark Implementados en MongoDB con Mongoose.
+    \item \textbf{API de viajes:} \checkmark Endpoints para solicitar, consultar estado, listar historial, cancelar y valorar viajes.
+    \item \textbf{Seguimiento en tiempo real:} \checkmark Timeline animado con progreso calculado dinámicamente.
+    \item \textbf{Script de seed:} \checkmark \texttt{seed-conductores.js} para generar conductores de prueba.
+    \item \textbf{Despliegue Vercel:} \checkmark Configuración serverless lista para producción.
+\end{enumerate}
+
+\subsection{Fase UD1C - Geolocalización y mapas}
 
 \begin{enumerate}
     \item \textbf{Implementación de Leaflet:}
@@ -838,11 +970,11 @@ El desarrollo del proyecto sigue principios de metodología ágil utilizando Tre
         \item Detección automática de ubicación.
     \end{itemize}
     
-    \item \textbf{Visualización de taxis:}
+    \item \textbf{Visualización de taxis en el mapa:}
     \begin{itemize}
         \item Marcadores de taxis disponibles en el mapa.
-        \item Actualización en tiempo real de posiciones.
-        \item Cálculo de distancias.
+        \item Animación del movimiento del taxi hacia el cliente.
+        \item Cálculo real de distancias mediante coordenadas.
     \end{itemize}
 \end{enumerate}
 
@@ -911,11 +1043,11 @@ El desarrollo del proyecto sigue principios de metodología ágil utilizando Tre
 \subsection{Mejoras de seguridad}
 
 \begin{itemize}
-    \item Implementación completa de JWT.
+    \item \textbf{Implementación completa de JWT} (sustituir el middleware temporal de email por header).
     \item Autenticación de dos factores (2FA).
     \item Rate limiting en la API.
     \item Logs de auditoría.
-    \item Certificado SSL en producción.
+    \item Certificado SSL en producción (gestionado por Vercel).
 \end{itemize}
 
 \subsection{Optimizaciones}
@@ -947,16 +1079,20 @@ El desarrollo del proyecto sigue principios de metodología ágil utilizando Tre
 
 \subsection{Logros alcanzados}
 
-El desarrollo de EasyTaxi Palma en su fase UD1A ha permitido alcanzar los siguientes logros:
+El desarrollo de EasyTaxi Palma en sus fases UD1A y UD1B ha permitido alcanzar los siguientes logros:
 
 \begin{enumerate}
     \item \textbf{Sistema funcional de autenticación:} Implementación completa de registro y login con las mejores prácticas de seguridad.
     
-    \item \textbf{Arquitectura escalable:} Diseño modular que facilita la incorporación de nuevas funcionalidades.
+    \item \textbf{Sistema completo de viajes:} Solicitud, seguimiento en tiempo real con timeline animado, cancelación y valoración de viajes.
     
-    \item \textbf{Interfaz profesional:} Diseño moderno, responsive y multiidioma que proporciona una excelente experiencia de usuario.
+    \item \textbf{API REST ampliada:} Diez endpoints funcionales cubriendo autenticación y gestión de viajes.
     
-    \item \textbf{Base sólida:} Estructura del proyecto bien organizada que permite el crecimiento ordenado del sistema.
+    \item \textbf{Modelos de datos relacionados:} Esquemas Mongoose para Usuario, Conductor y Viaje con relaciones entre documentos.
+    
+    \item \textbf{Arquitectura serverless:} Configuración de despliegue en Vercel con frontend estático y backend como función serverless.
+    
+    \item \textbf{Interfaz profesional:} Diseño moderno, responsive y multiidioma con páginas adicionales de viaje en curso e historial.
     
     \item \textbf{Cumplimiento de requisitos éticos:} Implementación de medidas de accesibilidad, usabilidad y protección de datos.
 \end{enumerate}
@@ -984,6 +1120,9 @@ Durante el desarrollo del proyecto he desarrollado y consolidado competencias cl
     \item \textbf{Modales personalizados:} Reemplazar elementos nativos del navegador manteniendo funcionalidad.
     \item \textbf{Responsive design:} Adaptar la interfaz a múltiples tamaños de pantalla sin perder usabilidad.
     \item \textbf{Gestión de estado:} Sincronizar el estado de sesión entre diferentes páginas.
+    \item \textbf{Seguimiento en tiempo real sin WebSockets:} Implementar polling eficiente para actualizar el estado del viaje cada 3 segundos.
+    \item \textbf{Gestión del ciclo de vida del conductor:} Liberar automáticamente al conductor al completarse el viaje.
+    \item \textbf{Configuración serverless:} Adaptar el servidor Express para funcionar tanto en local como como función serverless en Vercel.
 \end{itemize}
 
 \subsection{Reflexión personal}
@@ -1149,8 +1288,11 @@ Con las próximas fases de desarrollo completadas, el proyecto podría evolucion
 Extractos de código más relevantes incluidos en el documento:
 \begin{itemize}
     \item Modelo de Usuario (Mongoose)
+    \item Modelo de Conductor (Mongoose)
+    \item Modelo de Viaje (Mongoose)
     \item Configuración del servidor Express
     \item Docker Compose para MongoDB
+    \item Configuración de despliegue Vercel (vercel.json)
 \end{itemize}
 
 \newpage
