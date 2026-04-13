@@ -467,9 +467,12 @@
         // Traducciones
         const translations = {
             es: {
+                timelineScheduled: 'Programado',
                 timelineAssigned: 'Asignado',
                 timelineOnWay: 'En camino',
                 timelineArriving: 'Llegando',
+                startsInMinute: 'Comienza en ~1 minuto',
+                startsInMinutes: 'Comienza en ~{minutes} minutos',
                 arriveInMinute: 'Llegará en ~1 minuto',
                 arriveInMinutes: 'Llegará en ~{minutes} minutos',
                 taxiArrived: '¡Tu taxi ha llegado!',
@@ -492,9 +495,12 @@
                 errorRating: 'Error al enviar la valoración'
             },
             en: {
+                timelineScheduled: 'Scheduled',
                 timelineAssigned: 'Assigned',
                 timelineOnWay: 'On the way',
                 timelineArriving: 'Arriving',
+                startsInMinute: 'Starts in ~1 minute',
+                startsInMinutes: 'Starts in ~{minutes} minutes',
                 arriveInMinute: 'Arriving in ~1 minute',
                 arriveInMinutes: 'Arriving in ~{minutes} minutes',
                 taxiArrived: 'Your taxi has arrived!',
@@ -517,9 +523,12 @@
                 errorRating: 'Error submitting rating'
             },
             ca: {
+                timelineScheduled: 'Programat',
                 timelineAssigned: 'Assignat',
                 timelineOnWay: 'En camí',
                 timelineArriving: 'Arribant',
+                startsInMinute: 'Comenca en ~1 minut',
+                startsInMinutes: 'Comenca en ~{minutes} minuts',
                 arriveInMinute: 'Arribarà en ~1 minut',
                 arriveInMinutes: 'Arribarà en ~{minutes} minuts',
                 taxiArrived: 'El teu taxi ha arribat!',
@@ -640,13 +649,20 @@
             
             // Determinar estados de la timeline
             const estados = {
+                programado: viaje.estado === 'programado',
                 asignado: viaje.estado === 'asignado',
                 en_camino: ['en_camino', 'llegando', 'completado'].includes(viaje.estado),
                 llegando: ['llegando', 'completado'].includes(viaje.estado)
             };
 
             let tiempoTexto;
-            if (tiempoRestante > 0) {
+            if (viaje.estado === 'programado') {
+                if (tiempoRestante === 1) {
+                    tiempoTexto = t.startsInMinute;
+                } else {
+                    tiempoTexto = t.startsInMinutes.replace('{minutes}', tiempoRestante);
+                }
+            } else if (tiempoRestante > 0) {
                 if (tiempoRestante === 1) {
                     tiempoTexto = t.arriveInMinute;
                 } else {
@@ -669,7 +685,7 @@
 
                 <div class="timeline">
                     <div class="timeline-line">
-                        <div class="timeline-point ${estados.asignado ? 'active' : 'completed'}">
+                        <div class="timeline-point ${estados.programado || estados.asignado ? 'active' : 'completed'}">
                             <i class="ph-fill ph-check-circle"></i>
                         </div>
                         <div class="timeline-connector ${estados.en_camino ? 'completed' : ''}"></div>
@@ -682,7 +698,7 @@
                         </div>
                     </div>
                     <div class="timeline-labels">
-                        <div class="timeline-label ${estados.asignado ? 'active' : ''}">${t.timelineAssigned}</div>
+                        <div class="timeline-label ${estados.programado || estados.asignado ? 'active' : ''}">${estados.programado ? t.timelineScheduled : t.timelineAssigned}</div>
                         <div class="timeline-label ${estados.en_camino && !estados.llegando ? 'active' : ''}">${t.timelineOnWay}</div>
                         <div class="timeline-label ${estados.llegando ? 'active' : ''}">${t.timelineArriving}</div>
                     </div>

@@ -169,6 +169,32 @@
             text-transform: uppercase;
         }
 
+        .viaje-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .viaje-tipo {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .tipo-reserva {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tipo-inmediato {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
         .estado-completado {
             background: #d1fae5;
             color: #065f46;
@@ -417,6 +443,8 @@
                 destination: 'Destino',
                 completed: 'Completado',
                 cancelled: 'Cancelado',
+                scheduledType: 'Reserva',
+                immediateType: 'Inmediato',
                 errorTitle: 'Error al cargar viajes',
                 retry: 'Reintentar'
             },
@@ -436,6 +464,8 @@
                 destination: 'Destination',
                 completed: 'Completed',
                 cancelled: 'Cancelled',
+                scheduledType: 'Scheduled',
+                immediateType: 'Immediate',
                 errorTitle: 'Error loading trips',
                 retry: 'Retry'
             },
@@ -455,6 +485,8 @@
                 destination: 'Destinació',
                 completed: 'Completat',
                 cancelled: 'Cancel·lat',
+                scheduledType: 'Reserva',
+                immediateType: 'Immediat',
                 errorTitle: 'Error al carregar viatges',
                 retry: 'Tornar a intentar'
             }
@@ -590,17 +622,21 @@
         function crearViajeCard(viaje) {
             const t = translations[currentLang];
             const fecha = new Date(viaje.fecha);
-            const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+            const locale = currentLang === 'ca' ? 'ca-ES' : (currentLang === 'en' ? 'en-GB' : 'es-ES');
+            const fechaFormateada = fecha.toLocaleDateString(locale, {
                 day: '2-digit',
                 month: 'short',
                 year: 'numeric'
             });
-            const horaFormateada = fecha.toLocaleTimeString('es-ES', {
+            const horaFormateada = fecha.toLocaleTimeString(locale, {
                 hour: '2-digit',
                 minute: '2-digit'
             });
 
             const iniciales = viaje.conductor.nombre.charAt(0) + viaje.conductor.apellidos.charAt(0);
+            const esReserva = typeof viaje.esReserva === 'boolean' ? viaje.esReserva : new Date(viaje.horaInicio) > fecha;
+            const tipoLabel = esReserva ? t.scheduledType : t.immediateType;
+            const tipoClass = esReserva ? 'tipo-reserva' : 'tipo-inmediato';
 
             return `
                 <div class="viaje-card">
@@ -609,9 +645,12 @@
                             <i class="ph ph-calendar"></i>
                             ${fechaFormateada} • ${horaFormateada}
                         </div>
-                        <span class="viaje-estado estado-${viaje.estado}">
-                            ${viaje.estado === 'completado' ? t.completed : t.cancelled}
-                        </span>
+                        <div class="viaje-tags">
+                            <span class="viaje-tipo ${tipoClass}">${tipoLabel}</span>
+                            <span class="viaje-estado estado-${viaje.estado}">
+                                ${viaje.estado === 'completado' ? t.completed : t.cancelled}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="viaje-ruta">

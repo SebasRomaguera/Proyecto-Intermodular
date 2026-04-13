@@ -23,7 +23,7 @@ const viajeSchema = new mongoose.Schema({
   },
   estado: {
     type: String,
-    enum: ['asignado', 'en_camino', 'llegando', 'completado', 'cancelado'],
+    enum: ['programado', 'asignado', 'en_camino', 'llegando', 'completado', 'cancelado'],
     default: 'asignado'
   },
   precioEstimado: {
@@ -33,6 +33,10 @@ const viajeSchema = new mongoose.Schema({
   tiempoEstimadoMinutos: {
     type: Number,
     required: true
+  },
+  esReserva: {
+    type: Boolean,
+    default: false
   },
   horaInicio: {
     type: Date,
@@ -72,6 +76,12 @@ viajeSchema.methods.calcularProgreso = function() {
   }
 
   const ahora = new Date();
+  if (ahora < this.horaInicio) {
+    this.estado = 'programado';
+    this.progreso = 0;
+    return this.progreso;
+  }
+
   const tiempoTranscurrido = ahora - this.horaInicio;
   const duracionTotal = this.horaFinEstimada - this.horaInicio;
   

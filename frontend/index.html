@@ -151,21 +151,38 @@
             max-width: 400px;
         }
 
-        .time-picker {
-            background: #eeeeee;
-            padding: 12px 15px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
+        .trip-mode-row {
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 10px;
             margin-bottom: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.3s;
         }
 
-        .time-picker:hover {
-            background: #e0e0e0;
+        .trip-mode-select,
+        .schedule-input {
+            width: 100%;
+            border: 1px solid #ddd;
+            background: #f6f6f6;
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #333;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .trip-mode-select:focus,
+        .schedule-input:focus {
+            border-color: #FDB913;
+            box-shadow: 0 0 0 3px rgba(253, 185, 19, 0.15);
+        }
+
+        .schedule-wrapper {
+            display: none;
+        }
+
+        .schedule-wrapper.active {
+            display: block;
         }
 
         .location-inputs {
@@ -650,6 +667,16 @@
                 <p>Añade los datos del viaje, súbete y ¡en marcha!</p>
 
                 <div class="input-group">
+                    <div class="trip-mode-row">
+                        <select id="tipo-viaje" class="trip-mode-select" onchange="toggleScheduleFields()">
+                            <option value="ahora">Ahora mismo</option>
+                            <option value="reserva">Reservar para más tarde</option>
+                        </select>
+                        <div id="schedule-wrapper" class="schedule-wrapper">
+                            <input type="datetime-local" id="fecha-recogida" class="schedule-input">
+                        </div>
+                    </div>
+
                     <div class="location-inputs">
                         <div class="origin-wrapper">
                             <div class="input-wrapper">
@@ -1112,6 +1139,9 @@
                 city: 'Palma, ES',
                 title: 'Solicita un taxi ahora o reserva para más tarde',
                 subtitle: 'Añade los datos del viaje, súbete y ¡en marcha!',
+                modeNow: 'Ahora mismo',
+                modeLater: 'Reservar para mas tarde',
+                schedulePlaceholder: 'Fecha y hora de recogida',
                 pickupPlaceholder: 'Ubicación de recogida',
                 destPlaceholder: 'Ubicación de destino',
                 pricesBtn: 'Ver precios',
@@ -1122,12 +1152,16 @@
                 btnRegister: 'Registrarse',
                 btnLogout: 'Cerrar sesión',
                 loginPrompt: 'Necesitas iniciar sesión para solicitar un taxi. ¿Ir a iniciar sesión?',
-                devAlert: 'Funcionalidad de reserva en desarrollo...'
+                devAlert: 'Funcionalidad de reserva en desarrollo...',
+                invalidSchedule: 'Selecciona una fecha y hora futuras para la reserva.'
             },
             en: {
                 city: 'Palma, ES',
                 title: 'Request a taxi for now or later',
                 subtitle: 'Add your trip details, get in and let\'s go!',
+                modeNow: 'Right now',
+                modeLater: 'Schedule for later',
+                schedulePlaceholder: 'Pickup date and time',
                 pickupPlaceholder: 'Pickup location',
                 destPlaceholder: 'Destination location',
                 pricesBtn: 'See prices',
@@ -1138,12 +1172,16 @@
                 btnRegister: 'Sign up',
                 btnLogout: 'Log out',
                 loginPrompt: 'You need to log in to request a taxi. Go to login?',
-                devAlert: 'Booking functionality in development...'
+                devAlert: 'Booking functionality in development...',
+                invalidSchedule: 'Choose a future date and time for the reservation.'
             },
             ca: {
                 city: 'Palma, ES',
                 title: 'Sol·licita un taxi per ara o per més tard',
                 subtitle: 'Afegeix les dades del viatge, puja i en marxa!',
+                modeNow: 'Ara mateix',
+                modeLater: 'Reservar per mes tard',
+                schedulePlaceholder: 'Data i hora de recollida',
                 pickupPlaceholder: 'Ubicació de recollida',
                 destPlaceholder: 'Ubicació de destí',
                 pricesBtn: 'Veure preus',
@@ -1154,7 +1192,8 @@
                 btnRegister: 'Registra\'t',
                 btnLogout: 'Tanca sessió',
                 loginPrompt: 'Necessites iniciar sessió per sol·licitar un taxi. Anar a iniciar sessió?',
-                devAlert: 'Funcionalitat de reserva en desenvolupament...'
+                devAlert: 'Funcionalitat de reserva en desenvolupament...',
+                invalidSchedule: 'Selecciona una data i hora futures per a la reserva.'
             }
         };
 
@@ -1165,6 +1204,9 @@
             document.querySelector('.city-selector').innerHTML = `<i class="ph ph-map-pin-fill"></i> ${t.city}`;
             document.querySelector('h1').textContent = t.title;
             document.querySelector('main p').textContent = t.subtitle;
+            document.querySelector('#tipo-viaje option[value="ahora"]').textContent = t.modeNow;
+            document.querySelector('#tipo-viaje option[value="reserva"]').textContent = t.modeLater;
+            document.getElementById('fecha-recogida').setAttribute('aria-label', t.schedulePlaceholder);
             document.getElementById('origen-input').placeholder = t.pickupPlaceholder;
             document.getElementById('destino-input').placeholder = t.destPlaceholder;
             document.querySelector('.btn-prices').textContent = t.pricesBtn;
@@ -1195,7 +1237,36 @@
         // Inicializar traducciones
         document.addEventListener('DOMContentLoaded', () => {
             applyTranslations(localStorage.getItem('language') || 'es');
+            setMinReservationDate();
+            toggleScheduleFields();
         });
+
+        function setMinReservationDate() {
+            const input = document.getElementById('fecha-recogida');
+            if (!input) return;
+
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 5);
+            const minDateTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            input.min = minDateTime;
+        }
+
+        function toggleScheduleFields() {
+            const tripType = document.getElementById('tipo-viaje')?.value;
+            const wrapper = document.getElementById('schedule-wrapper');
+            const dateInput = document.getElementById('fecha-recogida');
+
+            if (!wrapper || !dateInput) return;
+
+            if (tripType === 'reserva') {
+                wrapper.classList.add('active');
+                dateInput.required = true;
+            } else {
+                wrapper.classList.remove('active');
+                dateInput.required = false;
+                dateInput.value = '';
+            }
+        }
 
         function handleVerPrecios() {
             // Check if user is logged in
@@ -1244,6 +1315,8 @@
         async function solicitarViaje() {
             const origen = document.getElementById('origen-input').value.trim();
             const destino = document.getElementById('destino-input').value.trim();
+            const tipoViaje = document.getElementById('tipo-viaje').value;
+            const fechaRecogida = document.getElementById('fecha-recogida').value;
             const lang = localStorage.getItem('language') || 'es';
 
             // Validar que haya origen y destino
@@ -1272,24 +1345,37 @@
                 return;
             }
 
+            if (tipoViaje === 'reserva') {
+                const fechaReserva = new Date(fechaRecogida);
+                if (!fechaRecogida || Number.isNaN(fechaReserva.getTime()) || fechaReserva <= new Date()) {
+                    showCustomModal({
+                        icon: '<i class="ph ph-warning"></i>',
+                        title: 'Error',
+                        message: translations[lang].invalidSchedule,
+                        buttons: [{ text: lang === 'en' ? 'OK' : 'Entendido', primary: true }]
+                    });
+                    return;
+                }
+            }
+
             // Mostrar modal de carga
             const loadingModal = {
                 es: {
                     icon: '<i class="ph ph-spinner" style="animation: spin 1s linear infinite;"></i>',
-                    title: 'Buscando conductor...',
-                    message: 'Estamos buscando el mejor conductor disponible para ti.',
+                    title: tipoViaje === 'reserva' ? 'Programando reserva...' : 'Buscando conductor...',
+                    message: tipoViaje === 'reserva' ? 'Estamos preparando tu reserva para la hora indicada.' : 'Estamos buscando el mejor conductor disponible para ti.',
                     buttons: []
                 },
                 en: {
                     icon: '<i class="ph ph-spinner" style="animation: spin 1s linear infinite;"></i>',
-                    title: 'Looking for driver...',
-                    message: 'We are looking for the best available driver for you.',
+                    title: tipoViaje === 'reserva' ? 'Scheduling your ride...' : 'Looking for driver...',
+                    message: tipoViaje === 'reserva' ? 'We are preparing your reservation for the selected time.' : 'We are looking for the best available driver for you.',
                     buttons: []
                 },
                 ca: {
                     icon: '<i class="ph ph-spinner" style="animation: spin 1s linear infinite;"></i>',
-                    title: 'Cercant conductor...',
-                    message: 'Estem cercant el millor conductor disponible per a tu.',
+                    title: tipoViaje === 'reserva' ? 'Programant reserva...' : 'Cercant conductor...',
+                    message: tipoViaje === 'reserva' ? 'Estem preparant la teva reserva per a l\'hora indicada.' : 'Estem cercant el millor conductor disponible per a tu.',
                     buttons: []
                 }
             };
@@ -1358,7 +1444,11 @@
                         'Content-Type': 'application/json',
                         'x-user-email': userEmail
                     },
-                    body: JSON.stringify({ origen, destino })
+                    body: JSON.stringify({
+                        origen,
+                        destino,
+                        fechaRecogida: tipoViaje === 'reserva' ? fechaRecogida : null
+                    })
                 });
 
                 const data = await response.json();

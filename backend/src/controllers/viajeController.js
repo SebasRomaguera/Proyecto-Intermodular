@@ -25,7 +25,7 @@ const estimarDistancia = (origen, destino) => {
 // Solicitar un viaje
 exports.solicitarViaje = async (req, res) => {
   try {
-    const { origen, destino } = req.body;
+    const { origen, destino, fechaRecogida } = req.body;
     const usuarioId = req.userId; // Del middleware de autenticación (lo crearemos)
 
     // Validación básica
@@ -50,8 +50,28 @@ exports.solicitarViaje = async (req, res) => {
     const distanciaKm = estimarDistancia(origen, destino);
     const precioEstimado = calcularPrecio(distanciaKm);
     const tiempoEstimadoMinutos = calcularTiempo(distanciaKm);
-    
-    const horaInicio = new Date();
+
+    const ahora = new Date();
+    let horaInicio = ahora;
+    let estadoInicial = 'asignado';
+    let esReserva = false;
+
+    if (fechaRecogida) {
+      const fechaProgramada = new Date(fechaRecogida);
+      if (Number.isNaN(fechaProgramada.getTime())) {
+        return res.status(400).json({
+          success: false,
+          mensaje: 'La fecha de recogida no es valida'
+        });
+      }
+
+      if (fechaProgramada > ahora) {
+        horaInicio = fechaProgramada;
+        estadoInicial = 'programado';
+        esReserva = true;
+      }
+    }
+
     const horaFinEstimada = new Date(horaInicio.getTime() + tiempoEstimadoMinutos * 60000);
 
     // Crear el viaje
@@ -60,6 +80,8 @@ exports.solicitarViaje = async (req, res) => {
       conductor: conductor._id,
       origen,
       destino,
+      estado: estadoInicial,
+      esReserva,
       precioEstimado,
       tiempoEstimadoMinutos,
       horaInicio,
@@ -85,6 +107,7 @@ exports.solicitarViaje = async (req, res) => {
         precioEstimado: viaje.precioEstimado,
         tiempoEstimadoMinutos: viaje.tiempoEstimadoMinutos,
         estado: viaje.estado,
+        horaInicio: viaje.horaInicio,
         conductor: {
           nombre: viaje.conductor.nombre,
           apellidos: viaje.conductor.apellidos,
@@ -141,6 +164,7 @@ exports.obtenerEstadoViaje = async (req, res) => {
         estado: viaje.estado,
         progreso: Math.round(viaje.progreso),
         tiempoRestante,
+        horaInicio: viaje.horaInicio,
         origen: viaje.origen,
         destino: viaje.destino,
         precioEstimado: viaje.precioEstimado,
@@ -181,6 +205,8 @@ exports.obtenerHistorial = async (req, res) => {
         origen: v.origen,
         destino: v.destino,
         fecha: v.createdAt,
+        horaInicio: v.horaInicio,
+        esReserva: v.esReserva,
         precioEstimado: v.precioEstimado,
         estado: v.estado,
         conductor: {
