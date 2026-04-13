@@ -158,7 +158,47 @@
             margin-bottom: 15px;
         }
 
-        .trip-mode-select,
+        .trip-mode-card {
+            background: linear-gradient(180deg, #fff9e8 0%, #fff4cf 100%);
+            border: 1px solid #f6d77d;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 8px 20px rgba(253, 185, 19, 0.12);
+        }
+
+        .trip-mode-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .trip-mode-btn {
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #5a4a1f;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .trip-mode-btn:hover {
+            background: rgba(255, 255, 255, 0.45);
+        }
+
+        .trip-mode-btn.active {
+            background: #FDB913;
+            color: #201a08;
+            border-color: #f0aa00;
+            box-shadow: 0 6px 14px rgba(253, 185, 19, 0.28);
+        }
+
         .schedule-input {
             width: 100%;
             border: 1px solid #ddd;
@@ -183,6 +223,22 @@
 
         .schedule-wrapper.active {
             display: block;
+        }
+
+        .schedule-field {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #f0d68b;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .schedule-field i {
+            color: #8a5d00;
+            font-size: 18px;
         }
 
         .location-inputs {
@@ -668,12 +724,24 @@
 
                 <div class="input-group">
                     <div class="trip-mode-row">
-                        <select id="tipo-viaje" class="trip-mode-select" onchange="toggleScheduleFields()">
-                            <option value="ahora">Ahora mismo</option>
-                            <option value="reserva">Reservar para más tarde</option>
-                        </select>
+                        <div class="trip-mode-card">
+                            <div class="trip-mode-toggle">
+                                <button type="button" id="btn-mode-now" class="trip-mode-btn active" onclick="setTripMode('ahora')">
+                                    <i class="ph ph-lightning"></i>
+                                    <span id="mode-now-label">Ahora mismo</span>
+                                </button>
+                                <button type="button" id="btn-mode-reserve" class="trip-mode-btn" onclick="setTripMode('reserva')">
+                                    <i class="ph ph-calendar-check"></i>
+                                    <span id="mode-later-label">Reservar para más tarde</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="tipo-viaje" value="ahora">
+                        </div>
                         <div id="schedule-wrapper" class="schedule-wrapper">
-                            <input type="datetime-local" id="fecha-recogida" class="schedule-input">
+                            <div class="schedule-field">
+                                <i class="ph ph-clock-countdown"></i>
+                                <input type="datetime-local" id="fecha-recogida" class="schedule-input">
+                            </div>
                         </div>
                     </div>
 
@@ -1153,7 +1221,9 @@
                 btnLogout: 'Cerrar sesión',
                 loginPrompt: 'Necesitas iniciar sesión para solicitar un taxi. ¿Ir a iniciar sesión?',
                 devAlert: 'Funcionalidad de reserva en desarrollo...',
-                invalidSchedule: 'Selecciona una fecha y hora futuras para la reserva.'
+                invalidSchedule: 'Selecciona una fecha y hora futuras para la reserva.',
+                reservationOkTitle: 'Reserva confirmada',
+                reservationOkMessage: 'Tu taxi ha sido reservado correctamente. Te llevamos a Tus viajes.'
             },
             en: {
                 city: 'Palma, ES',
@@ -1173,7 +1243,9 @@
                 btnLogout: 'Log out',
                 loginPrompt: 'You need to log in to request a taxi. Go to login?',
                 devAlert: 'Booking functionality in development...',
-                invalidSchedule: 'Choose a future date and time for the reservation.'
+                invalidSchedule: 'Choose a future date and time for the reservation.',
+                reservationOkTitle: 'Reservation confirmed',
+                reservationOkMessage: 'Your taxi has been booked successfully. Taking you to Your trips.'
             },
             ca: {
                 city: 'Palma, ES',
@@ -1193,7 +1265,9 @@
                 btnLogout: 'Tanca sessió',
                 loginPrompt: 'Necessites iniciar sessió per sol·licitar un taxi. Anar a iniciar sessió?',
                 devAlert: 'Funcionalitat de reserva en desenvolupament...',
-                invalidSchedule: 'Selecciona una data i hora futures per a la reserva.'
+                invalidSchedule: 'Selecciona una data i hora futures per a la reserva.',
+                reservationOkTitle: 'Reserva confirmada',
+                reservationOkMessage: 'El teu taxi s\'ha reservat correctament. Et duim a Els teus viatges.'
             }
         };
 
@@ -1204,8 +1278,8 @@
             document.querySelector('.city-selector').innerHTML = `<i class="ph ph-map-pin-fill"></i> ${t.city}`;
             document.querySelector('h1').textContent = t.title;
             document.querySelector('main p').textContent = t.subtitle;
-            document.querySelector('#tipo-viaje option[value="ahora"]').textContent = t.modeNow;
-            document.querySelector('#tipo-viaje option[value="reserva"]').textContent = t.modeLater;
+            document.getElementById('mode-now-label').textContent = t.modeNow;
+            document.getElementById('mode-later-label').textContent = t.modeLater;
             document.getElementById('fecha-recogida').setAttribute('aria-label', t.schedulePlaceholder);
             document.getElementById('origen-input').placeholder = t.pickupPlaceholder;
             document.getElementById('destino-input').placeholder = t.destPlaceholder;
@@ -1266,6 +1340,19 @@
                 dateInput.required = false;
                 dateInput.value = '';
             }
+        }
+
+        function setTripMode(mode) {
+            const typeInput = document.getElementById('tipo-viaje');
+            const btnNow = document.getElementById('btn-mode-now');
+            const btnReserve = document.getElementById('btn-mode-reserve');
+
+            if (!typeInput || !btnNow || !btnReserve) return;
+
+            typeInput.value = mode;
+            btnNow.classList.toggle('active', mode === 'ahora');
+            btnReserve.classList.toggle('active', mode === 'reserva');
+            toggleScheduleFields();
         }
 
         function handleVerPrecios() {
@@ -1454,8 +1541,20 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Redirigir a la página de viaje en curso
-                    window.location.href = `viaje-en-curso.html?id=${data.viaje.id}`;
+                    if (tipoViaje === 'reserva') {
+                        showCustomModal({
+                            icon: '<i class="ph ph-check-circle"></i>',
+                            title: translations[lang].reservationOkTitle,
+                            message: translations[lang].reservationOkMessage,
+                            buttons: []
+                        });
+
+                        setTimeout(() => {
+                            window.location.href = 'historial-viajes.html?tab=reservas';
+                        }, 1200);
+                    } else {
+                        window.location.href = `viaje-en-curso.html?id=${data.viaje.id}`;
+                    }
                 } else {
                     hideCustomModal();
                     const errorModal = {

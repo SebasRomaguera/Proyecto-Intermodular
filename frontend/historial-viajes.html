@@ -294,6 +294,19 @@
             color: #667eea;
         }
 
+        .reserva-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e3a8a;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* Empty state */
         .empty-state {
             text-align: center;
@@ -399,6 +412,10 @@
                 <span id="tab-completed">Completados</span>
                 <span class="tab-badge" id="badge-completados">0</span>
             </button>
+            <button class="tab" onclick="cambiarTab('reservas')">
+                <span id="tab-reservations">Reservas</span>
+                <span class="tab-badge" id="badge-reservas">0</span>
+            </button>
             <button class="tab" onclick="cambiarTab('cancelados')">
                 <span id="tab-cancelled">Cancelados</span>
                 <span class="tab-badge" id="badge-cancelados">0</span>
@@ -420,6 +437,14 @@
             </div>
             <div id="lista-cancelados"></div>
         </div>
+
+        <div id="tab-reservas" class="tab-content">
+            <div class="loading" id="loading-reservas">
+                <div class="spinner"></div>
+                <p id="loading-text-3">Cargando viajes...</p>
+            </div>
+            <div id="lista-reservas"></div>
+        </div>
     </div>
 
     <script>
@@ -432,10 +457,13 @@
                 pageTitle: '📋 Tus Viajes',
                 pageSubtitle: 'Historial completo de tus viajes en EasyTaxi Palma',
                 tabCompleted: 'Completados',
+                tabReservations: 'Reservas',
                 tabCancelled: 'Cancelados',
                 loadingText: 'Cargando viajes...',
                 emptyCompleted: 'No tienes viajes completados',
                 emptyCompletedDesc: 'Tus viajes completados aparecerán aquí',
+                emptyReservations: 'No tienes reservas pendientes',
+                emptyReservationsDesc: 'Cuando reserves un taxi para mas tarde, aparecera aqui.',
                 emptyCancelled: 'No tienes viajes cancelados',
                 emptyCancelledDesc: 'Los viajes que canceles aparecerán aquí',
                 requestTrip: 'Solicitar un viaje',
@@ -443,8 +471,14 @@
                 destination: 'Destino',
                 completed: 'Completado',
                 cancelled: 'Cancelado',
+                statusScheduled: 'Programado',
+                statusAssigned: 'Asignado',
+                statusOnWay: 'En camino',
+                statusArriving: 'Llegando',
                 scheduledType: 'Reserva',
                 immediateType: 'Inmediato',
+                pickupAt: 'Recogida',
+                driverPickupAt: 'Tu conductor te recogera el',
                 errorTitle: 'Error al cargar viajes',
                 retry: 'Reintentar'
             },
@@ -453,10 +487,13 @@
                 pageTitle: '📋 Your Trips',
                 pageSubtitle: 'Complete history of your trips in EasyTaxi Palma',
                 tabCompleted: 'Completed',
+                tabReservations: 'Reservations',
                 tabCancelled: 'Cancelled',
                 loadingText: 'Loading trips...',
                 emptyCompleted: 'No completed trips',
                 emptyCompletedDesc: 'Your completed trips will appear here',
+                emptyReservations: 'You have no pending reservations',
+                emptyReservationsDesc: 'When you schedule a ride, it will appear here.',
                 emptyCancelled: 'No cancelled trips',
                 emptyCancelledDesc: 'Trips you cancel will appear here',
                 requestTrip: 'Request a trip',
@@ -464,8 +501,14 @@
                 destination: 'Destination',
                 completed: 'Completed',
                 cancelled: 'Cancelled',
+                statusScheduled: 'Scheduled',
+                statusAssigned: 'Assigned',
+                statusOnWay: 'On the way',
+                statusArriving: 'Arriving',
                 scheduledType: 'Scheduled',
                 immediateType: 'Immediate',
+                pickupAt: 'Pickup',
+                driverPickupAt: 'Your driver will pick you up on',
                 errorTitle: 'Error loading trips',
                 retry: 'Retry'
             },
@@ -474,10 +517,13 @@
                 pageTitle: '📋 Els teus Viatges',
                 pageSubtitle: 'Historial complet dels teus viatges a EasyTaxi Palma',
                 tabCompleted: 'Completats',
+                tabReservations: 'Reserves',
                 tabCancelled: 'Cancel·lats',
                 loadingText: 'Carregant viatges...',
                 emptyCompleted: 'No tens viatges completats',
                 emptyCompletedDesc: 'Els teus viatges completats apareixeran aquí',
+                emptyReservations: 'No tens reserves pendents',
+                emptyReservationsDesc: 'Quan reservis un taxi per mes tard, apareixera aqui.',
                 emptyCancelled: 'No tens viatges cancel·lats',
                 emptyCancelledDesc: 'Els viatges que cancel·lis apareixeran aquí',
                 requestTrip: 'Sol·licitar un viatge',
@@ -485,8 +531,14 @@
                 destination: 'Destinació',
                 completed: 'Completat',
                 cancelled: 'Cancel·lat',
+                statusScheduled: 'Programat',
+                statusAssigned: 'Assignat',
+                statusOnWay: 'En cami',
+                statusArriving: 'Arribant',
                 scheduledType: 'Reserva',
                 immediateType: 'Immediat',
+                pickupAt: 'Recollida',
+                driverPickupAt: 'El teu conductor et recollira el',
                 errorTitle: 'Error al carregar viatges',
                 retry: 'Tornar a intentar'
             }
@@ -499,9 +551,11 @@
             document.getElementById('page-title').textContent = t.pageTitle;
             document.getElementById('page-subtitle').textContent = t.pageSubtitle;
             document.getElementById('tab-completed').textContent = t.tabCompleted;
+            document.getElementById('tab-reservations').textContent = t.tabReservations;
             document.getElementById('tab-cancelled').textContent = t.tabCancelled;
             document.getElementById('loading-text-1').textContent = t.loadingText;
             document.getElementById('loading-text-2').textContent = t.loadingText;
+            document.getElementById('loading-text-3').textContent = t.loadingText;
             document.title = t.pageTitle + ' - EasyTaxi Palma';
         }
 
@@ -522,14 +576,19 @@
         let viajes = [];
 
         // Cambiar tabs
-        function cambiarTab(tab) {
+        function activarTab(tab) {
             // Actualizar botones
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.closest('.tab').classList.add('active');
+            const tabButton = document.querySelector(`.tab[onclick="cambiarTab('${tab}')"]`);
+            if (tabButton) tabButton.classList.add('active');
 
             // Actualizar contenido
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function cambiarTab(tab) {
+            activarTab(tab);
         }
 
         // Función helper para obtener email
@@ -578,14 +637,17 @@
             const t = translations[currentLang];
             const completados = viajes.filter(v => v.estado === 'completado');
             const cancelados = viajes.filter(v => v.estado === 'cancelado');
+            const reservas = viajes.filter(v => v.esReserva && !['completado', 'cancelado'].includes(v.estado));
 
             // Actualizar badges
             document.getElementById('badge-completados').textContent = completados.length;
             document.getElementById('badge-cancelados').textContent = cancelados.length;
+            document.getElementById('badge-reservas').textContent = reservas.length;
 
             // Ocultar loading
             document.getElementById('loading-completados').style.display = 'none';
             document.getElementById('loading-cancelados').style.display = 'none';
+            document.getElementById('loading-reservas').style.display = 'none';
 
             // Mostrar viajes completados
             const listaCompletados = document.getElementById('lista-completados');
@@ -616,12 +678,37 @@
             } else {
                 listaCancelados.innerHTML = cancelados.map(viaje => crearViajeCard(viaje)).join('');
             }
+
+            const listaReservas = document.getElementById('lista-reservas');
+            if (reservas.length === 0) {
+                listaReservas.innerHTML = `
+                    <div class="empty-state">
+                        <i class="ph ph-calendar-check"></i>
+                        <h3>${t.emptyReservations}</h3>
+                        <p>${t.emptyReservationsDesc}</p>
+                        <a href="index.html" class="btn-primary">${t.requestTrip}</a>
+                    </div>
+                `;
+            } else {
+                listaReservas.innerHTML = reservas.map(viaje => crearViajeCard(viaje, true)).join('');
+            }
+        }
+
+        function estadoLabel(viaje, t) {
+            if (viaje.estado === 'completado') return t.completed;
+            if (viaje.estado === 'cancelado') return t.cancelled;
+            if (viaje.estado === 'programado') return t.statusScheduled;
+            if (viaje.estado === 'asignado') return t.statusAssigned;
+            if (viaje.estado === 'en_camino') return t.statusOnWay;
+            if (viaje.estado === 'llegando') return t.statusArriving;
+            return viaje.estado;
         }
 
         // Crear card de viaje
-        function crearViajeCard(viaje) {
+        function crearViajeCard(viaje, isReservationTab = false) {
             const t = translations[currentLang];
             const fecha = new Date(viaje.fecha);
+            const fechaRecogida = viaje.horaInicio ? new Date(viaje.horaInicio) : null;
             const locale = currentLang === 'ca' ? 'ca-ES' : (currentLang === 'en' ? 'en-GB' : 'es-ES');
             const fechaFormateada = fecha.toLocaleDateString(locale, {
                 day: '2-digit',
@@ -637,6 +724,26 @@
             const esReserva = typeof viaje.esReserva === 'boolean' ? viaje.esReserva : new Date(viaje.horaInicio) > fecha;
             const tipoLabel = esReserva ? t.scheduledType : t.immediateType;
             const tipoClass = esReserva ? 'tipo-reserva' : 'tipo-inmediato';
+            const etiquetaEstado = estadoLabel(viaje, t);
+
+            let reservaInfo = '';
+            if (isReservationTab && fechaRecogida && !Number.isNaN(fechaRecogida.getTime())) {
+                const recogidaFecha = fechaRecogida.toLocaleDateString(locale, {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                const recogidaHora = fechaRecogida.toLocaleTimeString(locale, {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                reservaInfo = `
+                    <div class="reserva-info">
+                        <i class="ph ph-calendar-check"></i>
+                        <span>${t.driverPickupAt} <strong>${recogidaFecha}</strong> ${currentLang === 'en' ? 'at' : 'a las'} <strong>${recogidaHora}</strong></span>
+                    </div>
+                `;
+            }
 
             return `
                 <div class="viaje-card">
@@ -648,10 +755,12 @@
                         <div class="viaje-tags">
                             <span class="viaje-tipo ${tipoClass}">${tipoLabel}</span>
                             <span class="viaje-estado estado-${viaje.estado}">
-                                ${viaje.estado === 'completado' ? t.completed : t.cancelled}
+                                ${etiquetaEstado}
                             </span>
                         </div>
                     </div>
+
+                    ${reservaInfo}
 
                     <div class="viaje-ruta">
                         <div class="ruta-item origen">
@@ -693,6 +802,7 @@
             const t = translations[currentLang];
             document.getElementById('loading-completados').style.display = 'none';
             document.getElementById('loading-cancelados').style.display = 'none';
+            document.getElementById('loading-reservas').style.display = 'none';
 
             const errorHtml = `
                 <div class="empty-state">
@@ -705,6 +815,12 @@
 
             document.getElementById('lista-completados').innerHTML = errorHtml;
             document.getElementById('lista-cancelados').innerHTML = errorHtml;
+            document.getElementById('lista-reservas').innerHTML = errorHtml;
+        }
+
+        const tabQuery = new URLSearchParams(window.location.search).get('tab');
+        if (tabQuery === 'reservas' || tabQuery === 'cancelados' || tabQuery === 'completados') {
+            activarTab(tabQuery);
         }
 
         // Cargar viajes al inicio
