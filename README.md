@@ -1,5 +1,6 @@
 # EasyTaxi Palma 🚕  
 Aplicación web para la reserva y solicitud de taxis en Palma de Mallorca
+https://proyecto-intermodular-liard.vercel.app/
 
 ## � Estado del proyecto
 **Versión actual:** UD1B - Sistema de viajes implementado  
