@@ -1,0 +1,407 @@
+/* ===================================================================
+   EASYTAXI PALMA - SHARED STYLES
+   Paleta de colores, componentes y estilos globales
+   Incluir en todas las páginas: <link rel="stylesheet" href="assets/css/styles-shared.css">
+   =================================================================== */
+
+:root {
+    /* Paleta principal */
+    --primary-color: #FDB913;
+    --primary-hover: #FFA500;
+    --secondary-color: #000000;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    
+    /* Neutros */
+    --text-dark: #1f2937;
+    --text-default: #333;
+    --text-muted: #6b7280;
+    --text-light: #9ca3af;
+    
+    --bg-white: #ffffff;
+    --bg-light: #f5f5f5;
+    --bg-lighter: #f9f9f9;
+    --bg-lightest: #fff8df;
+    
+    /* Bordes */
+    --border-light: #e5e7eb;
+    --border-lighter: #f0f0f0;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-primary: 0 8px 18px rgba(253, 185, 19, 0.18);
+    --shadow-focus: 0 10px 24px rgba(253, 185, 19, 0.18);
+    
+    /* Fonts */
+    --font-primary: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-2xl: 24px;
+    --font-size-3xl: 28px;
+    --font-size-4xl: 36px;
+    --font-weight-normal: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+}
+
+/* ===================================================================
+   RESET Y BASE
+   =================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: var(--font-primary);
+}
+
+body {
+    color: var(--text-default);
+    background-color: var(--bg-white);
+}
+
+/* ===================================================================
+   BOTONES COMUNES
+   =================================================================== */
+
+.btn-primary {
+    display: inline-block;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: var(--font-weight-semibold);
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-focus);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    display: inline-block;
+    background: var(--bg-lighter);
+    color: var(--text-default);
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: var(--font-weight-semibold);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--border-lighter);
+}
+
+.btn-danger {
+    background: var(--accent-red);
+    color: var(--bg-white);
+    padding: 11px 24px;
+    border-radius: 8px;
+    border: none;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 15px;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* ===================================================================
+   CARDS Y CONTENEDORES
+   =================================================================== */
+
+.card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-compact {
+    padding: 16px;
+}
+
+/* ===================================================================
+   INPUTS Y FORMULARIOS
+   =================================================================== */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-light);
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    font-family: var(--font-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: var(--text-default);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(253, 185, 19, 0.15);
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-default);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+}
+
+/* ===================================================================
+   BADGES Y ETIQUETAS
+   =================================================================== */
+
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.badge-primary {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+.badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-info {
+    background: #fff4cf;
+    color: #8a5b00;
+}
+
+/* ===================================================================
+   ESTADO DE CARGA Y ESTADOS VACÍOS
+   =================================================================== */
+
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-light);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.empty-state-title {
+    font-size: var(--font-size-lg);
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.empty-state-text {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+/* ===================================================================
+   ALERTAS Y MENSAJES
+   =================================================================== */
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid var(--accent-green);
+}
+
+.alert-error {
+    background: #ffebee;
+    color: #c41c3b;
+    border: 1px solid var(--accent-red);
+}
+
+.alert-info {
+    background: #fff9e8;
+    border: 1px solid #f6d77d;
+    color: #6b4b00;
+}
+
+/* ===================================================================
+   GRADIENTES Y FONDOS ESPECIALES
+   =================================================================== */
+
+.gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+}
+
+.gradient-primary-reverse {
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+}
+
+.bg-primary-light {
+    background: linear-gradient(180deg, var(--bg-lightest) 0%, var(--bg-light) 26%, var(--bg-light) 100%);
+}
+
+/* ===================================================================
+   ACCESIBILIDAD
+   =================================================================== */
+
+a:focus,
+button:focus,
+input:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* ===================================================================
+   UTILIDADES
+   =================================================================== */
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-secondary {
+    color: var(--text-muted);
+}
+
+.text-muted {
+    color: var(--text-light);
+}
+
+.text-bold {
+    font-weight: var(--font-weight-bold);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-sm {
+    font-size: var(--font-size-sm);
+}
+
+.text-lg {
+    font-size: var(--font-size-lg);
+}
+
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 16px; }
+.mt-lg { margin-top: 24px; }
+
+.mb-sm { margin-bottom: 8px; }
+.mb-md { margin-bottom: 16px; }
+.mb-lg { margin-bottom: 24px; }
+
+.px-sm { padding-left: 8px; padding-right: 8px; }
+.px-md { padding-left: 16px; padding-right: 16px; }
+.px-lg { padding-left: 24px; padding-right: 24px; }
+
+.hidden {
+    display: none;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ===================================================================
+   RESPONSIVE
+   =================================================================== */
+
+@media (max-width: 768px) {
+    .card {
+        padding: 16px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        padding: 11px 12px;
+        font-size: 16px; /* Previne zoom en iOS */
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 11px 20px;
+        font-size: var(--font-size-sm);
+    }
+}
