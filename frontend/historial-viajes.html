@@ -14,7 +14,7 @@
         }
 
         body {
-            background: #f5f5f5;
+            background: linear-gradient(180deg, #fff8df 0%, #f5f5f5 26%, #f5f5f5 100%);
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
@@ -42,12 +42,12 @@
 
         .page-header h1 {
             font-size: 36px;
-            color: #1f2937;
+            color: #000;
             margin-bottom: 10px;
         }
 
         .page-header p {
-            color: #6b7280;
+            color: #666;
             font-size: 16px;
         }
 
@@ -75,12 +75,12 @@
         }
 
         .tab:hover {
-            color: #667eea;
+            color: #FDB913;
         }
 
         .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+            color: #000;
+            border-bottom-color: #FDB913;
         }
 
         .tab-badge {
@@ -94,8 +94,8 @@
         }
 
         .tab.active .tab-badge {
-            background: #667eea;
-            color: white;
+            background: #FDB913;
+            color: #000;
         }
 
         /* Tab content */
@@ -136,13 +136,13 @@
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             transition: all 0.3s;
             cursor: pointer;
         }
 
         .viaje-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
             transform: translateY(-2px);
         }
 
@@ -186,13 +186,13 @@
         }
 
         .tipo-reserva {
-            background: #dbeafe;
-            color: #1e40af;
+            background: #fff4cf;
+            color: #8a5b00;
         }
 
         .tipo-inmediato {
-            background: #fef3c7;
-            color: #92400e;
+            background: #fde68a;
+            color: #6b4b00;
         }
 
         .estado-completado {
@@ -222,7 +222,7 @@
         }
 
         .ruta-item.origen i {
-            color: #667eea;
+            color: #FDB913;
         }
 
         .ruta-item.destino i {
@@ -264,11 +264,11 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #000;
             font-weight: bold;
         }
 
@@ -291,13 +291,13 @@
         .viaje-precio {
             font-size: 24px;
             font-weight: bold;
-            color: #667eea;
+            color: #000;
         }
 
         .reserva-info {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e3a8a;
+            background: #fff9e8;
+            border: 1px solid #f6d77d;
+            color: #6b4b00;
             border-radius: 10px;
             padding: 10px 12px;
             margin-bottom: 16px;
@@ -315,25 +315,25 @@
 
         .empty-state i {
             font-size: 64px;
-            color: #d1d5db;
+            color: #FDB913;
             margin-bottom: 20px;
         }
 
         .empty-state h3 {
             font-size: 20px;
-            color: #6b7280;
+            color: #000;
             margin-bottom: 10px;
         }
 
         .empty-state p {
-            color: #9ca3af;
+            color: #6b7280;
             margin-bottom: 20px;
         }
 
         .btn-primary {
             display: inline-block;
-            background: #667eea;
-            color: white;
+            background: #FDB913;
+            color: #000;
             padding: 12px 24px;
             border-radius: 8px;
             text-decoration: none;
@@ -342,7 +342,7 @@
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            background: #FFA500;
             transform: translateY(-2px);
         }
 
@@ -358,7 +358,7 @@
             width: 40px;
             height: 40px;
             border: 4px solid #e5e7eb;
-            border-top-color: #667eea;
+            border-top-color: #FDB913;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
