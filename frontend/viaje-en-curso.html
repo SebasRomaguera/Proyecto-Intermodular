@@ -6,50 +6,71 @@
     <title>Viaje en Curso - EasyTaxi Palma</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
+        html,
         body {
             min-height: 100vh;
             background: linear-gradient(180deg, #fff8df 0%, #f5f5f5 30%, #f5f5f5 100%);
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            box-sizing: border-box;
         }
 
         .viaje-container {
-            max-width: 620px;
-            margin: 50px auto;
-            padding: 20px;
+            width: min(620px, calc(100vw - 24px));
+            max-height: calc(100dvh - 24px);
+            margin: 0;
+            padding: 16px;
             background: white;
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        #contenido-viaje {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
         .conductor-card {
             background: linear-gradient(135deg, #FDB913 0%, #FFA500 100%);
             color: white;
-            padding: 25px;
+            padding: 18px;
             border-radius: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 18px;
             text-align: center;
             box-shadow: 0 10px 24px rgba(253, 185, 19, 0.18);
         }
 
         .conductor-nombre {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
         .conductor-valoracion {
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 17px;
+            margin-bottom: 10px;
         }
 
         .conductor-vehiculo {
-            font-size: 18px;
+            font-size: 15px;
             opacity: 0.95;
             margin: 5px 0;
         }
 
         .timeline {
-            margin: 40px 0;
+            margin: 24px 0;
             position: relative;
         }
 
@@ -62,13 +83,13 @@
         }
 
         .timeline-point {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             z-index: 2;
             background: white;
             border: 3px solid #ddd;
@@ -102,9 +123,9 @@
         .timeline-labels {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
+            font-size: 13px;
             color: #6b7280;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .timeline-label {
@@ -120,8 +141,8 @@
         .progress-bar {
             background: #e5e7eb;
             border-radius: 10px;
-            height: 30px;
-            margin: 30px 0;
+            height: 24px;
+            margin: 20px 0;
             position: relative;
         }
 
@@ -167,53 +188,53 @@
 
         .tiempo-restante {
             text-align: center;
-            font-size: 24px;
+            font-size: 19px;
             font-weight: bold;
             color: #000;
-            margin: 20px 0;
+            margin: 14px 0;
         }
 
         .info-viaje {
             background: #f9f9f9;
-            padding: 20px;
+            padding: 14px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 14px 0;
         }
 
         .info-item {
             display: flex;
             align-items: center;
-            margin: 15px 0;
-            font-size: 16px;
+            margin: 10px 0;
+            font-size: 14px;
         }
 
         .info-item i {
-            font-size: 24px;
-            margin-right: 15px;
+            font-size: 20px;
+            margin-right: 12px;
             color: #FDB913;
         }
 
         .precio-estimado {
             background: #fff4cf;
             color: #6b4b00;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
             text-align: center;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
-            margin: 20px 0;
+            margin: 14px 0;
         }
 
         .btn-cancelar {
             background: #ef4444;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 11px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 14px;
         }
 
         .btn-cancelar:hover {
@@ -223,20 +244,20 @@
         .estado-completado {
             background: #d1fae5;
             color: #065f46;
-            padding: 20px;
+            padding: 14px;
             border-radius: 10px;
             text-align: center;
-            margin: 20px 0;
+            margin: 12px 0;
         }
 
         .estado-completado h2 {
             margin: 0 0 10px 0;
-            font-size: 28px;
+            font-size: 22px;
         }
 
         .valoracion-container {
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 18px;
+            padding: 14px;
             background: #f9f9f9;
             border-radius: 10px;
         }
@@ -244,9 +265,9 @@
         .estrellas {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            font-size: 40px;
-            margin: 20px 0;
+            gap: 8px;
+            font-size: 34px;
+            margin: 14px 0;
         }
 
         .estrella {
@@ -264,10 +285,10 @@
             background: #FDB913;
             color: #000;
             border: none;
-            padding: 12px 30px;
+            padding: 11px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             width: 100%;
             box-shadow: 0 8px 18px rgba(253, 185, 19, 0.18);
             transition: all 0.25s ease;
@@ -303,7 +324,7 @@
         .modal-content {
             background: white;
             border-radius: 15px;
-            padding: 30px;
+            padding: 24px;
             max-width: 400px;
             width: 90%;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
@@ -409,16 +430,17 @@
             }
 
             .viaje-container {
-                margin: 10px auto;
-                padding: 15px;
+                width: min(620px, calc(100vw - 18px));
+                max-height: calc(100dvh - 18px);
+                padding: 12px;
             }
 
             .conductor-nombre {
-                font-size: 22px;
+                font-size: 21px;
             }
 
             .conductor-valoracion {
-                font-size: 16px;
+                font-size: 15px;
             }
 
             .conductor-vehiculo {
@@ -426,15 +448,15 @@
             }
 
             .tiempo-restante {
-                font-size: 20px;
-            }
-
-            .precio-estimado {
                 font-size: 18px;
             }
 
+            .precio-estimado {
+                font-size: 17px;
+            }
+
             .estado-completado h2 {
-                font-size: 22px;
+                font-size: 20px;
             }
 
             .modal-buttons {
@@ -450,7 +472,7 @@
             }
 
             .estrellas {
-                font-size: 32px;
+                font-size: 30px;
                 gap: 6px;
             }
 
@@ -460,6 +482,29 @@
 
             .info-item i {
                 font-size: 20px;
+            }
+        }
+
+        @media (max-height: 820px) {
+            .conductor-card {
+                padding: 14px;
+                margin-bottom: 14px;
+            }
+
+            .timeline {
+                margin: 18px 0;
+            }
+
+            .progress-bar,
+            .precio-estimado,
+            .info-viaje,
+            .valoracion-container {
+                margin-top: 12px;
+                margin-bottom: 12px;
+            }
+
+            .tiempo-restante {
+                margin: 10px 0;
             }
         }
     </style>
