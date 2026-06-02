@@ -195,6 +195,31 @@ El servidor estará disponible en: `http://localhost:3000`
 ### Paso 6: Abrir el frontend
 Abrir el archivo `frontend/index.html` en un navegador o usar Live Server de VS Code.
 
+---
+
+## 🐳 Arranque local con Docker Compose
+
+Si quieres levantar el frontend y el backend en local desde Docker Desktop sin tocar Vercel, usa este modo.
+
+### 1. Crear el archivo de variables de entorno
+Copia `.env.example` a `.env` en la raíz del proyecto y pon la misma `MONGO_URI` que usa el proyecto en Vercel.
+
+### 2. Levantar los contenedores
+```bash
+docker compose up --build
+```
+
+### 3. Abrir la app
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:3000`
+
+### 4. Detener el entorno
+```bash
+docker compose down
+```
+
+Este modo no crea una base de datos local. El backend de Docker se conecta a la misma base de datos remota que usa Vercel.
+
 ### Verificar que funciona
 1. Abre el navegador en `frontend/index.html`
 2. Haz clic en "Registrarse"
