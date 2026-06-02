@@ -92,7 +92,7 @@
             flex: 1;
             display: flex;
             align-items: center;
-            overflow: visible;
+            overflow: hidden;
         }
 
         .booking-section {
@@ -421,9 +421,10 @@
 
         .autocomplete-list {
             position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+            top: 0;
+            left: calc(100% + 12px);
+            right: auto;
+            width: min(340px, calc(100vw - 60px));
             background: white;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -650,6 +651,14 @@
                 overflow: visible;
                 padding: 20px 15px;
                 align-items: flex-start;
+            }
+
+            .autocomplete-list {
+                top: 100%;
+                left: 0;
+                right: 0;
+                width: auto;
+                margin-top: 5px;
             }
 
             .booking-section {
