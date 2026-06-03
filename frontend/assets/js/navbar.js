@@ -59,6 +59,14 @@
             transition: opacity 0.3s;
         }
 
+        .nav-links a.nav-drivers-btn {
+            background: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
         .nav-links a:hover, .nav-right a:hover { opacity: 0.7; }
 
         .nav-links a.active {
@@ -183,9 +191,9 @@
        TRADUCCIONES DEL NAVBAR
     ===================================================================== */
     const t = {
-        es: { drivers: 'Conductores', help: 'Ayuda', trips: 'Tus viajes', login: 'Inicia sesión', register: 'Registrarse', logout: 'Cerrar sesión' },
-        en: { drivers: 'Drivers', help: 'Help', trips: 'Your trips', login: 'Sign in', register: 'Register', logout: 'Sign out' },
-        ca: { drivers: 'Conductors', help: 'Ajuda', trips: 'Els teus viatges', login: 'Inicia sessió', register: "Registra't", logout: 'Tanca sessió' }
+        es: { drivers: 'Conductores', driversBtn: 'Consultar taxistas', help: 'Ayuda', trips: 'Tus viajes', login: 'Inicia sesión', register: 'Registrarse', logout: 'Cerrar sesión' },
+        en: { drivers: 'Drivers', driversBtn: 'Check drivers', help: 'Help', trips: 'Your trips', login: 'Sign in', register: 'Register', logout: 'Sign out' },
+        ca: { drivers: 'Conductors', driversBtn: 'Consultar taxistes', help: 'Ajuda', trips: 'Els teus viatges', login: 'Inicia sessió', register: "Registra't", logout: 'Tanca sessió' }
     };
 
     /* =====================================================================
@@ -235,6 +243,7 @@
         const tr = t[lang] || t.es;
         const userName = usuario ? (usuario.nombre || 'Usuario') : null;
         const langMap = { es: 'ES', en: 'EN', ca: 'CA' };
+        const showDriversButton = currentPage === 'index.html' && userName;
 
         const navRightHTML = userName ? `
             <div class="language-selector">
@@ -268,6 +277,7 @@
                 <li><a href="conductores.html" id="nav-drivers"${activePage === 'conductores' ? ' class="active"' : ''}>${tr.drivers}</a></li>
                 <li><a href="ayuda.html" id="nav-help"${activePage === 'ayuda' ? ' class="active"' : ''}>${tr.help}</a></li>
                 <li id="nav-viajes"${!userName ? ' style="display:none;"' : ''}><a href="historial-viajes.html" id="nav-viajes-link"${activePage === 'viajes' ? ' class="active"' : ''}>${tr.trips}</a></li>
+                ${showDriversButton ? `<li><a href="#" class="nav-drivers-btn" id="nav-drivers-btn" onclick="consultarTaxistasDisponibles(); return false;">${tr.driversBtn}</a></li>` : ''}
             </ul>
             <button class="hamburger-btn" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('mobile-open')" aria-label="Menú">
                 <i class="ph ph-list"></i>
@@ -299,6 +309,7 @@
         const nd = document.getElementById('nav-drivers');        if (nd) nd.textContent = tr.drivers;
         const nh = document.getElementById('nav-help');          if (nh) nh.textContent = tr.help;
         const nv = document.getElementById('nav-viajes-link');   if (nv) nv.textContent = tr.trips;
+        const db = document.getElementById('nav-drivers-btn');   if (db) db.textContent = tr.driversBtn;
         const bl = document.getElementById('btn-login');         if (bl) bl.textContent = tr.login;
         const br = document.getElementById('btn-register');      if (br) br.textContent = tr.register;
         const lo = document.getElementById('navbar-btn-logout'); if (lo) lo.textContent = tr.logout;
