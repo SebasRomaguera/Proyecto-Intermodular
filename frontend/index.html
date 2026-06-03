@@ -421,14 +421,15 @@
 
         .autocomplete-list {
             position: absolute;
-            top: -28px;
-            left: calc(100% + 12px);
+            bottom: calc(100% + 12px);
+            top: auto;
+            left: 0;
             right: auto;
-            width: min(340px, calc(100vw - 60px));
+            width: min(420px, calc(100vw - 60px));
             background: white;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            max-height: 300px;
+            max-height: 260px;
             overflow-y: auto;
             z-index: 1000;
             display: none;
@@ -654,11 +655,13 @@
             }
 
             .autocomplete-list {
-                top: 100%;
+                top: auto;
+                bottom: calc(100% + 8px);
                 left: 0;
                 right: 0;
                 width: auto;
                 margin-top: 5px;
+                max-height: 220px;
             }
 
             .booking-section {
