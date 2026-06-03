@@ -43,6 +43,7 @@ const authMiddleware = async (req, res, next) => {
 
 // Rutas de viajes
 router.post('/solicitar', authMiddleware, viajeController.solicitarViaje);
+router.get('/conductores/disponibles', viajeController.consultarConductoresDisponibles);
 router.get('/:id/estado', viajeController.obtenerEstadoViaje);
 router.get('/historial', authMiddleware, viajeController.obtenerHistorial);
 router.post('/:id/cancelar', authMiddleware, viajeController.cancelarViaje);

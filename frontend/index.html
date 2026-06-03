@@ -307,6 +307,31 @@
             transform: translateY(0);
         }
 
+        .btn-drivers {
+            background: #fff;
+            color: #111;
+            width: 100%;
+            padding: 13px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .btn-drivers:hover {
+            background: #f7f7f7;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .btn-drivers:active {
+            transform: translateY(0);
+        }
+
         /* Imagen */
         .hero-image {
             flex: 1.2;
@@ -766,6 +791,7 @@
                     </div>
 
                     <button class="btn-prices" onclick="handleVerPrecios()">Ver precios</button>
+                    <button class="btn-drivers" onclick="consultarTaxistasDisponibles()">Consultar taxistas disponibles</button>
                 </div>
             </div>
 
@@ -1397,6 +1423,44 @@
             } else {
                 // Logged in - solicitar viaje
                 solicitarViaje();
+            }
+        }
+
+        async function consultarTaxistasDisponibles() {
+            try {
+                const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
+                const response = await fetch(`${API_URL}/viajes/conductores/disponibles`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    showCustomModal({
+                        icon: '<i class="ph ph-warning"></i>',
+                        title: 'Error',
+                        message: data.mensaje || 'No se pudo consultar la disponibilidad de taxistas.',
+                        buttons: [{ text: 'Entendido', primary: true }]
+                    });
+                    return;
+                }
+
+                const total = data.totalDisponibles || 0;
+                const texto = total === 1
+                    ? 'Ahora mismo hay 1 taxista disponible.'
+                    : `Ahora mismo hay ${total} taxistas disponibles.`;
+
+                showCustomModal({
+                    icon: '<i class="ph ph-taxi"></i>',
+                    title: 'Taxistas disponibles',
+                    message: texto,
+                    buttons: [{ text: 'Entendido', primary: true }]
+                });
+            } catch (error) {
+                console.error('Error al consultar taxistas disponibles:', error);
+                showCustomModal({
+                    icon: '<i class="ph ph-warning"></i>',
+                    title: 'Error de conexión',
+                    message: 'No se pudo conectar con el servidor. Intenta nuevamente.',
+                    buttons: [{ text: 'Entendido', primary: true }]
+                });
             }
         }
 

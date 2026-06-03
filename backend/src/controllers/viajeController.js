@@ -227,6 +227,25 @@ exports.obtenerHistorial = async (req, res) => {
   }
 };
 
+// Consultar conductores disponibles
+exports.consultarConductoresDisponibles = async (req, res) => {
+  try {
+    const totalDisponibles = await Conductor.countDocuments({ estado: 'disponible' });
+
+    res.json({
+      success: true,
+      totalDisponibles
+    });
+  } catch (error) {
+    console.error('Error al consultar conductores disponibles:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al consultar los taxistas disponibles',
+      error: error.message
+    });
+  }
+};
+
 // Cancelar viaje
 exports.cancelarViaje = async (req, res) => {
   try {
