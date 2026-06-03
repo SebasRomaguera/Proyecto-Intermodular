@@ -288,6 +288,39 @@
             color: #000;
         }
 
+        .viaje-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel-reserva {
+            border: none;
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cancel-reserva:hover {
+            background: #fecaca;
+            transform: translateY(-1px);
+        }
+
+        .btn-cancel-reserva:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .reserva-info {
             background: #fff9e8;
             border: 1px solid #f6d77d;
@@ -473,6 +506,9 @@
                 immediateType: 'Inmediato',
                 pickupAt: 'Recogida',
                 driverPickupAt: 'Tu conductor te recogera el',
+                cancelReservation: 'Cancelar reserva',
+                confirmCancelReservation: '¿Quieres cancelar esta reserva? El conductor quedará liberado.',
+                reservationCancelled: 'Reserva cancelada correctamente',
                 errorTitle: 'Error al cargar viajes',
                 retry: 'Reintentar'
             },
@@ -503,6 +539,9 @@
                 immediateType: 'Immediate',
                 pickupAt: 'Pickup',
                 driverPickupAt: 'Your driver will pick you up on',
+                cancelReservation: 'Cancel reservation',
+                confirmCancelReservation: 'Do you want to cancel this reservation? The driver will be released.',
+                reservationCancelled: 'Reservation cancelled successfully',
                 errorTitle: 'Error loading trips',
                 retry: 'Retry'
             },
@@ -533,6 +572,9 @@
                 immediateType: 'Immediat',
                 pickupAt: 'Recollida',
                 driverPickupAt: 'El teu conductor et recollira el',
+                cancelReservation: 'Cancel·lar reserva',
+                confirmCancelReservation: 'Vols cancel·lar aquesta reserva? El conductor quedarà alliberat.',
+                reservationCancelled: 'Reserva cancel·lada correctament',
                 errorTitle: 'Error al carregar viatges',
                 retry: 'Tornar a intentar'
             }
@@ -698,6 +740,40 @@
             return viaje.estado;
         }
 
+        function puedeCancelarReserva(viaje) {
+            return viaje.esReserva && !['completado', 'cancelado'].includes(viaje.estado);
+        }
+
+        async function cancelarReserva(viajeId) {
+            const t = translations[currentLang];
+            if (!window.confirm(t.confirmCancelReservation)) {
+                return;
+            }
+
+            try {
+                const userEmail = getUserEmail();
+                const response = await fetch(`${API_URL}/viajes/${viajeId}/cancelar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-email': userEmail
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.alert(t.reservationCancelled);
+                    await cargarViajes();
+                } else {
+                    window.alert(data.mensaje || t.errorTitle);
+                }
+            } catch (error) {
+                console.error('Error al cancelar reserva:', error);
+                window.alert(t.errorTitle);
+            }
+        }
+
         // Crear card de viaje
         function crearViajeCard(viaje, isReservationTab = false) {
             const t = translations[currentLang];
@@ -785,7 +861,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="viaje-precio">${viaje.precioEstimado}€</div>
+                        <div class="viaje-actions">
+                            <div class="viaje-precio">${viaje.precioEstimado}€</div>
+                            ${isReservationTab && puedeCancelarReserva(viaje) ? `
+                                <button class="btn-cancel-reserva" onclick="cancelarReserva('${viaje.id}')">
+                                    <i class="ph ph-x-circle"></i>
+                                    ${t.cancelReservation}
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
                 </div>
             `;
