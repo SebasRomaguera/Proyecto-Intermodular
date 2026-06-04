@@ -1239,6 +1239,8 @@
                 pickupPlaceholder: 'Ubicación de recogida',
                 destPlaceholder: 'Ubicación de destino',
                 pricesBtn: 'Ver precios',
+                requestTaxi: 'Pedir taxi',
+                reserveTaxi: 'Reservar taxi',
                 navDrivers: 'Conductores',
                 navHelp: 'Ayuda',
                 navTrips: 'Tus viajes',
@@ -1261,6 +1263,8 @@
                 pickupPlaceholder: 'Pickup location',
                 destPlaceholder: 'Destination location',
                 pricesBtn: 'See prices',
+                requestTaxi: 'Request taxi',
+                reserveTaxi: 'Reserve taxi',
                 navDrivers: 'Drivers',
                 navHelp: 'Help',
                 navTrips: 'Your trips',
@@ -1283,6 +1287,8 @@
                 pickupPlaceholder: 'Ubicació de recollida',
                 destPlaceholder: 'Ubicació de destí',
                 pricesBtn: 'Veure preus',
+                requestTaxi: 'Demanar taxi',
+                reserveTaxi: 'Reservar taxi',
                 navDrivers: 'Conductors',
                 navHelp: 'Ajuda',
                 navTrips: 'Els teus viatges',
@@ -1309,7 +1315,9 @@
             document.getElementById('fecha-recogida').setAttribute('aria-label', t.schedulePlaceholder);
             document.getElementById('origen-input').placeholder = t.pickupPlaceholder;
             document.getElementById('destino-input').placeholder = t.destPlaceholder;
-            document.querySelector('.btn-prices').textContent = t.pricesBtn;
+            
+            const tripType = document.getElementById('tipo-viaje')?.value || 'ahora';
+            document.querySelector('.btn-prices').textContent = tripType === 'ahora' ? t.requestTaxi : t.reserveTaxi;
             
             // Update nav links if not logged in
             const btnLogin = document.getElementById('btn-login');
@@ -1379,6 +1387,13 @@
             btnNow.classList.toggle('active', mode === 'ahora');
             btnReserve.classList.toggle('active', mode === 'reserva');
             toggleScheduleFields();
+            
+            const lang = localStorage.getItem('language') || 'es';
+            const t = translations[lang] || translations.es;
+            const btnPrices = document.querySelector('.btn-prices');
+            if (btnPrices) {
+                btnPrices.textContent = mode === 'ahora' ? t.requestTaxi : t.reserveTaxi;
+            }
         }
 
         function handleVerPrecios() {
