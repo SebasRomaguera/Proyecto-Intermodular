@@ -113,9 +113,9 @@ EasyTaxi Palma es una aplicación web diseñada para modernizar el sector del ta
 
 La aplicación implementa un sistema completo de registro y autenticación de usuarios, una interfaz intuitiva y responsive, y una arquitectura cliente-servidor robusta utilizando tecnologías modernas como Node.js, Express, MongoDB y JavaScript vanilla. El sistema garantiza la seguridad mediante encriptación de contraseñas con bcrypt y validación exhaustiva de datos tanto en frontend como en backend.
 
-El estado actual del proyecto (versión UD1B) incluye un sistema funcional de gestión de usuarios con registro, login y perfil personalizado, así como un completo sistema de solicitud y seguimiento de viajes en tiempo real. La versión incorpora los modelos de datos \texttt{Conductor} y \texttt{Viaje}, una API REST ampliada con endpoints de viajes, asignación automática del conductor disponible más próximo, seguimiento del progreso mediante un timeline animado, cálculo estimado de precios y tiempos, sistema de valoraciones y posibilidad de cancelación. El proyecto está configurado para despliegue en Vercel como función serverless. Las próximas fases incorporarán autenticación JWT y geolocalización en tiempo real con mapas interactivos Leaflet.
+El estado actual del proyecto (versión UD1B) incluye un sistema funcional de gestión de usuarios con registro, login y perfil personalizado, así como un completo sistema de solicitud y seguimiento de viajes en tiempo real. La versión incorpora los modelos de datos \texttt{Conductor} y \texttt{Viaje}, una API REST ampliada con endpoints de viajes, asignación automática de conductores consciente del horario (permitiendo reservas futuras sin solapes) o inmediata según necesidad, seguimiento del progreso mediante un timeline animado, cálculo estimado de precios y tiempos, sistema de valoraciones, consulta de conductores disponibles en tiempo real y posibilidad de cancelación. El proyecto está configurado para despliegue en Vercel como función serverless. Las próximas fases incorporarán mejoras adicionales como la autenticación JWT.
 
-\textbf{Palabras clave:} Aplicación web, taxi, Node.js, MongoDB, Express, JavaScript, geolocalización, sistema de reservas, API REST.
+\textbf{Palabras clave:} Aplicación web, taxi, Node.js, MongoDB, Express, JavaScript, sistema de reservas, API REST, UI adaptativa.
 
 \newpage
 
@@ -128,7 +128,7 @@ He elegido este proyecto porque el verano pasado estuve trabajando como taxista 
 
 Con la llegada de las VTC (Vehículos de Transporte con Conductor), como Uber o Cabify, el taxi tradicional se ha quedado atrás en cuanto a tecnología, rapidez y facilidad de uso. Por eso considero necesario que el sector se modernice y ofrezca una alternativa digital que permita competir con esas empresas. 
 
-Mi idea es crear una aplicación web que permita reservar y solicitar taxis en Palma de forma sencilla, segura, rápida y con una geolocalización a tiempo real. Con los conocimientos que adquirí el año pasado en el ciclo de Desarrollo de Aplicaciones Web y todo lo que voy a aprender este año, creo que puedo aportar una solución real a este problema y demostrar mi progreso como desarrollador.
+Mi idea es crear una aplicación web que permita reservar y solicitar taxis en Palma de forma sencilla, segura y rápida. Con los conocimientos que adquirí el año pasado en el ciclo de Desarrollo de Aplicaciones Web y todo lo que voy a aprender este año, creo que puedo aportar una solución real a este problema y demostrar mi progreso como desarrollador.
 
 \subsection{Problemática actual del sector}
 
@@ -163,7 +163,7 @@ Este proyecto representa para mí la oportunidad de:
 
 \subsection{Objetivo general}
 
-Desarrollar una aplicación web funcional que permita solicitar, reservar y gestionar taxis en Palma de Mallorca con geolocalización a tiempo real de manera rápida, segura y accesible.
+Desarrollar una aplicación web funcional que permita solicitar, reservar y gestionar taxis en Palma de Mallorca de manera rápida, segura y accesible.
 
 \subsection{Objetivos específicos}
 
@@ -176,12 +176,11 @@ Desarrollar una aplicación web funcional que permita solicitar, reservar y gest
         \item Página de perfil personalizada.
     \end{itemize}
     
-    \item \textbf{Diseñar un mapa interactivo que muestre los taxis disponibles y permita hacer reservas en tiempo real.}
+    \item \textbf{Gestionar ubicaciones y puntos de interés.}
     \begin{itemize}
-        \item Integración de Leaflet para visualización de mapas.
-        \item Geolocalización del usuario.
-        \item Visualización de taxis cercanos en el mapa.
-        \item Cálculo de rutas óptimas.
+        \item Autocompletado de direcciones usando ubicaciones clave de Palma.
+        \item Sugerencias inteligentes para agilizar la reserva.
+        \item Visualización de progreso del viaje de forma clara.
     \end{itemize}
     
     \item \textbf{Crear un sistema de gestión de reservas con confirmación y estado del servicio.}
@@ -297,8 +296,6 @@ API nativa de JavaScript para realizar peticiones HTTP asíncronas al backend, r
 
 \begin{itemize}
     \item \textbf{JSON Web Tokens (JWT):} Autenticación stateless y segura.
-    \item \textbf{Leaflet:} Librería de mapas interactivos open source.
-    \item \textbf{OpenStreetMap:} Proveedor de datos cartográficos gratuito.
     \item \textbf{Socket.io:} Comunicación en tiempo real entre cliente y servidor.
 \end{itemize}
 
@@ -477,6 +474,7 @@ GET  & /api/viajes/:id/estado & Estado y progreso del viaje \\
 GET  & /api/viajes/historial & Historial de viajes del usuario \\
 POST & /api/viajes/:id/cancelar & Cancelar un viaje en curso \\
 POST & /api/viajes/:id/valorar & Valorar un viaje completado \\
+GET  & /api/conductores/disponibles & Consultar disponibilidad de conductores en tiempo real \\
 \hline
 \end{tabular}
 \caption{Endpoints de la API REST}
@@ -601,10 +599,13 @@ El proyecto se encuentra en su segunda versión funcional. La versión UD1A esta
 \begin{itemize}
     \item \textbf{Solicitud de viaje:}
     \begin{itemize}
-        \item El usuario introduce origen y destino desde la página principal.
-        \item El sistema localiza automáticamente el conductor disponible.
+        \item El usuario introduce origen, destino y modalidad (ahora mismo o reserva programada) desde la página principal. El botón de solicitud cambia dinámicamente ("Pedir taxi" o "Reservar taxi").
+        \item El sistema localiza automáticamente un conductor:
+        \begin{itemize}
+            \item \textbf{Para viajes inmediatos:} Asigna al conductor disponible más próximo y lo marca como "ocupado".
+            \item \textbf{Para reservas futuras:} Busca un conductor sin solapes de horario y reserva el servicio sin bloquear su estado actual hasta que inicie el viaje.
+        \end{itemize}
         \item Se calculan precio estimado y tiempo de llegada.
-        \item El conductor queda marcado como ``ocupado'' hasta finalizar el servicio.
     \end{itemize}
     
     \item \textbf{Seguimiento en tiempo real:}
@@ -862,8 +863,6 @@ MongoDB (Community Edition) & SSPL (Server Side Public License) \\
 Mongoose & MIT License \\
 bcryptjs & MIT License \\
 Phosphor Icons & MIT License \\
-Leaflet & BSD 2-Clause \\
-OpenStreetMap & ODbL (Open Database License) \\
 \hline
 \end{tabular}
 \caption{Licencias de software utilizadas}
@@ -953,28 +952,19 @@ El desarrollo del proyecto sigue principios de metodología ágil utilizando Tre
     \item \textbf{Despliegue Vercel:} \checkmark Configuración serverless lista para producción.
 \end{enumerate}
 
-\subsection{Fase UD1C - Geolocalización y mapas}
+\subsection{Fase UD1C - Autenticación y Mejoras (Planificado)}
 
 \begin{enumerate}
-    \item \textbf{Implementación de Leaflet:}
+    \item \textbf{Implementación de JWT:}
     \begin{itemize}
-        \item Integración de la librería de mapas.
-        \item Configuración de OpenStreetMap como proveedor.
-        \item Personalización de marcadores y estilos.
+        \item Autenticación segura y sin estado.
+        \item Protección de rutas de la API.
     \end{itemize}
     
-    \item \textbf{Geolocalización del usuario:}
+    \item \textbf{Optimizaciones de la interfaz:}
     \begin{itemize}
-        \item Uso de Geolocation API.
-        \item Solicitud de permisos.
-        \item Detección automática de ubicación.
-    \end{itemize}
-    
-    \item \textbf{Visualización de taxis en el mapa:}
-    \begin{itemize}
-        \item Marcadores de taxis disponibles en el mapa.
-        \item Animación del movimiento del taxi hacia el cliente.
-        \item Cálculo real de distancias mediante coordenadas.
+        \item Mejoras en la accesibilidad.
+        \item Nuevos componentes interactivos.
     \end{itemize}
 \end{enumerate}
 
@@ -1167,7 +1157,7 @@ Con las próximas fases de desarrollo completadas, el proyecto podría evolucion
     
     \item MDN Web Docs. (2026). \textit{JavaScript | MDN}. Mozilla Developer Network. Recuperado de \url{https://developer.mozilla.org/en-US/docs/Web/JavaScript}
     
-    \item Leaflet Documentation. (2026). \textit{Leaflet - a JavaScript library for interactive maps}. Recuperado de \url{https://leafletjs.com/}
+
 \end{enumerate}
 
 \subsection{Libros y recursos educativos}

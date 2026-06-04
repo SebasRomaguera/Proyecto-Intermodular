@@ -23,11 +23,12 @@ https://proyecto-intermodular-liard.vercel.app/
 - ✅ **Sistema de valoraciones**
 - ✅ **Cancelación de viajes**
 - ✅ **Historial de viajes del usuario**
+- ✅ **Soporte para reservas futuras**
+- ✅ **Consulta de disponibilidad de conductores en tiempo real**
 - ✅ **Despliegue configurado en Vercel (serverless)**
 
 ### Próximas funcionalidades (UD1C y siguientes)
 - ⏳ Tokens JWT para autenticación
-- ⏳ Mapa interactivo con Leaflet
 - ⏳ WebSockets para actualizaciones en tiempo real
 - ⏳ Sistema de notificaciones push
 
@@ -51,8 +52,6 @@ Mientras plataformas como Uber o Cabify han avanzado muchísimo digitalmente, el
 
 ### Frontend
 - **HTML5** + **CSS3** + **JavaScript ES6+**
-- **Leaflet** - Mapas interactivos (próximamente)
-- **OpenStreetMap** - Proveedor de mapas (próximamente)
 - **Fetch API** - Peticiones HTTP
 
 ### Herramientas
@@ -70,8 +69,8 @@ Desarrollar una aplicación web funcional que permita solicitar, reservar y gest
 
 ### Objetivos específicos
 1. Implementar un sistema de registro y autenticación para usuarios (clientes).  
-2. Diseñar un mapa interactivo con Leaflet que muestre la ubicación del usuario y el taxi asignado.  
-3. Simular el movimiento del taxi en tiempo real hacia la ubicación del cliente.  
+2. Implementar una base de datos local de ubicaciones clave en Palma para facilitar la selección del destino.
+3. Simular el progreso del taxi en tiempo real hacia la ubicación del cliente.  
 4. Crear un sistema de gestión de reservas con distintos estados (pendiente, en camino, completado).  
 5. Calcular automáticamente el taxi más cercano según la ubicación del usuario.  
 
@@ -113,12 +112,11 @@ Trabajaré con datos sensibles (email, nombre, ubicación, contraseñas), así q
 
 **Frontend:**
 - HTML5, CSS3, JavaScript vanilla.  
-- Leaflet + OpenStreetMap (mapas interactivos, 100% gratis).  
-- Geolocalización HTML5 (para detectar ubicación del usuario).  
+- Geolocalización HTML5 (para detectar ubicación actual del usuario como texto).  
 
 **Simulación:**
-- Movimiento del taxi mediante actualización de coordenadas con `setInterval`.  
-- Datos de taxis generados (5-10 taxis simulados con ubicaciones en Palma).  
+- Actualización progresiva del estado del viaje mediante `setInterval`.  
+- Datos de taxis generados (5-10 taxis simulados con datos realistas).  
 
 Todas las tecnologías son gratuitas y open source.
 
@@ -134,18 +132,20 @@ La aplicación está pensada para ser intuitiva y accesible, especialmente para 
 
 ### Para usuarios (clientes)
 1. **Registro e inicio de sesión** - Sistema de autenticación con email y contraseña.  
-2. **Solicitar taxi** - El usuario introduce o permite detectar su ubicación.  
-3. **Visualización en mapa** - Ver en tiempo real:
-   - Su propia ubicación (marcador azul).  
-   - El taxi asignado y su movimiento hacia el cliente (marcador amarillo).  
+2. **Solicitar taxi** - El usuario introduce o permite detectar su ubicación actual.  
+3. **Seguimiento del viaje** - Ver en tiempo real:
+   - El estado del taxi asignado (asignado, en camino, llegando).
+   - Timeline visual con progreso simulado.
 4. **Ver tiempo estimado de llegada** - Cálculo aproximado según distancia.  
 5. **Historial de reservas** - Consultar viajes anteriores.  
-6. **Cancelar reserva** - Antes de que el taxi llegue.  
+6. **Cancelar reserva** - Antes de que el taxi llegue.
+7. **Reservas futuras** - Opción de programar viajes estableciendo fecha y hora.
+8. **Disponibilidad de flota** - Posibilidad de consultar los conductores disponibles en tiempo real.
 
 ### Sistema de simulación
 - Los taxis son **datos falsos** almacenados en la base de datos con ubicaciones reales de Palma.  
-- Cuando un usuario pide taxi, el sistema calcula cuál está más cerca.  
-- El taxi se "mueve" por el mapa siguiendo una ruta simulada hasta llegar al cliente.  
+- Cuando un usuario pide taxi, el sistema asigna uno disponible.  
+- El progreso del viaje se simula mediante una actualización periódica de su estado y tiempo restante.  
 
 ---
 ## 🚀 Instalación y ejecución del proyecto
@@ -308,8 +308,8 @@ Esto creará 5 conductores disponibles:
 3. En la página principal, ingresa:
    - **Origen:** Calle Mayor, 5
    - **Destino:** Aeropuerto de Palma
-4. Click en "Ver precios"
-5. Se te asignará un conductor automáticamente
+4. Click en "Pedir taxi" (o "Reservar taxi" para reservas futuras)
+5. Se te asignará un conductor automáticamente (para viajes inmediatos) o uno sin solapes de horario (para reservas futuras)
 6. Verás la página de tracking con:
    - Timeline visual (Asignado → En camino → Llegando)
    - Barra de progreso animada
@@ -327,12 +327,12 @@ GET    /api/viajes/:id/estado     - Obtener estado del viaje
 GET    /api/viajes/historial      - Historial de viajes
 POST   /api/viajes/:id/cancelar   - Cancelar viaje
 POST   /api/viajes/:id/valorar    - Valorar viaje completado
+GET    /api/conductores/disponibles - Consultar conductores disponibles
 ```
 
 ---
 ## �📚 Bibliografía y recursos consultados
 - MDN Web Docs – Accesibilidad y buenas prácticas.  
-- Leaflet Documentation – Mapas interactivos con OpenStreetMap.  
 - MongoDB – Security Best Practices.  
 - Express.js Documentation – Creación de APIs REST.  
 - Consultas técnicas sobre accesibilidad y elección de tecnologías.  
