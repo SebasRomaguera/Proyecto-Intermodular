@@ -36,16 +36,6 @@ exports.solicitarViaje = async (req, res) => {
       });
     }
 
-    // Buscar conductor disponible
-    const conductor = await Conductor.findOne({ estado: 'disponible' });
-    
-    if (!conductor) {
-      return res.status(404).json({
-        success: false,
-        mensaje: 'No hay conductores disponibles en este momento'
-      });
-    }
-
     // Calcular datos del viaje
     const distanciaKm = estimarDistancia(origen, destino);
     const precioEstimado = calcularPrecio(distanciaKm);
@@ -72,7 +62,39 @@ exports.solicitarViaje = async (req, res) => {
       }
     }
 
-    const horaFinEstimada = new Date(horaInicio.getTime() + tiempoEstimadoMinutos * 60000);
+    const horaFinNueva = new Date(horaInicio.getTime() + tiempoEstimadoMinutos * 60000);
+
+    // Para reservas futuras: buscar un conductor sin solapamiento de horario.
+    // Para viajes inmediatos: buscar un conductor disponible en este momento.
+    let conductor;
+    if (esReserva) {
+      // Obtener IDs de conductores que ya tienen una reserva/viaje activo que se solapa
+      const viajesSolapados = await Viaje.find({
+        estado: { $in: ['programado', 'asignado', 'en_camino', 'llegando'] },
+        horaInicio: { $lt: horaFinNueva },
+        horaFinEstimada: { $gt: horaInicio }
+      }).select('conductor');
+
+      const conductoresOcupados = viajesSolapados.map(v => v.conductor.toString());
+
+      conductor = await Conductor.findOne({
+        _id: { $nin: conductoresOcupados }
+      });
+    } else {
+      // Viaje inmediato: conductor disponible ahora mismo
+      conductor = await Conductor.findOne({ estado: 'disponible' });
+    }
+
+    if (!conductor) {
+      return res.status(404).json({
+        success: false,
+        mensaje: esReserva
+          ? 'No hay conductores disponibles para esa franja horaria'
+          : 'No hay conductores disponibles en este momento'
+      });
+    }
+
+    const horaFinEstimada = horaFinNueva;
 
     // Crear el viaje
     const viaje = new Viaje({
@@ -90,9 +112,13 @@ exports.solicitarViaje = async (req, res) => {
 
     await viaje.save();
 
-    // Actualizar estado del conductor
-    conductor.estado = 'ocupado';
-    await conductor.save();
+    // Actualizar estado del conductor:
+    // Solo se marca 'ocupado' en viajes inmediatos.
+    // Las reservas futuras no bloquean al conductor hasta que llegue la hora.
+    if (!esReserva) {
+      conductor.estado = 'ocupado';
+      await conductor.save();
+    }
 
     // Populate para devolver datos completos
     await viaje.populate('conductor');
@@ -148,6 +174,13 @@ exports.obtenerEstadoViaje = async (req, res) => {
     // Calcular progreso actual
     viaje.calcularProgreso();
     await viaje.save();
+
+    // Si la reserva acaba de comenzar (pasó de 'programado' a un estado activo),
+    // ahora sí marcar al conductor como ocupado
+    if (estadoAnterior === 'programado' && viaje.estado !== 'programado' && viaje.estado !== 'cancelado') {
+      await Conductor.findByIdAndUpdate(viaje.conductor._id, { estado: 'ocupado' });
+      console.log(`🚕 Conductor ${viaje.conductor.nombre} ocupado (reserva iniciada)`);
+    }
 
     // Si el viaje acaba de completarse, liberar al conductor
     if (estadoAnterior !== 'completado' && viaje.estado === 'completado') {
