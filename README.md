@@ -8,7 +8,7 @@ https://proyecto-intermodular-liard.vercel.app/
 **Estado:** ✅ En desarrollo activo  
 
 ### Funcionalidades implementadas
-- ✅ Sistema de registro de usuarios
+- ✅ Sistema de registro de usuarios.
 - ✅ Sistema de login/autenticación
 - ✅ Validación de datos (frontend y backend)
 - ✅ Encriptación de contraseñas con bcrypt
