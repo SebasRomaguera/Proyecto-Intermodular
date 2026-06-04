@@ -372,3 +372,39 @@ exports.valorarViaje = async (req, res) => {
     });
   }
 };
+
+// Admin: Liberar todos los conductores
+exports.liberarConductores = async (req, res) => {
+  try {
+    // Verificar si es admin
+    const email = req.headers['x-user-email'];
+    if (email !== 'admin@gmail.com') {
+      return res.status(403).json({
+        success: false,
+        mensaje: 'No tienes permisos para realizar esta acción'
+      });
+    }
+
+    // Liberar todos los conductores ocupados
+    const resultado = await Conductor.updateMany(
+      { estado: 'ocupado' },
+      { estado: 'disponible' }
+    );
+
+    console.log(`🚕 ADMIN: Se han liberado ${resultado.modifiedCount} conductores`);
+
+    res.json({
+      success: true,
+      mensaje: `Se han liberado ${resultado.modifiedCount} conductores ocupados correctamente.`,
+      modificados: resultado.modifiedCount
+    });
+
+  } catch (error) {
+    console.error('Error al liberar conductores:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al liberar los conductores',
+      error: error.message
+    });
+  }
+};

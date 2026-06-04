@@ -191,9 +191,9 @@
        TRADUCCIONES DEL NAVBAR
     ===================================================================== */
     const t = {
-        es: { drivers: 'Conductores', driversBtn: 'Consultar taxistas', help: 'Ayuda', trips: 'Tus viajes', login: 'Inicia sesión', register: 'Registrarse', logout: 'Cerrar sesión' },
-        en: { drivers: 'Drivers', driversBtn: 'Check drivers', help: 'Help', trips: 'Your trips', login: 'Sign in', register: 'Register', logout: 'Sign out' },
-        ca: { drivers: 'Conductors', driversBtn: 'Consultar taxistes', help: 'Ajuda', trips: 'Els teus viatges', login: 'Inicia sessió', register: "Registra't", logout: 'Tanca sessió' }
+        es: { drivers: 'Conductores', driversBtn: 'Consultar taxistas', help: 'Ayuda', trips: 'Tus viajes', login: 'Inicia sesión', register: 'Registrarse', logout: 'Cerrar sesión', adminFree: 'Liberar conductores' },
+        en: { drivers: 'Drivers', driversBtn: 'Check drivers', help: 'Help', trips: 'Your trips', login: 'Sign in', register: 'Register', logout: 'Sign out', adminFree: 'Free drivers' },
+        ca: { drivers: 'Conductors', driversBtn: 'Consultar taxistes', help: 'Ajuda', trips: 'Els teus viatges', login: 'Inicia sessió', register: "Registra't", logout: 'Tanca sessió', adminFree: 'Alliberar conductors' }
     };
 
     /* =====================================================================
@@ -244,6 +244,7 @@
         const userName = usuario ? (usuario.nombre || 'Usuario') : null;
         const langMap = { es: 'ES', en: 'EN', ca: 'CA' };
         const showDriversButton = currentPage === 'index.html' && userName;
+        const isAdmin = usuario && usuario.email === 'admin@gmail.com';
 
         const navRightHTML = userName ? `
             <div class="language-selector">
@@ -278,6 +279,7 @@
                 <li><a href="ayuda.html" id="nav-help"${activePage === 'ayuda' ? ' class="active"' : ''}>${tr.help}</a></li>
                 <li id="nav-viajes"${!userName ? ' style="display:none;"' : ''}><a href="historial-viajes.html" id="nav-viajes-link"${activePage === 'viajes' ? ' class="active"' : ''}>${tr.trips}</a></li>
                 ${showDriversButton ? `<li><a href="#" class="nav-drivers-btn" id="nav-drivers-btn" onclick="consultarTaxistasDisponibles(); return false;">${tr.driversBtn}</a></li>` : ''}
+                ${isAdmin ? `<li><a href="#" class="nav-drivers-btn" id="nav-admin-btn" style="background:#ff4444; color:white;" onclick="liberarConductoresAdmin(); return false;">${tr.adminFree}</a></li>` : ''}
             </ul>
             <button class="hamburger-btn" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('mobile-open')" aria-label="Menú">
                 <i class="ph ph-list"></i>
@@ -313,6 +315,7 @@
         const bl = document.getElementById('btn-login');         if (bl) bl.textContent = tr.login;
         const br = document.getElementById('btn-register');      if (br) br.textContent = tr.register;
         const lo = document.getElementById('navbar-btn-logout'); if (lo) lo.textContent = tr.logout;
+        const ab = document.getElementById('nav-admin-btn');     if (ab) ab.textContent = tr.adminFree;
 
         // Llamar al callback de la página (si existe)
         if (typeof window.onLanguageChange === 'function') {
@@ -325,6 +328,34 @@
         localStorage.removeItem('usuario');
         localStorage.removeItem('userEmail');
         window.location.href = 'index.html';
+    };
+
+    window.liberarConductoresAdmin = async function () {
+        if (!confirm('¿Estás seguro de que quieres liberar a todos los conductores ocupados?')) return;
+        
+        try {
+            const token = localStorage.getItem('token');
+            const userEmail = localStorage.getItem('userEmail');
+            
+            const response = await fetch('/api/viajes/admin/liberar-conductores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'x-user-email': userEmail
+                }
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                alert('Éxito: ' + data.mensaje);
+            } else {
+                alert('Error: ' + data.mensaje);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un error al intentar liberar los conductores.');
+        }
     };
 
     /* =====================================================================

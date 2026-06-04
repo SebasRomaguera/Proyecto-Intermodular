@@ -48,5 +48,6 @@ router.get('/:id/estado', viajeController.obtenerEstadoViaje);
 router.get('/historial', authMiddleware, viajeController.obtenerHistorial);
 router.post('/:id/cancelar', authMiddleware, viajeController.cancelarViaje);
 router.post('/:id/valorar', authMiddleware, viajeController.valorarViaje);
+router.post('/admin/liberar-conductores', authMiddleware, viajeController.liberarConductores);
 
 module.exports = router;
