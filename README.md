@@ -346,7 +346,7 @@ GET    /api/conductores/disponibles - Consultar conductores disponibles
 ---
 
 ## 📄 Información
-Proyecto Intermodular – UT0  
+Proyecto Intermodular – UD3 
 Sebastià Romaguera Camps – IFC33X  
-Marzo 2026
+Junio 2026  
 
